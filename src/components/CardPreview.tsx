@@ -4,9 +4,10 @@ import type { CardConfig, TemplateRenderer } from '../templates/types'
 interface CardPreviewProps {
   config: CardConfig
   renderer: TemplateRenderer
+  onReady?: (canvas: HTMLCanvasElement) => void
 }
 
-export function CardPreview({ config, renderer }: CardPreviewProps) {
+export function CardPreview({ config, renderer, onReady }: CardPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -15,7 +16,8 @@ export function CardPreview({ config, renderer }: CardPreviewProps) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     renderer(ctx, config)
-  }, [config, renderer])
+    onReady?.(canvas)
+  }, [config, renderer, onReady])
 
   return <canvas ref={canvasRef} width={config.width} height={config.height} />
 }

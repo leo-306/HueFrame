@@ -18,6 +18,12 @@ export async function extractPalette(
     })
   }
 
-  const palette = colorThief.getPalette(source, colorCount) as RGB[]
-  return palette.slice(0, colorCount)
+  try {
+    // 图片几乎没有可提取的颜色（如纯白）时，color-thief-browser 会返回 null；
+    // 某些像素分布还会触发其内部量化代码抛出异常，一并兜底为空数组。
+    const palette = colorThief.getPalette(source, colorCount) as RGB[] | null
+    return palette ? palette.slice(0, colorCount) : []
+  } catch {
+    return []
+  }
 }

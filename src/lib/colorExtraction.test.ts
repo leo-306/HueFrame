@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+import ColorThief from 'color-thief-browser'
 import { extractPalette } from './colorExtraction'
 
 function createSolidColorCanvas(r: number, g: number, b: number, size = 50): HTMLCanvasElement {
@@ -28,5 +29,25 @@ describe('extractPalette', () => {
     const canvas = createSolidColorCanvas(10, 20, 30)
     const palette = await extractPalette(canvas, 3)
     expect(palette.length).toBeLessThanOrEqual(3)
+  })
+
+  it('returns an empty array instead of throwing when the image has no extractable colors', async () => {
+    // color-thief-browser 会过滤掉接近纯白的像素；纯白图片会导致其
+    // 内部量化直方图为空，getPalette 返回 null。
+    const canvas = createSolidColorCanvas(255, 255, 255)
+    const palette = await extractPalette(canvas, 5)
+    expect(palette).toEqual([])
+  })
+
+  it('returns an empty array instead of throwing when color-thief-browser itself throws', async () => {
+    // color-thief-browser 的压缩包在某些像素分布下会在内部抛出
+    // ReferenceError（已知的第三方库问题，非本项目代码触发）。
+    const spy = vi.spyOn(ColorThief.prototype, 'getPalette').mockImplementation(() => {
+      throw new ReferenceError('index is not defined')
+    })
+    const canvas = createSolidColorCanvas(100, 120, 140)
+    const palette = await extractPalette(canvas, 5)
+    expect(palette).toEqual([])
+    spy.mockRestore()
   })
 })
