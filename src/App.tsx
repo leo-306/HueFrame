@@ -122,7 +122,7 @@ export default function App() {
         setIsProcessing(false)
       }
     },
-    [language]
+    [language, width, height]
   )
 
   useEffect(() => {

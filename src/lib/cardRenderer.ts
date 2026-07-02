@@ -41,18 +41,6 @@ export function renderCardWithMargin(
 }
 
 /**
- * 用指定的版式渲染函数把 CardConfig 画进一个新建的 canvas（含留白与水印合成）。
- */
-export function renderCardToCanvas(config: CardConfig, renderer: TemplateRenderer): HTMLCanvasElement {
-  const canvas = document.createElement('canvas')
-  canvas.width = config.width
-  canvas.height = config.height
-  const ctx = canvas.getContext('2d')!
-  renderCardWithMargin(ctx, config, renderer)
-  return canvas
-}
-
-/**
  * 把 canvas 导出为 PNG Blob，用于下载。
  */
 export function exportCanvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {

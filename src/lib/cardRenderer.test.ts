@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { renderCardToCanvas, exportCanvasToBlob, renderCardWithMargin } from './cardRenderer'
+import { exportCanvasToBlob, renderCardWithMargin } from './cardRenderer'
 import type { CardConfig } from '../templates/types'
 import { renderClassicStrip } from '../templates/classicStrip'
 import { createTestPhoto } from '../../tests/testImage'
@@ -20,17 +20,17 @@ function makeConfig(): CardConfig {
   }
 }
 
-describe('renderCardToCanvas', () => {
-  it('returns a canvas sized to the config dimensions', () => {
-    const canvas = renderCardToCanvas(makeConfig(), renderClassicStrip)
-    expect(canvas.width).toBe(400)
-    expect(canvas.height).toBe(500)
-  })
-})
+function renderToNewCanvas(config: CardConfig): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = config.width
+  canvas.height = config.height
+  renderCardWithMargin(canvas.getContext('2d')!, config, renderClassicStrip)
+  return canvas
+}
 
 describe('exportCanvasToBlob', () => {
   it('resolves with a PNG blob', async () => {
-    const canvas = renderCardToCanvas(makeConfig(), renderClassicStrip)
+    const canvas = renderToNewCanvas(makeConfig())
     const blob = await exportCanvasToBlob(canvas)
     expect(blob).toBeInstanceOf(Blob)
     expect(blob.type).toBe('image/png')
@@ -38,6 +38,12 @@ describe('exportCanvasToBlob', () => {
 })
 
 describe('renderCardWithMargin', () => {
+  it('returns a canvas sized to the config dimensions', () => {
+    const canvas = renderToNewCanvas(makeConfig())
+    expect(canvas.width).toBe(400)
+    expect(canvas.height).toBe(500)
+  })
+
   it('insets the template content by marginPx on all sides', () => {
     const config = { ...makeConfig(), marginPx: 40 }
     const canvas = document.createElement('canvas')
