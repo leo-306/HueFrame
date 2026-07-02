@@ -33,3 +33,28 @@ export function applyFilter(canvas: HTMLCanvasElement, filter: FilterName): void
 
   ctx.putImageData(imageData, 0, 0)
 }
+
+/**
+ * 生成指定滤镜应用后的缩略图（居中裁剪填满 size×size 正方形），
+ * 用于滤镜选择器展示实时预览，而不只是文字按钮。
+ */
+export function createFilterThumbnail(
+  photo: HTMLImageElement,
+  filter: FilterName,
+  size: number
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+
+  const scale = Math.max(size / photo.width, size / photo.height)
+  const sw = size / scale
+  const sh = size / scale
+  const sx = (photo.width - sw) / 2
+  const sy = (photo.height - sh) / 2
+  ctx.drawImage(photo, sx, sy, sw, sh, 0, 0, size, size)
+
+  applyFilter(canvas, filter)
+  return canvas
+}
