@@ -19,6 +19,10 @@ vi.mock('./colorExtraction', () => ({
   ]),
 }))
 
+vi.mock('./paletteWeights', () => ({
+  computePalettePercentages: vi.fn().mockReturnValue([60, 40]),
+}))
+
 describe('buildCardConfig', () => {
   it('assembles a complete CardConfig from a photo image', async () => {
     const photo = new Image(200, 200)
@@ -35,6 +39,8 @@ describe('buildCardConfig', () => {
     expect(config.capturedAtText).toContain('2026')
     expect(config.palette.length).toBe(2)
     expect(config.palette[0].hex).toMatch(/^#[0-9a-f]{6}$/i)
+    expect(config.palette[0].percentage).toBe(60)
+    expect(config.palette[1].percentage).toBe(40)
     expect(config.width).toBe(800)
     expect(config.height).toBe(1000)
     expect(config.colorNameLanguage).toBe('zh')

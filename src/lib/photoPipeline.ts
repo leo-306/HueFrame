@@ -4,6 +4,7 @@ import { nearestColorName } from './colorNames'
 import { pickReadableTextColor } from './contrastColor'
 import { parsePhotoMeta } from './exifParser'
 import { resolveLocationName } from './geocoding'
+import { computePalettePercentages } from './paletteWeights'
 import type { CardConfig, ColorNameLanguage, PaletteEntry } from '../templates/types'
 
 function formatDate(date: Date): string {
@@ -21,7 +22,7 @@ export interface CardOptions {
 }
 
 /**
- * 整条处理管线：文件 → EXIF/GPS/取色 → 组装成可直接传给版式渲染器的 CardConfig。
+ * 整条处理管线：文件 → EXIF/GPS/取色/占比 → 组装成可直接传给版式渲染器的 CardConfig。
  * GPS 缺失时地点显示"未知地点"，拍摄时间缺失时留空，不阻塞主流程。
  */
 export async function buildCardConfig(
@@ -33,12 +34,14 @@ export async function buildCardConfig(
 
   const locationName = meta.gps ? await resolveLocationName(meta.gps) : '未知地点'
   const capturedAtText = meta.capturedAt ? formatDate(meta.capturedAt) : ''
+  const percentages = computePalettePercentages(photo, rawPalette)
 
-  const palette: PaletteEntry[] = rawPalette.map((rgb) => ({
+  const palette: PaletteEntry[] = rawPalette.map((rgb, index) => ({
     rgb,
     hex: rgbToHex(rgb),
     name: nearestColorName(rgb),
     textColor: pickReadableTextColor(rgb),
+    percentage: percentages[index],
   }))
 
   return {
