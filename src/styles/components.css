@@ -53,15 +53,19 @@
 .btn-primary {
   appearance: none;
   border: none;
-  border-radius: var(--radius-default);
-  background: var(--color-primary-container);
-  color: var(--color-on-primary-container);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 500;
-  padding: 12px 20px;
+  padding: 16px 20px;
   cursor: pointer;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -95,82 +99,136 @@
   margin: 0;
 }
 
-/* 底部导航 */
+/* 底部导航：无边框，仅选中项带轻微背景色块 */
 .bottom-nav {
   display: flex;
   gap: 8px;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border-top: 1px solid var(--color-outline-variant);
   margin-top: 24px;
 }
 
+.bottom-nav .btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+}
+
+.bottom-nav .btn[aria-pressed='true'] {
+  background: var(--color-primary-container);
+  border-color: transparent;
+}
+
 /* 空状态 */
 .empty-state {
-  padding: 24px 20px;
-  text-align: center;
+  padding: 56px 20px 24px;
 }
 
 .empty-state h2 {
-  font-size: 32px;
-  margin: 24px 0 20px;
+  font-size: 36px;
+  line-height: 1.25;
+  margin: 0 0 32px;
 }
 
 .empty-state .format-hint {
   color: var(--color-on-surface-variant);
   font-size: 13px;
   letter-spacing: 0.04em;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
-/* 上传区：虚线容器 */
+/* 上传区：虚线容器，大圆角，居中图标 + 大写字距提示 */
 .upload-zone {
-  border: 2px dashed var(--color-outline-variant);
-  border-radius: var(--radius-xl);
-  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1.5px dashed var(--color-outline-variant);
+  border-radius: 28px;
+  padding: 64px 20px;
   text-align: center;
   background: var(--color-surface-container-low, var(--color-surface));
+  cursor: pointer;
 }
 
-.upload-zone p {
-  color: var(--color-on-surface-variant);
-  margin-bottom: 16px;
-}
-
-/* 卡片预览容器 */
-.card-preview {
+.upload-zone-icon {
   display: flex;
+  align-items: center;
   justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  color: var(--color-on-surface-variant);
+  margin-bottom: 24px;
+}
+
+.upload-zone-hint {
+  margin: 0;
+  color: var(--color-on-surface-variant);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 卡片预览容器：白色圆角卡片 + 细描边，贴合设计稿里的相框感 */
+.card-preview {
   padding: 20px;
 }
 
-.card-preview canvas {
-  max-width: 100%;
-  height: auto;
+.card-preview-frame {
+  border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius-xl);
+  background: var(--color-surface-container-lowest, #ffffff);
+  overflow: hidden;
+  line-height: 0;
 }
 
-/* 二级 Tab 容器 */
+.card-preview canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 二级 Tab 容器：胶囊分段控件，选中项是白色圆角小块 */
 .card-tabs {
   padding: 0 20px;
 }
 
 .card-tabs-nav {
   display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--color-outline-variant);
-  margin-bottom: 16px;
+  gap: 2px;
+  padding: 4px;
+  background: var(--color-surface-container-low, var(--color-surface));
+  border-radius: var(--radius-lg);
+  margin: 20px 0 20px;
 }
 
 .card-tabs-nav .btn {
+  flex: 1;
   border: none;
-  border-radius: var(--radius-default) var(--radius-default) 0 0;
-  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  padding: 8px 10px;
 }
 
 .card-tabs-nav .btn[aria-pressed='true'] {
-  background: transparent;
-  border-bottom: 2px solid var(--color-primary);
+  background: var(--color-surface-container-lowest, #ffffff);
   color: var(--color-on-surface);
+  font-weight: 500;
 }
 
 .card-tabs-panel {

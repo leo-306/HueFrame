@@ -22,7 +22,9 @@ export function CardPreview({ config, renderer, onReady }: CardPreviewProps) {
 
   return (
     <div className="card-preview">
-      <canvas ref={canvasRef} width={config.width} height={config.height} />
+      <div className="card-preview-frame">
+        <canvas ref={canvasRef} width={config.width} height={config.height} />
+      </div>
     </div>
   )
 }
