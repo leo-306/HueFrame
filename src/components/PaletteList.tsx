@@ -8,7 +8,7 @@ interface PaletteListProps {
 
 export function PaletteList({ palette, language, onColorChange }: PaletteListProps) {
   return (
-    <ul>
+    <ul className="palette-list">
       {palette.map((entry, index) => (
         <li key={index}>
           <input
@@ -17,9 +17,9 @@ export function PaletteList({ palette, language, onColorChange }: PaletteListPro
             value={entry.hex}
             onChange={(e) => onColorChange(index, e.target.value)}
           />
-          <span>{language === 'en' ? entry.name.en : entry.name.zh}</span>
-          <span>{entry.hex.toUpperCase()}</span>
-          {entry.percentage !== undefined && <span>{entry.percentage}%</span>}
+          <span className="color-name">{language === 'en' ? entry.name.en : entry.name.zh}</span>
+          <span className="color-hex">{entry.hex.toUpperCase()}</span>
+          {entry.percentage !== undefined && <span className="color-percentage">{entry.percentage}%</span>}
         </li>
       ))}
     </ul>

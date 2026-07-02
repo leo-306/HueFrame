@@ -7,8 +7,11 @@ interface MarginSliderProps {
 
 export function MarginSlider({ valuePx, onChange, min = 0, max = 80 }: MarginSliderProps) {
   return (
-    <div>
-      <label htmlFor="margin-slider">留白 (Margin)</label>
+    <div className="form-field">
+      <div className="form-field-row">
+        <label htmlFor="margin-slider">留白 (Margin)</label>
+        <span>{valuePx}px</span>
+      </div>
       <input
         id="margin-slider"
         type="range"
@@ -17,7 +20,6 @@ export function MarginSlider({ valuePx, onChange, min = 0, max = 80 }: MarginSli
         value={valuePx}
         onChange={(e) => onChange(Number(e.target.value))}
       />
-      <span>{valuePx}px</span>
     </div>
   )
 }

@@ -19,11 +19,7 @@ export function UploadZone({ onFileSelected }: UploadZoneProps) {
   }
 
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={(e) => e.preventDefault()}
-      style={{ border: '2px dashed #ccc', padding: '2rem', textAlign: 'center' }}
-    >
+    <div className="upload-zone" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <p>上传一张照片开始</p>
       <input data-testid="upload-input" type="file" accept="image/*" onChange={handleChange} />
     </div>

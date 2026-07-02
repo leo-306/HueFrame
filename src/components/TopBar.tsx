@@ -8,7 +8,7 @@ interface TopBarProps {
 
 export function TopBar({ language, onLanguageChange }: TopBarProps) {
   return (
-    <header>
+    <header className="top-bar">
       <h1>HueFrame</h1>
       <LanguagePicker selected={language} onSelect={onLanguageChange} />
     </header>

@@ -6,10 +6,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ onFileSelected }: EmptyStateProps) {
   return (
-    <div>
+    <div className="empty-state">
       <h2>给照片，配一套颜色。</h2>
       <UploadZone onFileSelected={onFileSelected} />
-      <p>本地解析支持 JPG / PNG / WEBP</p>
+      <p className="format-hint">本地解析支持 JPG / PNG / WEBP</p>
     </div>
   )
 }

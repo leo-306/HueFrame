@@ -28,15 +28,15 @@ const PANEL_KEYS: Record<CardSubTab, 'filterPanel' | 'layoutPanel' | 'palettePan
 export function CardTabs(props: CardTabsProps) {
   const { active, onSelect } = props
   return (
-    <div>
-      <div>
+    <div className="card-tabs">
+      <div className="card-tabs-nav">
         {SUB_TABS.map((tab) => (
-          <button key={tab.id} aria-pressed={active === tab.id} onClick={() => onSelect(tab.id)}>
+          <button key={tab.id} className="btn" aria-pressed={active === tab.id} onClick={() => onSelect(tab.id)}>
             {tab.label}
           </button>
         ))}
       </div>
-      <div>{props[PANEL_KEYS[active]]}</div>
+      <div className="card-tabs-panel">{props[PANEL_KEYS[active]]}</div>
     </div>
   )
 }

@@ -12,9 +12,9 @@ interface LanguagePickerProps {
 
 export function LanguagePicker({ selected, onSelect }: LanguagePickerProps) {
   return (
-    <div>
+    <div className="btn-group">
       {(Object.keys(LABELS) as ColorNameLanguage[]).map((language) => (
-        <button key={language} onClick={() => onSelect(language)} aria-pressed={selected === language}>
+        <button key={language} className="btn" onClick={() => onSelect(language)} aria-pressed={selected === language}>
           {LABELS[language]}
         </button>
       ))}

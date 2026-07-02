@@ -19,10 +19,11 @@ interface BottomNavProps {
 
 export function BottomNav({ active, onSelect }: BottomNavProps) {
   return (
-    <nav>
+    <nav className="bottom-nav">
       {TABS.map((tab) => (
         <button
           key={tab.id}
+          className="btn"
           disabled={tab.disabled}
           aria-pressed={active === tab.id}
           onClick={() => onSelect(tab.id)}

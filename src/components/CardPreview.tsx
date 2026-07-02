@@ -20,5 +20,9 @@ export function CardPreview({ config, renderer, onReady }: CardPreviewProps) {
     onReady?.(canvas)
   }, [config, renderer, onReady])
 
-  return <canvas ref={canvasRef} width={config.width} height={config.height} />
+  return (
+    <div className="card-preview">
+      <canvas ref={canvasRef} width={config.width} height={config.height} />
+    </div>
+  )
 }

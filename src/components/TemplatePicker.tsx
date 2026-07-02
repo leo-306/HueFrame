@@ -17,10 +17,11 @@ interface TemplatePickerProps {
 
 export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {
   return (
-    <div>
+    <div className="btn-group">
       {OPTIONS.map((option) => (
         <button
           key={option.id}
+          className="btn"
           onClick={() => onSelect(option.id)}
           aria-pressed={selected === option.id}
         >

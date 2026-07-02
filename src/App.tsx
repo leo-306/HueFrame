@@ -147,14 +147,14 @@ export default function App() {
   )
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto' }}>
+    <div className="app-shell">
       <TopBar language={language} onLanguageChange={setLanguage} />
 
       {activeTab === 'card' && (
         <>
           {!baseConfig && <EmptyState onFileSelected={handleFileSelected} />}
 
-          {isProcessing && <p>处理中…</p>}
+          {isProcessing && <p className="processing-hint">处理中…</p>}
 
           {config && (
             <>
@@ -192,13 +192,15 @@ export default function App() {
                 }
               />
 
-              <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
+              <div className="export-row">
+                <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
+              </div>
             </>
           )}
         </>
       )}
 
-      {activeTab !== 'card' && <p>敬请期待</p>}
+      {activeTab !== 'card' && <p className="coming-soon">敬请期待</p>}
 
       <BottomNav active={activeTab} onSelect={setActiveTab} />
     </div>

@@ -7,9 +7,9 @@ interface AspectRatioPickerProps {
 
 export function AspectRatioPicker({ selected, onSelect }: AspectRatioPickerProps) {
   return (
-    <div>
+    <div className="btn-group">
       {ASPECT_RATIOS.map((ratio) => (
-        <button key={ratio} onClick={() => onSelect(ratio)} aria-pressed={selected === ratio}>
+        <button key={ratio} className="btn" onClick={() => onSelect(ratio)} aria-pressed={selected === ratio}>
           {ratio}
         </button>
       ))}

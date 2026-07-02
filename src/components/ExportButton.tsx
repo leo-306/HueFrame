@@ -18,7 +18,7 @@ export function ExportButton({ canvas, fileName }: ExportButtonProps) {
   }
 
   return (
-    <button onClick={handleExport} disabled={!canvas}>
+    <button className="btn-primary" onClick={handleExport} disabled={!canvas}>
       导出图片
     </button>
   )

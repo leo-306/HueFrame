@@ -37,9 +37,9 @@ interface FilterPickerProps {
 
 export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
   return (
-    <div>
+    <div className="filter-picker">
       {FILTERS.map((filter) => (
-        <button key={filter} onClick={() => onSelect(filter)} aria-pressed={selected === filter}>
+        <button key={filter} className="filter-thumb-btn" onClick={() => onSelect(filter)} aria-pressed={selected === filter}>
           <FilterThumbnail photo={photo} filter={filter} />
           {LABELS[filter]}
         </button>
