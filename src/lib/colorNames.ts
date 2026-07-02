@@ -1,4 +1,5 @@
 import type { RGB } from './colorExtraction'
+import { distanceSquared } from './colorMath'
 
 export interface ColorName {
   zh: string
@@ -23,13 +24,6 @@ const COLOR_TABLE: ColorName[] = [
   { zh: '墨灰', en: 'Ink Grey', rgb: [70, 70, 75] },
   { zh: '玄黑', en: 'Deep Black', rgb: [20, 20, 25] },
 ]
-
-function distanceSquared(a: RGB, b: RGB): number {
-  const dr = a[0] - b[0]
-  const dg = a[1] - b[1]
-  const db = a[2] - b[2]
-  return dr * dr + dg * dg + db * db
-}
 
 /**
  * 在参考色表中找到与输入 RGB 欧氏距离最近的色名。

@@ -1,14 +1,10 @@
-import { extractPalette, type RGB } from './colorExtraction'
+import { extractPalette } from './colorExtraction'
+import { rgbToHex } from './colorMath'
 import { nearestColorName } from './colorNames'
 import { pickReadableTextColor } from './contrastColor'
 import { parsePhotoMeta } from './exifParser'
 import { resolveLocationName } from './geocoding'
 import type { CardConfig, ColorNameLanguage, PaletteEntry } from '../templates/types'
-
-function rgbToHex([r, g, b]: RGB): string {
-  const toHex = (v: number) => v.toString(16).padStart(2, '0')
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
-}
 
 function formatDate(date: Date): string {
   const y = date.getFullYear()
