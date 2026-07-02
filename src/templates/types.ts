@@ -6,6 +6,7 @@ export interface PaletteEntry {
   hex: string
   name: ColorName
   textColor: '#ffffff' | '#000000'
+  percentage?: number
 }
 
 export type ColorNameLanguage = 'zh' | 'en'
@@ -19,6 +20,8 @@ export interface CardConfig {
   width: number
   height: number
   colorNameLanguage: ColorNameLanguage
+  marginPx?: number
+  watermarkEnabled?: boolean
 }
 
 export type TemplateRenderer = (ctx: CanvasRenderingContext2D, config: CardConfig) => void

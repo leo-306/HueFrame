@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { CardConfig, TemplateRenderer } from '../templates/types'
+import { renderCardWithMargin } from '../lib/cardRenderer'
 
 interface CardPreviewProps {
   config: CardConfig
@@ -15,7 +16,7 @@ export function CardPreview({ config, renderer, onReady }: CardPreviewProps) {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    renderer(ctx, config)
+    renderCardWithMargin(ctx, config, renderer)
     onReady?.(canvas)
   }, [config, renderer, onReady])
 
