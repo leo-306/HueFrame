@@ -1,0 +1,24 @@
+:root {
+  --color-surface: #f9f9f8;
+  --color-on-surface: #1a1c1c;
+  --color-on-surface-variant: #434846;
+  --color-outline: #737875;
+  --color-outline-variant: #c3c7c4;
+  --color-primary: #57605d;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #e0e9e4;
+  --color-on-primary-container: #606965;
+  --color-surface-container: #eeeeed;
+  --color-surface-container-high: #e8e8e7;
+  --color-error: #ba1a1a;
+
+  --font-headline: 'Libre Caslon Text', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --radius-sm: 2px;
+  --radius-default: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+}
