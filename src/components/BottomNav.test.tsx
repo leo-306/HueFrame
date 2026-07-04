@@ -10,10 +10,10 @@ describe('BottomNav', () => {
     expect(screen.getByText('裁剪')).toBeInTheDocument()
   })
 
-  it('disables the grid and crop tabs', () => {
+  it('disables the crop tab but not the grid tab', () => {
     render(<BottomNav active="card" onSelect={vi.fn()} />)
-    expect(screen.getByText('宫格')).toBeDisabled()
     expect(screen.getByText('裁剪')).toBeDisabled()
+    expect(screen.getByText('宫格')).not.toBeDisabled()
   })
 
   it('marks the active tab as selected via ARIA state', () => {

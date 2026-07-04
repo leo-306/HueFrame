@@ -10,7 +10,7 @@ interface TabOption {
 
 const TABS: TabOption[] = [
   { id: 'card', label: '卡片' },
-  { id: 'grid', label: '宫格', disabled: true },
+  { id: 'grid', label: '宫格' },
   { id: 'crop', label: '裁剪', disabled: true },
 ]
 

@@ -11,6 +11,7 @@ import { PaletteList } from './components/PaletteList'
 import { InfoPanel } from './components/InfoPanel'
 import { CardPreview } from './components/CardPreview'
 import { ExportButton } from './components/ExportButton'
+import { GridTool } from './components/grid/GridTool'
 import { buildCardConfig } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForAspectRatio, type AspectRatioId } from './lib/aspectRatio'
@@ -138,6 +139,18 @@ export default function App() {
     [config, paletteOverride]
   )
 
+  const handleGenerateCardFromGrid = useCallback(
+    (canvas: HTMLCanvasElement) => {
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const file = new File([blob], 'hueframe-grid-result.png', { type: 'image/png' })
+        handleFileSelected(file)
+        setActiveTab('card')
+      }, 'image/png')
+    },
+    [handleFileSelected]
+  )
+
   return (
     <div className="mx-auto min-h-screen max-w-120">
       <TopBar language={language} onLanguageChange={setLanguage} />
@@ -192,7 +205,9 @@ export default function App() {
         </>
       )}
 
-      {activeTab !== 'card' && <p className="px-5 py-10 text-center text-on-surface-variant">敬请期待</p>}
+      {activeTab === 'grid' && <GridTool onGenerateCard={handleGenerateCardFromGrid} />}
+
+      {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">敬请期待</p>}
 
       <BottomNav active={activeTab} onSelect={setActiveTab} />
     </div>
