@@ -7,6 +7,7 @@ import { computeSplitCanvasSize } from '../../lib/gridLayout'
 import { renderSplitGrid } from '../../lib/gridRenderer'
 import { exportCanvasToBlob } from '../../lib/cardRenderer'
 import { loadImage } from '../../lib/loadImage'
+import { useTranslation } from '../../i18n/LocaleContext'
 
 interface GridSplitPanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
@@ -14,6 +15,7 @@ interface GridSplitPanelProps {
 }
 
 export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelProps) {
+  const t = useTranslation()
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null)
   const [rows, setRows] = useState(3)
   const [cols, setCols] = useState(3)
@@ -94,10 +96,10 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
 
           <div className="flex flex-col gap-2">
             <Button size="lg" onClick={handleExport} disabled={!exportReady}>
-              导出图片
+              {t.gridPanel.export}
             </Button>
             <Button variant="secondary" size="lg" onClick={handleGenerateCard} disabled={!exportReady}>
-              生成色卡
+              {t.gridPanel.generateCard}
             </Button>
           </div>
         </>

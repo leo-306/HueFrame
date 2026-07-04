@@ -3,6 +3,7 @@ import { GRID_PRESETS, clampGridSize } from '../../lib/gridLayout'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { useTranslation } from '../../i18n/LocaleContext'
 
 interface GridSize {
   rows: number
@@ -15,9 +16,8 @@ interface GridSizePickerProps {
   onChange: (size: GridSize) => void
 }
 
-const CLAMP_HINT = '已调整为 1-6 之间'
-
 export function GridSizePicker({ rows, cols, onChange }: GridSizePickerProps) {
+  const t = useTranslation()
   const [showClampHint, setShowClampHint] = useState(false)
   const isPresetSelected = (presetRows: number, presetCols: number) => rows === presetRows && cols === presetCols
 
@@ -44,7 +44,7 @@ export function GridSizePicker({ rows, cols, onChange }: GridSizePickerProps) {
 
       <div className="mt-3 flex items-center gap-3">
         <div className="flex items-center gap-1.5">
-          <Label htmlFor="grid-custom-rows">自定义行数</Label>
+          <Label htmlFor="grid-custom-rows">{t.gridSizePicker.customRows}</Label>
           <Input
             id="grid-custom-rows"
             type="number"
@@ -56,7 +56,7 @@ export function GridSizePicker({ rows, cols, onChange }: GridSizePickerProps) {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <Label htmlFor="grid-custom-cols">自定义列数</Label>
+          <Label htmlFor="grid-custom-cols">{t.gridSizePicker.customCols}</Label>
           <Input
             id="grid-custom-cols"
             type="number"
@@ -69,7 +69,7 @@ export function GridSizePicker({ rows, cols, onChange }: GridSizePickerProps) {
         </div>
       </div>
 
-      {showClampHint && <p className="mt-1.5 text-xs text-on-surface-variant">{CLAMP_HINT}</p>}
+      {showClampHint && <p className="mt-1.5 text-xs text-on-surface-variant">{t.gridSizePicker.clampHint}</p>}
     </div>
   )
 }

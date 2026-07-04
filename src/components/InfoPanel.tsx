@@ -1,6 +1,7 @@
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Checkbox } from './ui/checkbox'
+import { useTranslation } from '../i18n/LocaleContext'
 
 interface InfoPanelProps {
   locationName: string
@@ -19,11 +20,12 @@ export function InfoPanel({
   onCapturedAtChange,
   onWatermarkToggle,
 }: InfoPanelProps) {
+  const t = useTranslation()
   return (
     <div>
       <div className="mb-4">
         <Label htmlFor="location-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
-          地点
+          {t.infoPanel.location}
         </Label>
         <Input
           id="location-input"
@@ -35,7 +37,7 @@ export function InfoPanel({
 
       <div className="mb-4">
         <Label htmlFor="captured-at-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
-          时间
+          {t.infoPanel.capturedAt}
         </Label>
         <Input
           id="captured-at-input"
@@ -51,7 +53,7 @@ export function InfoPanel({
           checked={watermarkEnabled}
           onCheckedChange={(checked) => onWatermarkToggle(checked === true)}
         />
-        <Label htmlFor="watermark-toggle">HueFrame 水印</Label>
+        <Label htmlFor="watermark-toggle">{t.infoPanel.watermark}</Label>
       </div>
     </div>
   )

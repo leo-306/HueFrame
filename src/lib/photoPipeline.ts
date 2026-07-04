@@ -19,11 +19,12 @@ export interface CardOptions {
   height: number
   titleFont: string
   colorNameLanguage: ColorNameLanguage
+  unknownLocationLabel: string
 }
 
 /**
  * 整条处理管线：文件 → EXIF/GPS/取色/占比 → 组装成可直接传给版式渲染器的 CardConfig。
- * GPS 缺失时地点显示"未知地点"，拍摄时间缺失时留空，不阻塞主流程。
+ * GPS 缺失时地点显示 options.unknownLocationLabel，拍摄时间缺失时留空，不阻塞主流程。
  */
 export async function buildCardConfig(
   file: File,
@@ -32,7 +33,7 @@ export async function buildCardConfig(
 ): Promise<CardConfig> {
   const [meta, rawPalette] = await Promise.all([parsePhotoMeta(file), extractPalette(photo, 6)])
 
-  const locationName = meta.gps ? await resolveLocationName(meta.gps) : '未知地点'
+  const locationName = meta.gps ? await resolveLocationName(meta.gps) : options.unknownLocationLabel
   const capturedAtText = meta.capturedAt ? formatDate(meta.capturedAt) : ''
   const percentages = computePalettePercentages(photo, rawPalette)
 

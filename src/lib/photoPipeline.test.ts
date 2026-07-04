@@ -33,6 +33,7 @@ describe('buildCardConfig', () => {
       height: 1000,
       titleFont: 'serif',
       colorNameLanguage: 'zh',
+      unknownLocationLabel: '未知地点',
     })
 
     expect(config.locationName).toBe('Kyoto, Japan')
@@ -58,6 +59,7 @@ describe('buildCardConfig', () => {
       height: 1000,
       titleFont: 'serif',
       colorNameLanguage: 'zh',
+      unknownLocationLabel: '未知地点',
     })
 
     expect(config.locationName).toBe('未知地点')
@@ -73,6 +75,7 @@ describe('buildCardConfig', () => {
       height: 1000,
       titleFont: 'serif',
       colorNameLanguage: 'en',
+      unknownLocationLabel: 'Unknown Location',
     })
 
     expect(config.colorNameLanguage).toBe('en')

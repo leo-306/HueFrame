@@ -21,6 +21,7 @@ import { renderClassicStrip } from './templates/classicStrip'
 import { renderMagazineCover } from './templates/magazineCover'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
+import { useTranslation } from './i18n/LocaleContext'
 
 const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   classicStrip: renderClassicStrip,
@@ -43,6 +44,7 @@ function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promis
 }
 
 export default function App() {
+  const t = useTranslation()
   const [activeTab, setActiveTab] = useState<AppTab>('home')
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
 
@@ -107,6 +109,7 @@ export default function App() {
           height,
           titleFont: 'Georgia, serif',
           colorNameLanguage: language,
+          unknownLocationLabel: t.common.unknownLocation,
         })
         setOriginalPhoto(photo)
         setBaseConfig(cardConfig)
@@ -117,7 +120,7 @@ export default function App() {
         setIsProcessing(false)
       }
     },
-    [language, width, height]
+    [language, width, height, t.common.unknownLocation]
   )
 
   useEffect(() => {
@@ -174,7 +177,7 @@ export default function App() {
         <>
           {!baseConfig && <EmptyState onFileSelected={handleFileSelected} />}
 
-          {isProcessing && <p className="px-5 py-3 text-sm text-on-surface-variant">处理中…</p>}
+          {isProcessing && <p className="px-5 py-3 text-sm text-on-surface-variant">{t.common.processing}</p>}
 
           {config && (
             <>
@@ -228,7 +231,7 @@ export default function App() {
         <GridTool onGenerateCard={handleGenerateCardFromGrid} initialFile={gridInitialFile} />
       )}
 
-      {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">敬请期待</p>}
+      {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
 
       <BottomNav active={activeTab} onSelect={setActiveTab} />
     </div>

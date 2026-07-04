@@ -1,16 +1,7 @@
 import { Button } from './ui/button'
+import { useTranslation } from '../i18n/LocaleContext'
 
 export type TemplateId = 'classicStrip' | 'magazineCover'
-
-interface Option {
-  id: TemplateId
-  label: string
-}
-
-const OPTIONS: Option[] = [
-  { id: 'classicStrip', label: '经典色带' },
-  { id: 'magazineCover', label: '杂志封面' },
-]
 
 interface TemplatePickerProps {
   selected: TemplateId
@@ -18,9 +9,14 @@ interface TemplatePickerProps {
 }
 
 export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {
+  const t = useTranslation()
+  const options: { id: TemplateId; label: string }[] = [
+    { id: 'classicStrip', label: t.templatePicker.classicStrip },
+    { id: 'magazineCover', label: t.templatePicker.magazineCover },
+  ]
   return (
     <div className="my-3 flex flex-wrap gap-2">
-      {OPTIONS.map((option) => (
+      {options.map((option) => (
         <Button
           key={option.id}
           variant={selected === option.id ? 'secondary' : 'outline'}

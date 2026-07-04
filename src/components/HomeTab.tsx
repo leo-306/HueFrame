@@ -1,4 +1,5 @@
 import { Palette, Grid2x2, ShieldCheck, Leaf, Zap } from 'lucide-react'
+import { useTranslation } from '../i18n/LocaleContext'
 
 interface HomeTabProps {
   onSelectCardPhoto: (file: File) => void
@@ -62,34 +63,35 @@ function ModeCard({
 }
 
 export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) {
+  const t = useTranslation()
   return (
     <div className="px-5 pb-12">
       <section className="py-12">
         <h1 className="mb-6 max-w-[12ch] text-[32px] leading-[1.2] tracking-[-0.01em] text-on-surface">
-          给照片，配一套颜色。
+          {t.homeTab.heading}
         </h1>
         <p className="max-w-md text-base leading-relaxed text-on-surface-variant opacity-80">
-          极简的照片色卡与切分工具，让每一份视觉表达都拥有呼吸感。
+          {t.homeTab.subheading}
         </p>
       </section>
 
       <section className="mb-16 flex flex-col gap-6">
         <ModeCard
           icon={<Palette size={22} strokeWidth={1.3} />}
-          eyebrow="Creative Tool"
-          title="色卡模式"
-          description="提取主色调，生成精致色卡，记录每一个瞬间的光影情绪。"
-          actionLabel="进入工作流"
+          eyebrow={t.homeTab.cardEyebrow}
+          title={t.homeTab.cardTitle}
+          description={t.homeTab.cardDescription}
+          actionLabel={t.homeTab.cardAction}
           containerClassName="aspect-4/3 bg-primary-container/30 hover:bg-primary-container/50"
           inputTestId="home-card-upload-input"
           onFileSelected={onSelectCardPhoto}
         />
         <ModeCard
           icon={<Grid2x2 size={22} strokeWidth={1.3} />}
-          eyebrow="Visual Layout"
-          title="切分模式"
-          description="九宫格切分，支持自定义间距，为社交平台打造平衡的视觉节奏。"
-          actionLabel="开始排版"
+          eyebrow={t.homeTab.gridEyebrow}
+          title={t.homeTab.gridTitle}
+          description={t.homeTab.gridDescription}
+          actionLabel={t.homeTab.gridAction}
           containerClassName="aspect-4/3 bg-secondary-container/30 hover:bg-secondary-container/50"
           inputTestId="home-grid-upload-input"
           onFileSelected={onSelectGridPhoto}
@@ -104,9 +106,9 @@ export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) 
           >
             <ShieldCheck size={22} strokeWidth={1.5} />
           </span>
-          <h3 className="text-xl text-on-surface">本地解析</h3>
+          <h3 className="text-xl text-on-surface">{t.homeTab.localTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">
-            照片仅在设备本地进行解析，无需上传服务器。我们尊重并保护您的每一份视觉隐私。
+            {t.homeTab.localDescription}
           </p>
         </div>
         <div className="flex flex-col gap-4">
@@ -116,9 +118,9 @@ export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) 
           >
             <Leaf size={22} strokeWidth={1.5} />
           </span>
-          <h3 className="text-xl text-on-surface">极致清新</h3>
+          <h3 className="text-xl text-on-surface">{t.homeTab.freshTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">
-            遵循"留白"设计哲学，去除一切不必要的干扰。专注于色彩本身，享受纯粹的创作过程。
+            {t.homeTab.freshDescription}
           </p>
         </div>
         <div className="flex flex-col gap-4">
@@ -128,9 +130,9 @@ export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) 
           >
             <Zap size={22} strokeWidth={1.5} />
           </span>
-          <h3 className="text-xl text-on-surface">快速导出</h3>
+          <h3 className="text-xl text-on-surface">{t.homeTab.fastTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">
-            优化导出算法，一键保存至系统相册。无论是色卡还是九宫格，瞬间即可分享您的灵感。
+            {t.homeTab.fastDescription}
           </p>
         </div>
       </section>

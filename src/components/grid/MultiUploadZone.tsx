@@ -1,10 +1,12 @@
 import { ImagePlus } from 'lucide-react'
+import { useTranslation } from '../../i18n/LocaleContext'
 
 interface MultiUploadZoneProps {
   onFilesSelected: (files: File[]) => void
 }
 
 export function MultiUploadZone({ onFilesSelected }: MultiUploadZoneProps) {
+  const t = useTranslation()
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (files && files.length > 0) {
@@ -32,7 +34,7 @@ export function MultiUploadZone({ onFilesSelected }: MultiUploadZoneProps) {
       >
         <ImagePlus size={32} strokeWidth={1.3} />
       </span>
-      <p className="m-0 text-xs font-medium tracking-wider text-on-surface-variant opacity-80">上传多张照片开始</p>
+      <p className="m-0 text-xs font-medium tracking-wider text-on-surface-variant opacity-80">{t.multiUploadZone.prompt}</p>
       <input
         data-testid="grid-upload-input"
         type="file"

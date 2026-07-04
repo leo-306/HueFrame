@@ -7,6 +7,7 @@ import { computeCollageCanvasSize } from '../../lib/gridLayout'
 import { renderCollageGrid } from '../../lib/gridRenderer'
 import { exportCanvasToBlob } from '../../lib/cardRenderer'
 import { loadImage } from '../../lib/loadImage'
+import { useTranslation } from '../../i18n/LocaleContext'
 
 const CELL_SIZE = 300
 
@@ -15,6 +16,7 @@ interface GridCollagePanelProps {
 }
 
 export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
+  const t = useTranslation()
   const [photos, setPhotos] = useState<HTMLImageElement[]>([])
   const [rows, setRows] = useState(3)
   const [cols, setCols] = useState(3)
@@ -69,7 +71,9 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
           <MarginSlider valuePx={gapPx} onChange={setGapPx} />
 
           {showOverflowHint && (
-            <p className="mb-3 text-sm text-on-surface-variant">仅使用前 {totalCells} 张</p>
+            <p className="mb-3 text-sm text-on-surface-variant">
+              {t.gridPanel.overflowHint.replace('{count}', String(totalCells))}
+            </p>
           )}
 
           <div className="mb-4 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest leading-none">
@@ -78,10 +82,10 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
 
           <div className="flex flex-col gap-2">
             <Button size="lg" onClick={handleExport} disabled={!exportReady}>
-              导出图片
+              {t.gridPanel.export}
             </Button>
             <Button variant="secondary" size="lg" onClick={handleGenerateCard} disabled={!exportReady}>
-              生成色卡
+              {t.gridPanel.generateCard}
             </Button>
           </div>
         </>

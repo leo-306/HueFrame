@@ -1,10 +1,12 @@
 import { ImagePlus } from 'lucide-react'
+import { useTranslation } from '../i18n/LocaleContext'
 
 interface UploadZoneProps {
   onFileSelected: (file: File) => void
 }
 
 export function UploadZone({ onFileSelected }: UploadZoneProps) {
+  const t = useTranslation()
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -32,7 +34,7 @@ export function UploadZone({ onFileSelected }: UploadZoneProps) {
       >
         <ImagePlus size={32} strokeWidth={1.3} />
       </span>
-      <p className="m-0 text-xs font-medium tracking-wider text-on-surface-variant opacity-80">上传一张照片开始</p>
+      <p className="m-0 text-xs font-medium tracking-wider text-on-surface-variant opacity-80">{t.uploadZone.prompt}</p>
       <input
         data-testid="upload-input"
         type="file"

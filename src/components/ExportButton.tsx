@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react'
 import { exportCanvasToBlob } from '../lib/cardRenderer'
 import { Button } from './ui/button'
+import { useTranslation } from '../i18n/LocaleContext'
 
 interface ExportButtonProps {
   canvas: HTMLCanvasElement | null
@@ -8,6 +9,7 @@ interface ExportButtonProps {
 }
 
 export function ExportButton({ canvas, fileName }: ExportButtonProps) {
+  const t = useTranslation()
   const handleExport = async () => {
     if (!canvas) return
     const blob = await exportCanvasToBlob(canvas)
@@ -22,7 +24,7 @@ export function ExportButton({ canvas, fileName }: ExportButtonProps) {
   return (
     <Button className="w-full" size="lg" onClick={handleExport} disabled={!canvas}>
       <Download aria-hidden="true" />
-      导出图片
+      {t.exportButton.export}
     </Button>
   )
 }

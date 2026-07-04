@@ -1,12 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { FILTERS, createFilterThumbnail, type FilterName } from '../lib/filters'
-
-const LABELS: Record<FilterName, string> = {
-  none: '无滤镜',
-  warmFilm: '暖调胶片',
-  coolFilm: '冷调胶片',
-  vintagePositive: '复古正片',
-}
+import { useTranslation } from '../i18n/LocaleContext'
 
 const THUMBNAIL_SIZE = 64
 
@@ -36,6 +30,13 @@ interface FilterPickerProps {
 }
 
 export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
+  const t = useTranslation()
+  const labels: Record<FilterName, string> = {
+    none: t.filterPicker.none,
+    warmFilm: t.filterPicker.warmFilm,
+    coolFilm: t.filterPicker.coolFilm,
+    vintagePositive: t.filterPicker.vintagePositive,
+  }
   return (
     <div className="flex w-full flex-wrap gap-2.5">
       {FILTERS.map((filter) => (
@@ -50,7 +51,7 @@ export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
           }`}
         >
           <FilterThumbnail photo={photo} filter={filter} />
-          {LABELS[filter]}
+          {labels[filter]}
         </button>
       ))}
     </div>
