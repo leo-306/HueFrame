@@ -6,15 +6,7 @@ import { Button } from '../ui/button'
 import { computeSplitCanvasSize } from '../../lib/gridLayout'
 import { renderSplitGrid } from '../../lib/gridRenderer'
 import { exportCanvasToBlob } from '../../lib/cardRenderer'
-
-function loadImage(file: File): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('failed to load image'))
-    img.src = URL.createObjectURL(file)
-  })
-}
+import { loadImage } from '../../lib/loadImage'
 
 interface GridSplitPanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void

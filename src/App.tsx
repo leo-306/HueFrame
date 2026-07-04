@@ -18,19 +18,11 @@ import { updatePaletteEntryColor } from './lib/paletteEditing'
 import { renderClassicStrip } from './templates/classicStrip'
 import { renderMagazineCover } from './templates/magazineCover'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateRenderer } from './templates/types'
+import { loadImage } from './lib/loadImage'
 
 const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   classicStrip: renderClassicStrip,
   magazineCover: renderMagazineCover,
-}
-
-function loadImage(file: File): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('failed to load image'))
-    img.src = URL.createObjectURL(file)
-  })
 }
 
 function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promise<HTMLImageElement> {

@@ -12,12 +12,20 @@ import { GridCollagePanel } from './GridCollagePanel'
  */
 const FAKE_IMAGE_BUFFER = createCanvas(4, 4).toBuffer('image/png')
 
+// `canvas`'s Image class declares `src` as a plain property (backed by a native
+// accessor on the prototype), so TS forbids a subclass from redeclaring it as a
+// get/set pair. Defining the accessor per-instance in the constructor sidesteps
+// that static check while still delegating to the real (per-instance) native
+// accessor for storage, and redirecting every assignment to the fake buffer.
+const nativeSrcDescriptor = Object.getOwnPropertyDescriptor(CanvasImage.prototype, 'src')!
+
 class MockImage extends CanvasImage {
-  set src(_value: string) {
-    super.src = FAKE_IMAGE_BUFFER
-  }
-  get src() {
-    return super.src
+  constructor() {
+    super()
+    Object.defineProperty(this, 'src', {
+      get: () => nativeSrcDescriptor.get!.call(this),
+      set: () => nativeSrcDescriptor.set!.call(this, FAKE_IMAGE_BUFFER),
+    })
   }
 }
 

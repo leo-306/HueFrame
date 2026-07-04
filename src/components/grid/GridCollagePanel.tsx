@@ -6,17 +6,9 @@ import { Button } from '../ui/button'
 import { computeCollageCanvasSize } from '../../lib/gridLayout'
 import { renderCollageGrid } from '../../lib/gridRenderer'
 import { exportCanvasToBlob } from '../../lib/cardRenderer'
+import { loadImage } from '../../lib/loadImage'
 
 const CELL_SIZE = 300
-
-function loadImage(file: File): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('failed to load image'))
-    img.src = URL.createObjectURL(file)
-  })
-}
 
 interface GridCollagePanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
