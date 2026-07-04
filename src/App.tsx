@@ -12,6 +12,7 @@ import { InfoPanel } from './components/InfoPanel'
 import { CardPreview } from './components/CardPreview'
 import { ExportButton } from './components/ExportButton'
 import { GridTool } from './components/grid/GridTool'
+import { HomeTab } from './components/HomeTab'
 import { buildCardConfig } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForAspectRatio, type AspectRatioId } from './lib/aspectRatio'
@@ -42,7 +43,7 @@ function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promis
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<AppTab>('card')
+  const [activeTab, setActiveTab] = useState<AppTab>('home')
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
 
   // originalPhoto + baseConfig 保存取色/EXIF 等一次性处理结果（基于未加滤镜的原图，
@@ -65,6 +66,7 @@ export default function App() {
 
   const [isProcessing, setIsProcessing] = useState(false)
   const [exportCanvas, setExportCanvas] = useState<HTMLCanvasElement | null>(null)
+  const [gridInitialFile, setGridInitialFile] = useState<File | undefined>(undefined)
 
   const { width, height } = dimensionsForAspectRatio(aspectRatio)
 
@@ -151,6 +153,19 @@ export default function App() {
     [handleFileSelected]
   )
 
+  const handleSelectCardPhotoFromHome = useCallback(
+    (file: File) => {
+      handleFileSelected(file)
+      setActiveTab('card')
+    },
+    [handleFileSelected]
+  )
+
+  const handleSelectGridPhotoFromHome = useCallback((file: File) => {
+    setGridInitialFile(file)
+    setActiveTab('grid')
+  }, [])
+
   return (
     <div className="mx-auto min-h-screen max-w-120">
       <TopBar language={language} onLanguageChange={setLanguage} />
@@ -205,7 +220,13 @@ export default function App() {
         </>
       )}
 
-      {activeTab === 'grid' && <GridTool onGenerateCard={handleGenerateCardFromGrid} />}
+      {activeTab === 'home' && (
+        <HomeTab onSelectCardPhoto={handleSelectCardPhotoFromHome} onSelectGridPhoto={handleSelectGridPhotoFromHome} />
+      )}
+
+      {activeTab === 'grid' && (
+        <GridTool onGenerateCard={handleGenerateCardFromGrid} initialFile={gridInitialFile} />
+      )}
 
       {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">敬请期待</p>}
 
