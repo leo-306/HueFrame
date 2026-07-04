@@ -4,8 +4,7 @@ import { BottomNav, type AppTab } from './components/BottomNav'
 import { EmptyState } from './components/EmptyState'
 import { CardTabs, type CardSubTab } from './components/CardTabs'
 import { FilterPicker } from './components/FilterPicker'
-import { TemplatePicker, type TemplateId } from './components/TemplatePicker'
-import { AspectRatioPicker } from './components/AspectRatioPicker'
+import { TemplatePicker } from './components/TemplatePicker'
 import { MarginSlider } from './components/MarginSlider'
 import { PaletteList } from './components/PaletteList'
 import { InfoPanel } from './components/InfoPanel'
@@ -15,11 +14,11 @@ import { GridTool } from './components/grid/GridTool'
 import { HomeTab } from './components/HomeTab'
 import { buildCardConfig } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
-import { dimensionsForAspectRatio, type AspectRatioId } from './lib/aspectRatio'
+import { dimensionsForTemplate } from './lib/cardDimensions'
 import { updatePaletteEntryColor } from './lib/paletteEditing'
 import { renderClassicStrip } from './templates/classicStrip'
 import { renderMagazineCover } from './templates/magazineCover'
-import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateRenderer } from './templates/types'
+import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateId, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
 import { useTranslation } from './i18n/LocaleContext'
 import { LanguagePicker } from './components/LanguagePicker'
@@ -71,7 +70,6 @@ export default function App() {
   const [template, setTemplate] = useState<TemplateId>('classicStrip')
   const [filter, setFilter] = useState<FilterName>('none')
   const [language, setLanguage] = useState<ColorNameLanguage>('zh')
-  const [aspectRatio, setAspectRatio] = useState<AspectRatioId>('4:5')
   const [marginPx, setMarginPx] = useState(24)
   const [watermarkEnabled, setWatermarkEnabled] = useState(true)
 
@@ -79,10 +77,14 @@ export default function App() {
   const [processingError, setProcessingError] = useState<string | null>(null)
   const [exportCanvas, setExportCanvas] = useState<HTMLCanvasElement | null>(null)
 
-  const { width, height } = dimensionsForAspectRatio(aspectRatio)
-
   const config = useMemo(() => {
     if (!baseConfig || !displayPhoto) return null
+    const { width, height } = dimensionsForTemplate(
+      template,
+      displayPhoto.naturalWidth,
+      displayPhoto.naturalHeight,
+      marginPx
+    )
     return {
       ...baseConfig,
       photo: displayPhoto,
@@ -98,9 +100,8 @@ export default function App() {
   }, [
     baseConfig,
     displayPhoto,
+    template,
     language,
-    width,
-    height,
     marginPx,
     watermarkEnabled,
     paletteOverride,
@@ -114,6 +115,7 @@ export default function App() {
       setProcessingError(null)
       try {
         const photo = await loadImage(file)
+        const { width, height } = dimensionsForTemplate(template, photo.naturalWidth, photo.naturalHeight, marginPx)
         const cardConfig = await buildCardConfig(file, photo, {
           width,
           height,
@@ -133,7 +135,7 @@ export default function App() {
         setIsProcessing(false)
       }
     },
-    [language, width, height, t.common.unknownLocation, t.common.imageLoadFailed]
+    [language, template, marginPx, t.common.unknownLocation, t.common.imageLoadFailed]
   )
 
   useEffect(() => {
@@ -255,10 +257,7 @@ export default function App() {
                   originalPhoto && <FilterPicker selected={filter} photo={originalPhoto} onSelect={setFilter} />
                 }
                 layoutPanel={
-                  <>
-                    <AspectRatioPicker selected={aspectRatio} onSelect={setAspectRatio} />
-                    <MarginSlider valuePx={marginPx} onChange={setMarginPx} />
-                  </>
+                  <MarginSlider valuePx={marginPx} onChange={setMarginPx} />
                 }
                 palettePanel={
                   <div className="flex flex-col gap-6">

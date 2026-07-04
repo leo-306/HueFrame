@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import { Button } from './ui/button'
 import { useTranslation } from '../i18n/LocaleContext'
+import type { TemplateId } from '../templates/types'
 
-export type TemplateId = 'classicStrip' | 'magazineCover'
+export type { TemplateId } from '../templates/types'
 
 interface TemplatePickerProps {
   selected: TemplateId

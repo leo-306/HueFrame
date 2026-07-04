@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { renderClassicStrip } from './classicStrip'
 import type { CardConfig } from './types'
 import { createTestPhoto } from '../../tests/testImage'
@@ -42,5 +42,16 @@ describe('renderClassicStrip', () => {
     const config = { ...makeConfig(), colorNameLanguage: 'en' as const }
 
     expect(() => renderClassicStrip(ctx, config)).not.toThrow()
+  })
+
+  it('draws the photo at its original aspect ratio', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const config = { ...makeConfig(), photo: createTestPhoto(300, 200), width: 800, height: 933 }
+    const drawImage = vi.spyOn(ctx, 'drawImage')
+
+    renderClassicStrip(ctx, config)
+
+    expect(drawImage).toHaveBeenCalledWith(config.photo, 0, 0, 800, 533)
   })
 })

@@ -1,4 +1,5 @@
 import type { TemplateRenderer } from './types'
+import { photoHeightForWidth } from '../lib/cardDimensions'
 
 /**
  * 经典色带版式：照片占上半部分，下半部分是等分色块条，
@@ -10,11 +11,11 @@ export const renderClassicStrip: TemplateRenderer = (ctx, config) => {
   ctx.fillStyle = '#faf7f2'
   ctx.fillRect(0, 0, width, height)
 
-  const photoHeight = height * 0.6
+  const photoHeight = photoHeightForWidth(photo.naturalWidth, photo.naturalHeight, width)
   ctx.drawImage(photo, 0, 0, width, photoHeight)
 
   const stripTop = photoHeight
-  const stripHeight = height * 0.3
+  const stripHeight = Math.round(width * 0.375)
   const swatchWidth = width / palette.length
 
   palette.forEach((entry, index) => {

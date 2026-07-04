@@ -11,6 +11,8 @@ export interface PaletteEntry {
 
 export type ColorNameLanguage = 'zh' | 'en'
 
+export type TemplateId = 'classicStrip' | 'magazineCover'
+
 export interface CardConfig {
   photo: HTMLImageElement
   palette: PaletteEntry[]
