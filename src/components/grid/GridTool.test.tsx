@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GridTool } from './GridTool'
 import { installMockUploadImage } from '../../../tests/mockUploadImage'
@@ -48,5 +48,12 @@ describe('GridTool', () => {
     await user.click(screen.getByText('切分'))
 
     expect(screen.queryByText(/上传一张照片/)).not.toBeInTheDocument()
+  })
+
+  it('passes initialFile through to the split panel', async () => {
+    const file = new File(['dummy'], 'from-home.jpg', { type: 'image/jpeg' })
+    render(<GridTool onGenerateCard={vi.fn()} initialFile={file} />)
+
+    await waitFor(() => expect(screen.getByText('3×3')).toBeInTheDocument())
   })
 })

@@ -7,9 +7,10 @@ type GridSubTab = 'split' | 'collage'
 
 interface GridToolProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
+  initialFile?: File
 }
 
-export function GridTool({ onGenerateCard }: GridToolProps) {
+export function GridTool({ onGenerateCard, initialFile }: GridToolProps) {
   const [activeSubTab, setActiveSubTab] = useState<GridSubTab>('split')
 
   return (
@@ -20,7 +21,7 @@ export function GridTool({ onGenerateCard }: GridToolProps) {
       </TabsList>
 
       <TabsContent value="split" className="pb-4" forceMount hidden={activeSubTab !== 'split'}>
-        <GridSplitPanel onGenerateCard={onGenerateCard} />
+        <GridSplitPanel onGenerateCard={onGenerateCard} initialFile={initialFile} />
       </TabsContent>
       <TabsContent value="collage" className="pb-4" forceMount hidden={activeSubTab !== 'collage'}>
         <GridCollagePanel onGenerateCard={onGenerateCard} />
