@@ -30,17 +30,23 @@ export function CardTabs(props: CardTabsProps) {
     { id: 'info', label: t.cardTabs.info },
   ]
   return (
-    <Tabs value={active} onValueChange={(value) => onSelect(value as CardSubTab)} className="flex-col px-5">
-      <TabsList className="my-5 h-auto w-full bg-surface-container-low p-1">
-        {subTabs.map((tab) => (
-          <TabsTrigger key={tab.id} value={tab.id} className="py-2">
-            {tab.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-      <TabsContent value={active} className="pb-4">
-        {props[PANEL_KEYS[active]]}
-      </TabsContent>
-    </Tabs>
+    <section className="mx-auto w-full max-w-[1140px] px-5 pt-10 pb-6 sm:px-8 sm:pt-14">
+      <h2 className="type-heading mb-5 text-on-surface">{t.cardTabs.toolConfig}</h2>
+      <Tabs value={active} onValueChange={(value) => onSelect(value as CardSubTab)} className="flex-col gap-5">
+        <TabsList className="h-auto w-full bg-surface-container-low p-1.5 sm:w-fit">
+          {subTabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} className="min-h-10 px-4 py-2 sm:min-w-24">
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent
+          value={active}
+          className="rounded-xl border border-outline-variant/20 bg-surface-container-low p-5 sm:p-7"
+        >
+          {props[PANEL_KEYS[active]]}
+        </TabsContent>
+      </Tabs>
+    </section>
   )
 }

@@ -22,6 +22,8 @@ import { renderMagazineCover } from './templates/magazineCover'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
 import { useTranslation } from './i18n/LocaleContext'
+import { LanguagePicker } from './components/LanguagePicker'
+import { LoadingOverlay } from './components/LoadingOverlay'
 
 const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   classicStrip: renderClassicStrip,
@@ -67,8 +69,8 @@ export default function App() {
   const [watermarkEnabled, setWatermarkEnabled] = useState(true)
 
   const [isProcessing, setIsProcessing] = useState(false)
+  const [processingError, setProcessingError] = useState<string | null>(null)
   const [exportCanvas, setExportCanvas] = useState<HTMLCanvasElement | null>(null)
-  const [gridInitialFile, setGridInitialFile] = useState<File | undefined>(undefined)
 
   const { width, height } = dimensionsForAspectRatio(aspectRatio)
 
@@ -102,6 +104,7 @@ export default function App() {
   const handleFileSelected = useCallback(
     async (file: File) => {
       setIsProcessing(true)
+      setProcessingError(null)
       try {
         const photo = await loadImage(file)
         const cardConfig = await buildCardConfig(file, photo, {
@@ -116,11 +119,13 @@ export default function App() {
         setPaletteOverride(null)
         setLocationOverride(null)
         setCapturedAtOverride(null)
+      } catch {
+        setProcessingError(t.common.imageLoadFailed)
       } finally {
         setIsProcessing(false)
       }
     },
-    [language, width, height, t.common.unknownLocation]
+    [language, width, height, t.common.unknownLocation, t.common.imageLoadFailed]
   )
 
   useEffect(() => {
@@ -156,28 +161,38 @@ export default function App() {
     [handleFileSelected]
   )
 
-  const handleSelectCardPhotoFromHome = useCallback(
-    (file: File) => {
-      handleFileSelected(file)
-      setActiveTab('card')
-    },
-    [handleFileSelected]
-  )
-
-  const handleSelectGridPhotoFromHome = useCallback((file: File) => {
-    setGridInitialFile(file)
-    setActiveTab('grid')
-  }, [])
+  const handleBack = useCallback(() => {
+    if (activeTab === 'card' && originalPhoto) {
+      setOriginalPhoto(null)
+      setBaseConfig(null)
+      setDisplayPhoto(null)
+      setPaletteOverride(null)
+      setLocationOverride(null)
+      setCapturedAtOverride(null)
+      setExportCanvas(null)
+      setFilter('none')
+      setProcessingError(null)
+      return
+    }
+    setActiveTab('home')
+  }, [activeTab, originalPhoto])
 
   return (
-    <div className="mx-auto min-h-screen max-w-120">
-      <TopBar language={language} onLanguageChange={setLanguage} />
+    <div className={`min-h-screen ${activeTab === 'card' && config ? 'pb-44' : 'pb-24'}`}>
+      <TopBar
+        onBack={activeTab === 'home' ? undefined : handleBack}
+      />
 
       {activeTab === 'card' && (
         <>
           {!baseConfig && <EmptyState onFileSelected={handleFileSelected} />}
 
-          {isProcessing && <p className="px-5 py-3 text-sm text-on-surface-variant">{t.common.processing}</p>}
+          {isProcessing && <LoadingOverlay label={t.common.processing} />}
+          {processingError && (
+            <p role="alert" className="type-label px-5 py-3 text-error">
+              {processingError}
+            </p>
+          )}
 
           {config && (
             <>
@@ -197,11 +212,17 @@ export default function App() {
                   </>
                 }
                 palettePanel={
-                  <PaletteList
-                    palette={config.palette}
-                    language={language}
-                    onColorChange={handlePaletteColorChange}
-                  />
+                  <div className="flex flex-col gap-6">
+                    <div>
+                      <div className="mb-3 text-base text-on-surface-variant">{t.cardTabs.colorNameLanguage}</div>
+                      <LanguagePicker selected={language} onSelect={setLanguage} />
+                    </div>
+                    <PaletteList
+                      palette={config.palette}
+                      language={language}
+                      onColorChange={handlePaletteColorChange}
+                    />
+                  </div>
                 }
                 infoPanel={
                   <InfoPanel
@@ -215,25 +236,23 @@ export default function App() {
                 }
               />
 
-              <div className="px-5 pb-5">
-                <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
-              </div>
+              <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
             </>
           )}
         </>
       )}
 
       {activeTab === 'home' && (
-        <HomeTab onSelectCardPhoto={handleSelectCardPhotoFromHome} onSelectGridPhoto={handleSelectGridPhotoFromHome} />
+        <HomeTab onSelectCard={() => setActiveTab('card')} onSelectGrid={() => setActiveTab('grid')} />
       )}
 
       {activeTab === 'grid' && (
-        <GridTool onGenerateCard={handleGenerateCardFromGrid} initialFile={gridInitialFile} />
+        <GridTool onGenerateCard={handleGenerateCardFromGrid} />
       )}
 
       {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
 
-      <BottomNav active={activeTab} onSelect={setActiveTab} />
+      {activeTab !== 'home' && <BottomNav active={activeTab} onSelect={setActiveTab} />}
     </div>
   )
 }

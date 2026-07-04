@@ -4,45 +4,43 @@ import { HomeTab } from './HomeTab'
 
 describe('HomeTab', () => {
   it('renders the hero headline and subheadline', () => {
-    render(<HomeTab onSelectCardPhoto={vi.fn()} onSelectGridPhoto={vi.fn()} />)
+    render(<HomeTab onSelectCard={vi.fn()} onSelectGrid={vi.fn()} />)
     expect(screen.getByText('给照片，配一套颜色。')).toBeInTheDocument()
     expect(screen.getByText(/极简的照片色卡与切分工具/)).toBeInTheDocument()
   })
 
   it('renders both mode entry cards with their descriptions', () => {
-    render(<HomeTab onSelectCardPhoto={vi.fn()} onSelectGridPhoto={vi.fn()} />)
-    expect(screen.getByText('色卡模式')).toBeInTheDocument()
+    render(<HomeTab onSelectCard={vi.fn()} onSelectGrid={vi.fn()} />)
+    expect(screen.getByRole('button', { name: /色卡模式/ })).toHaveStyle({
+      backgroundImage: "url('/images/home-palette-bg.jpg')",
+    })
     expect(screen.getByText(/提取主色调，生成精致色卡/)).toBeInTheDocument()
-    expect(screen.getByText('切分模式')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /切分模式/ })).toHaveStyle({
+      backgroundImage: "url('/images/home-grid-bg.jpg')",
+    })
     expect(screen.getByText(/九宫格切分，支持自定义间距/)).toBeInTheDocument()
   })
 
   it('renders all three feature descriptions', () => {
-    render(<HomeTab onSelectCardPhoto={vi.fn()} onSelectGridPhoto={vi.fn()} />)
+    render(<HomeTab onSelectCard={vi.fn()} onSelectGrid={vi.fn()} />)
     expect(screen.getByText('本地解析')).toBeInTheDocument()
     expect(screen.getByText('极致清新')).toBeInTheDocument()
     expect(screen.getByText('快速导出')).toBeInTheDocument()
   })
 
-  it('calls onSelectCardPhoto when a file is chosen via the 色卡模式 card', () => {
-    const onSelectCardPhoto = vi.fn()
-    render(<HomeTab onSelectCardPhoto={onSelectCardPhoto} onSelectGridPhoto={vi.fn()} />)
-
-    const file = new File(['dummy'], 'trip.jpg', { type: 'image/jpeg' })
-    const input = screen.getByTestId('home-card-upload-input') as HTMLInputElement
-    fireEvent.change(input, { target: { files: [file] } })
-
-    expect(onSelectCardPhoto).toHaveBeenCalledWith(file)
+  it('switches to the card tool without opening a file input', () => {
+    const onSelectCard = vi.fn()
+    render(<HomeTab onSelectCard={onSelectCard} onSelectGrid={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: /色卡模式/ }))
+    expect(onSelectCard).toHaveBeenCalledOnce()
+    expect(screen.queryByTestId('home-card-upload-input')).not.toBeInTheDocument()
   })
 
-  it('calls onSelectGridPhoto when a file is chosen via the 切分模式 card', () => {
-    const onSelectGridPhoto = vi.fn()
-    render(<HomeTab onSelectCardPhoto={vi.fn()} onSelectGridPhoto={onSelectGridPhoto} />)
-
-    const file = new File(['dummy'], 'trip.jpg', { type: 'image/jpeg' })
-    const input = screen.getByTestId('home-grid-upload-input') as HTMLInputElement
-    fireEvent.change(input, { target: { files: [file] } })
-
-    expect(onSelectGridPhoto).toHaveBeenCalledWith(file)
+  it('switches to the grid tool without opening a file input', () => {
+    const onSelectGrid = vi.fn()
+    render(<HomeTab onSelectCard={vi.fn()} onSelectGrid={onSelectGrid} />)
+    fireEvent.click(screen.getByRole('button', { name: /切分模式/ }))
+    expect(onSelectGrid).toHaveBeenCalledOnce()
+    expect(screen.queryByTestId('home-grid-upload-input')).not.toBeInTheDocument()
   })
 })

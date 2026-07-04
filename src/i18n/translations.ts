@@ -3,6 +3,9 @@ export type UiLocale = 'zh' | 'en'
 export interface Translations {
   topBar: {
     title: string
+    back: string
+    cardTool: string
+    gridTool: string
   }
   bottomNav: {
     home: string
@@ -15,6 +18,8 @@ export interface Translations {
     layout: string
     palette: string
     info: string
+    toolConfig: string
+    colorNameLanguage: string
   }
   emptyState: {
     heading: string
@@ -28,6 +33,8 @@ export interface Translations {
   }
   exportButton: {
     export: string
+    exportPng: string
+    saveAlbum: string
   }
   filterPicker: {
     none: string
@@ -41,6 +48,10 @@ export interface Translations {
   }
   marginSlider: {
     label: string
+  }
+  layoutControls: {
+    template: string
+    aspectRatio: string
   }
   infoPanel: {
     location: string
@@ -81,6 +92,7 @@ export interface Translations {
   }
   common: {
     processing: string
+    imageLoadFailed: string
     comingSoon: string
     unknownLocation: string
   }
@@ -88,7 +100,10 @@ export interface Translations {
 
 export const zh: Translations = {
   topBar: {
-    title: 'HueFrame',
+    title: '映色格',
+    back: '返回首页',
+    cardTool: '色卡卡片',
+    gridTool: '图片切分',
   },
   bottomNav: {
     home: '首页',
@@ -101,10 +116,12 @@ export const zh: Translations = {
     layout: '版式',
     palette: '调色',
     info: '信息',
+    toolConfig: '工具配置',
+    colorNameLanguage: '色名语言',
   },
   emptyState: {
     heading: '给照片，配一套颜色。',
-    supportedFormats: '本地解析支持 JPG / PNG / WEBP',
+    supportedFormats: '本地解析支持 JPG / PNG / WEBP / HEIF / HEIC',
   },
   uploadZone: {
     prompt: '上传一张照片开始',
@@ -114,6 +131,8 @@ export const zh: Translations = {
   },
   exportButton: {
     export: '导出图片',
+    exportPng: '导出 PNG',
+    saveAlbum: '保存到相册',
   },
   filterPicker: {
     none: '无滤镜',
@@ -127,6 +146,10 @@ export const zh: Translations = {
   },
   marginSlider: {
     label: '留白 (Margin)',
+  },
+  layoutControls: {
+    template: '版式模板',
+    aspectRatio: '比例 (Aspect Ratio)',
   },
   infoPanel: {
     location: '地点',
@@ -167,6 +190,7 @@ export const zh: Translations = {
   },
   common: {
     processing: '处理中…',
+    imageLoadFailed: '图片解析失败，请确认文件有效或换一张图片重试。',
     comingSoon: '敬请期待',
     unknownLocation: '未知地点',
   },
@@ -174,7 +198,10 @@ export const zh: Translations = {
 
 export const en: Translations = {
   topBar: {
-    title: 'HueFrame',
+    title: 'HUEFRAME',
+    back: 'Back to home',
+    cardTool: 'Palette Card',
+    gridTool: 'Image Split',
   },
   bottomNav: {
     home: 'Home',
@@ -187,10 +214,12 @@ export const en: Translations = {
     layout: 'Layout',
     palette: 'Palette',
     info: 'Info',
+    toolConfig: 'Tool Settings',
+    colorNameLanguage: 'Color-name language',
   },
   emptyState: {
     heading: 'A palette for your photo.',
-    supportedFormats: 'Local parsing supports JPG / PNG / WEBP',
+    supportedFormats: 'Local parsing supports JPG / PNG / WEBP / HEIF / HEIC',
   },
   uploadZone: {
     prompt: 'Upload a photo to start',
@@ -200,6 +229,8 @@ export const en: Translations = {
   },
   exportButton: {
     export: 'Export Image',
+    exportPng: 'Export PNG',
+    saveAlbum: 'Save to Photos',
   },
   filterPicker: {
     none: 'None',
@@ -213,6 +244,10 @@ export const en: Translations = {
   },
   marginSlider: {
     label: 'Margin',
+  },
+  layoutControls: {
+    template: 'Template',
+    aspectRatio: 'Aspect Ratio',
   },
   infoPanel: {
     location: 'Location',
@@ -253,6 +288,7 @@ export const en: Translations = {
   },
   common: {
     processing: 'Processing…',
+    imageLoadFailed: 'Could not process this image. Check the file or try another image.',
     comingSoon: 'Coming soon',
     unknownLocation: 'Unknown Location',
   },

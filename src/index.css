@@ -4,13 +4,27 @@
 
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body {
   margin: 0;
+  min-width: 360px;
   background-color: var(--color-surface);
   color: var(--color-on-surface);
   font-family: var(--font-body);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 h1,
@@ -79,5 +93,71 @@ h3 {
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer components {
+  .type-display {
+    font-family: var(--font-headline);
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-display);
+    letter-spacing: -0.01em;
+  }
+
+  .type-heading {
+    font-family: var(--font-headline);
+    font-size: var(--font-size-heading);
+    line-height: var(--line-height-heading);
+  }
+
+  .type-body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+  }
+
+  .type-label {
+    font-family: var(--font-body);
+    font-size: var(--font-size-label);
+    line-height: var(--line-height-label);
+  }
+
+  .type-caption {
+    font-family: var(--font-body);
+    font-size: var(--font-size-caption);
+    line-height: var(--line-height-caption);
+  }
+
+  .hueframe-loading-halo {
+    animation: hueframe-breathe 2.4s ease-in-out infinite;
+  }
+
+  .hueframe-loading-orbit {
+    animation: hueframe-orbit 3.2s linear infinite;
+  }
+}
+
+@keyframes hueframe-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.88);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes hueframe-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hueframe-loading-halo,
+  .hueframe-loading-orbit {
+    animation: none;
   }
 }

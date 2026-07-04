@@ -1,5 +1,6 @@
 import { ImagePlus } from 'lucide-react'
 import { useTranslation } from '../i18n/LocaleContext'
+import { IMAGE_FILE_ACCEPT } from '../lib/loadImage'
 
 interface UploadZoneProps {
   onFileSelected: (file: File) => void
@@ -34,11 +35,11 @@ export function UploadZone({ onFileSelected }: UploadZoneProps) {
       >
         <ImagePlus size={32} strokeWidth={1.3} />
       </span>
-      <p className="m-0 text-xs font-medium tracking-wider text-on-surface-variant opacity-80">{t.uploadZone.prompt}</p>
+      <p className="type-body m-0 font-medium text-on-surface-variant">{t.uploadZone.prompt}</p>
       <input
         data-testid="upload-input"
         type="file"
-        accept="image/*"
+        accept={IMAGE_FILE_ACCEPT}
         onChange={handleChange}
         className="sr-only"
       />

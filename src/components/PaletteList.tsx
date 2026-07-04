@@ -21,10 +21,10 @@ export function PaletteList({ palette, language, onColorChange }: PaletteListPro
             onChange={(e) => onColorChange(index, e.target.value)}
             className="h-8 w-8 shrink-0 cursor-pointer rounded-sm border border-outline-variant p-0"
           />
-          <span className="flex-1 text-sm">{language === 'en' ? entry.name.en : entry.name.zh}</span>
-          <span className="font-mono text-xs text-on-surface-variant">{entry.hex.toUpperCase()}</span>
+          <span className="type-label flex-1">{language === 'en' ? entry.name.en : entry.name.zh}</span>
+          <span className="type-caption font-mono text-on-surface-variant">{entry.hex.toUpperCase()}</span>
           {entry.percentage !== undefined && (
-            <span className="min-w-8 text-right text-xs text-on-surface-variant">{entry.percentage}%</span>
+            <span className="type-caption min-w-8 text-right text-on-surface-variant">{entry.percentage}%</span>
           )}
         </li>
       ))}

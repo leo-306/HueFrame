@@ -14,8 +14,15 @@ describe('ExportButton', () => {
     })
 
     render(<ExportButton canvas={canvas} fileName="card.png" />)
-    fireEvent.click(screen.getByText('导出图片'))
+    fireEvent.click(screen.getByText('导出 PNG'))
 
     expect(toBlobSpy).toHaveBeenCalled()
+  })
+
+  it('sits above the fixed tool navigation', () => {
+    render(<ExportButton canvas={null} fileName="card.png" />)
+    expect(screen.getByText('导出 PNG').parentElement?.parentElement).toHaveClass(
+      'bottom-[calc(4.5rem+env(safe-area-inset-bottom))]'
+    )
   })
 })

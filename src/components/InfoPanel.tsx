@@ -24,7 +24,7 @@ export function InfoPanel({
   return (
     <div>
       <div className="mb-4">
-        <Label htmlFor="location-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
+        <Label htmlFor="location-input" className="type-label mb-1.5 text-on-surface-variant">
           {t.infoPanel.location}
         </Label>
         <Input
@@ -36,7 +36,7 @@ export function InfoPanel({
       </div>
 
       <div className="mb-4">
-        <Label htmlFor="captured-at-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
+        <Label htmlFor="captured-at-input" className="type-label mb-1.5 text-on-surface-variant">
           {t.infoPanel.capturedAt}
         </Label>
         <Input

@@ -1,9 +1,9 @@
-import { Palette, Grid2x2, ShieldCheck, Leaf, Zap } from 'lucide-react'
+import { SwatchBook, Grid3X3, LockKeyhole, Feather, Download } from 'lucide-react'
 import { useTranslation } from '../i18n/LocaleContext'
 
 interface HomeTabProps {
-  onSelectCardPhoto: (file: File) => void
-  onSelectGridPhoto: (file: File) => void
+  onSelectCard: () => void
+  onSelectGrid: () => void
 }
 
 interface ModeCardProps {
@@ -13,8 +13,8 @@ interface ModeCardProps {
   description: string
   actionLabel: string
   containerClassName: string
-  inputTestId: string
-  onFileSelected: (file: File) => void
+  backgroundImage: string
+  onSelect: () => void
 }
 
 function ModeCard({
@@ -24,87 +24,80 @@ function ModeCard({
   description,
   actionLabel,
   containerClassName,
-  inputTestId,
-  onFileSelected,
+  backgroundImage,
+  onSelect,
 }: ModeCardProps) {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      onFileSelected(file)
-    }
-  }
-
   return (
-    <label
-      className={`relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-4xl border border-outline-variant/30 p-8 transition-colors duration-400 ${containerClassName}`}
+    <button
+      type="button"
+      onClick={onSelect}
+      style={{ backgroundImage: `url('${backgroundImage}')` }}
+      className={`group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-4xl border border-outline-variant/30 bg-cover bg-center p-8 text-left transition-all duration-400 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(67,72,70,0.09)] ${containerClassName}`}
     >
       <span
-        className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-lowest/60 text-primary"
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(249,249,248,0.96)_0%,rgba(249,249,248,0.9)_48%,rgba(249,249,248,0.32)_100%)]"
+      />
+      <span
+        className="relative z-10 mb-4 flex size-11 self-start items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary backdrop-blur-sm transition-all duration-300 group-hover:border-primary/25 group-hover:bg-primary/10"
         aria-hidden="true"
       >
         {icon}
       </span>
-      <span className="mb-2 text-xs font-medium uppercase tracking-widest text-primary opacity-60">{eyebrow}</span>
-      <h2 className="mb-3 text-[28px] leading-[1.3] text-on-surface">{title}</h2>
-      <p className="max-w-xs text-on-surface-variant opacity-80">{description}</p>
-      <span className="mt-6 flex items-center gap-2 text-sm font-medium text-primary">
+      <span className="type-caption relative z-10 mb-2 font-medium uppercase tracking-widest text-primary opacity-60">{eyebrow}</span>
+      <h2 className="type-heading relative z-10 mb-3 text-on-surface">{title}</h2>
+      <p className="type-body relative z-10 max-w-xs text-on-surface-variant opacity-80">{description}</p>
+      <span className="type-label relative z-10 mt-6 flex items-center gap-2 font-medium text-primary">
         {actionLabel}
         <span aria-hidden="true">→</span>
       </span>
-      <input
-        data-testid={inputTestId}
-        type="file"
-        accept="image/*"
-        onChange={handleChange}
-        className="sr-only"
-      />
-    </label>
+    </button>
   )
 }
 
-export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) {
+export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
   const t = useTranslation()
   return (
     <div className="px-5 pb-12">
       <section className="py-12">
-        <h1 className="mb-6 max-w-[12ch] text-[32px] leading-[1.2] tracking-[-0.01em] text-on-surface">
+        <h1 className="type-display mb-6 max-w-[12ch] text-on-surface">
           {t.homeTab.heading}
         </h1>
-        <p className="max-w-md text-base leading-relaxed text-on-surface-variant opacity-80">
+        <p className="type-body max-w-md text-on-surface-variant opacity-80">
           {t.homeTab.subheading}
         </p>
       </section>
 
       <section className="mb-16 flex flex-col gap-6">
         <ModeCard
-          icon={<Palette size={22} strokeWidth={1.3} />}
+          icon={<SwatchBook size={23} strokeWidth={1.45} />}
           eyebrow={t.homeTab.cardEyebrow}
           title={t.homeTab.cardTitle}
           description={t.homeTab.cardDescription}
           actionLabel={t.homeTab.cardAction}
           containerClassName="aspect-4/3 bg-primary-container/30 hover:bg-primary-container/50"
-          inputTestId="home-card-upload-input"
-          onFileSelected={onSelectCardPhoto}
+          backgroundImage="/images/home-palette-bg.jpg"
+          onSelect={onSelectCard}
         />
         <ModeCard
-          icon={<Grid2x2 size={22} strokeWidth={1.3} />}
+          icon={<Grid3X3 size={23} strokeWidth={1.45} />}
           eyebrow={t.homeTab.gridEyebrow}
           title={t.homeTab.gridTitle}
           description={t.homeTab.gridDescription}
           actionLabel={t.homeTab.gridAction}
           containerClassName="aspect-4/3 bg-secondary-container/30 hover:bg-secondary-container/50"
-          inputTestId="home-grid-upload-input"
-          onFileSelected={onSelectGridPhoto}
+          backgroundImage="/images/home-grid-bg.jpg"
+          onSelect={onSelectGrid}
         />
       </section>
 
       <section className="flex flex-col gap-10 border-t border-outline-variant/20 pt-12">
         <div className="flex flex-col gap-4">
           <span
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-primary"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary-container bg-primary-container/70 text-primary shadow-[0_8px_24px_rgba(67,72,70,0.06)]"
             aria-hidden="true"
           >
-            <ShieldCheck size={22} strokeWidth={1.5} />
+            <LockKeyhole size={21} strokeWidth={1.5} />
           </span>
           <h3 className="text-xl text-on-surface">{t.homeTab.localTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">
@@ -113,10 +106,10 @@ export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) 
         </div>
         <div className="flex flex-col gap-4">
           <span
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-primary"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary-container bg-primary-container/70 text-primary shadow-[0_8px_24px_rgba(67,72,70,0.06)]"
             aria-hidden="true"
           >
-            <Leaf size={22} strokeWidth={1.5} />
+            <Feather size={21} strokeWidth={1.5} />
           </span>
           <h3 className="text-xl text-on-surface">{t.homeTab.freshTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">
@@ -125,10 +118,10 @@ export function HomeTab({ onSelectCardPhoto, onSelectGridPhoto }: HomeTabProps) 
         </div>
         <div className="flex flex-col gap-4">
           <span
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-primary"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary-container bg-primary-container/70 text-primary shadow-[0_8px_24px_rgba(67,72,70,0.06)]"
             aria-hidden="true"
           >
-            <Zap size={22} strokeWidth={1.5} />
+            <Download size={21} strokeWidth={1.5} />
           </span>
           <h3 className="text-xl text-on-surface">{t.homeTab.fastTitle}</h3>
           <p className="leading-relaxed text-on-surface-variant opacity-70">

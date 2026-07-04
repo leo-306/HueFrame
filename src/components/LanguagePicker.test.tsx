@@ -5,6 +5,7 @@ import { LanguagePicker } from './LanguagePicker'
 describe('LanguagePicker', () => {
   it('renders both language options with Chinese selected by default', () => {
     render(<LanguagePicker selected="zh" onSelect={vi.fn()} />)
+    expect(screen.getByRole('group', { name: '色名语言' })).toBeInTheDocument()
     const zhButton = screen.getByText('中文')
     const enButton = screen.getByText('English')
     expect(zhButton).toBeInTheDocument()

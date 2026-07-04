@@ -26,4 +26,25 @@ describe('FilterPicker', () => {
     const canvases = container.querySelectorAll('canvas')
     expect(canvases.length).toBe(4)
   })
+
+  it('shows fade hints only in directions with more content', () => {
+    const { container } = render(
+      <FilterPicker selected="none" photo={createTestPhoto()} onSelect={vi.fn()} />
+    )
+    const scroller = container.querySelector('[data-filter-scroller]') as HTMLDivElement
+    Object.defineProperties(scroller, {
+      clientWidth: { configurable: true, value: 240 },
+      scrollWidth: { configurable: true, value: 480 },
+      scrollLeft: { configurable: true, writable: true, value: 0 },
+    })
+
+    fireEvent.scroll(scroller)
+    expect(screen.getByTestId('filter-fade-left')).toHaveClass('opacity-0')
+    expect(screen.getByTestId('filter-fade-right')).toHaveClass('opacity-100')
+
+    scroller.scrollLeft = 240
+    fireEvent.scroll(scroller)
+    expect(screen.getByTestId('filter-fade-left')).toHaveClass('opacity-100')
+    expect(screen.getByTestId('filter-fade-right')).toHaveClass('opacity-0')
+  })
 })

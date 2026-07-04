@@ -15,8 +15,19 @@
   --color-tertiary-container: #dfe9e3;
   --color-error: #ba1a1a;
 
-  --font-headline: 'Libre Caslon Text', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-headline: 'Libre Caslon Text', 'Songti SC', STSong, serif;
+  --font-body: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  --font-size-display: 2rem;
+  --line-height-display: 1.2;
+  --font-size-heading: 1.75rem;
+  --line-height-heading: 1.3;
+  --font-size-body: 1rem;
+  --line-height-body: 1.6;
+  --font-size-label: 0.875rem;
+  --line-height-label: 1.4;
+  --font-size-caption: 0.75rem;
+  --line-height-caption: 1.4;
 
   --radius-sm: 2px;
   --radius-default: 4px;

@@ -25,5 +25,7 @@ describe('MultiUploadZone', () => {
     render(<MultiUploadZone onFilesSelected={vi.fn()} />)
     const input = screen.getByTestId('grid-upload-input') as HTMLInputElement
     expect(input.multiple).toBe(true)
+    expect(input.accept).toContain('.heic')
+    expect(input.accept).toContain('.heif')
   })
 })

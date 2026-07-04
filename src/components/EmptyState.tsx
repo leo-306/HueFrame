@@ -17,11 +17,11 @@ export function EmptyState({ onFileSelected }: EmptyStateProps) {
         className="absolute -right-[10%] bottom-[10%] -z-10 h-75 w-75 rounded-full bg-[rgba(223,233,227,0.5)] mix-blend-multiply blur-[80px]"
         aria-hidden="true"
       />
-      <h2 className="mx-0 mb-12 mt-0 max-w-[12ch] text-center text-[32px] leading-[1.2] tracking-[-0.01em]">
+      <h2 className="type-display mx-0 mb-12 mt-0 max-w-[12ch] text-center">
         {t.emptyState.heading}
       </h2>
       <UploadZone onFileSelected={onFileSelected} />
-      <p className="mt-8 text-center text-base text-outline opacity-75">{t.emptyState.supportedFormats}</p>
+      <p className="type-body mt-8 text-center text-outline opacity-75">{t.emptyState.supportedFormats}</p>
     </div>
   )
 }

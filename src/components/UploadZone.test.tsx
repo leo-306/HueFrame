@@ -17,6 +17,13 @@ describe('UploadZone', () => {
 
   it('renders prompt text when no file is selected', () => {
     render(<UploadZone onFileSelected={vi.fn()} />)
-    expect(screen.getByText(/上传一张照片/)).toBeInTheDocument()
+    expect(screen.getByText(/上传一张照片/)).toHaveClass('type-body')
+  })
+
+  it('accepts HEIF and HEIC files', () => {
+    render(<UploadZone onFileSelected={vi.fn()} />)
+    const input = screen.getByTestId('upload-input')
+    expect(input).toHaveAttribute('accept', expect.stringContaining('.heic'))
+    expect(input).toHaveAttribute('accept', expect.stringContaining('.heif'))
   })
 })

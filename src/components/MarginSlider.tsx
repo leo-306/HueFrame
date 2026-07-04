@@ -11,8 +11,8 @@ interface MarginSliderProps {
 export function MarginSlider({ valuePx, onChange, min = 0, max = 80 }: MarginSliderProps) {
   const t = useTranslation()
   return (
-    <div className="mb-4">
-      <div className="mb-1.5 flex items-center justify-between text-[13px] tracking-wide text-on-surface-variant">
+    <div>
+      <div className="type-body mb-4 flex items-center justify-between text-on-surface-variant">
         <label htmlFor="margin-slider">{t.marginSlider.label}</label>
         <span>{valuePx}px</span>
       </div>

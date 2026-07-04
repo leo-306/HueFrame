@@ -6,7 +6,7 @@ describe('EmptyState', () => {
   it('renders the headline and format hint', () => {
     render(<EmptyState onFileSelected={vi.fn()} />)
     expect(screen.getByText('给照片，配一套颜色。')).toBeInTheDocument()
-    expect(screen.getByText('本地解析支持 JPG / PNG / WEBP')).toBeInTheDocument()
+    expect(screen.getByText('本地解析支持 JPG / PNG / WEBP / HEIF / HEIC')).toBeInTheDocument()
   })
 
   it('forwards the selected file to onFileSelected via the upload zone', () => {

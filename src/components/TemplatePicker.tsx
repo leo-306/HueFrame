@@ -15,18 +15,22 @@ export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {
     { id: 'magazineCover', label: t.templatePicker.magazineCover },
   ]
   return (
-    <div className="my-3 flex flex-wrap gap-2">
-      {options.map((option) => (
-        <Button
-          key={option.id}
-          variant={selected === option.id ? 'secondary' : 'outline'}
-          size="sm"
-          onClick={() => onSelect(option.id)}
-          aria-pressed={selected === option.id}
-        >
-          {option.label}
-        </Button>
-      ))}
+    <div className="mb-7">
+      <div className="type-body mb-3 text-on-surface-variant">{t.layoutControls.template}</div>
+      <div className="grid grid-cols-2 gap-3">
+        {options.map((option) => (
+          <Button
+            key={option.id}
+            variant={selected === option.id ? 'secondary' : 'outline'}
+            size="sm"
+            onClick={() => onSelect(option.id)}
+            aria-pressed={selected === option.id}
+            className="h-12 bg-surface"
+          >
+            {option.label}
+          </Button>
+        ))}
+      </div>
     </div>
   )
 }

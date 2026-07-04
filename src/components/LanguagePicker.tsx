@@ -13,14 +13,21 @@ interface LanguagePickerProps {
 
 export function LanguagePicker({ selected, onSelect }: LanguagePickerProps) {
   return (
-    <div className="flex gap-2">
+    <div
+      role="group"
+      aria-label="色名语言"
+      className="inline-flex rounded-lg border border-outline-variant/40 bg-surface p-1"
+    >
       {(Object.keys(LABELS) as ColorNameLanguage[]).map((language) => (
         <Button
           key={language}
-          variant={selected === language ? 'secondary' : 'outline'}
+          variant="ghost"
           size="sm"
           onClick={() => onSelect(language)}
           aria-pressed={selected === language}
+          className={`h-9 min-w-24 rounded-md border-0 px-5 text-sm ${
+            selected === language ? 'bg-surface-container text-on-surface shadow-none' : 'bg-transparent'
+          }`}
         >
           {LABELS[language]}
         </Button>
