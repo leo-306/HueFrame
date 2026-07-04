@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { GRID_PRESETS, clampGridSize, computeSplitCells, computeSplitCanvasSize } from './gridLayout'
+import {
+  GRID_PRESETS,
+  clampGridSize,
+  computeSplitCells,
+  computeSplitCanvasSize,
+  computeCollageCells,
+  computeCoverSourceRect,
+  computeCollageCanvasSize,
+} from './gridLayout'
 
 describe('GRID_PRESETS', () => {
   it('exposes the three preset grid specs', () => {
@@ -65,6 +73,92 @@ describe('computeSplitCanvasSize', () => {
     expect(computeSplitCanvasSize({ imageWidth: 300, imageHeight: 200, rows: 2, cols: 2, gapPx: 0 })).toEqual({
       width: 300,
       height: 200,
+    })
+  })
+})
+
+describe('computeCollageCells', () => {
+  it('assigns images to cells in upload order, left-to-right then top-to-bottom', () => {
+    const cells = computeCollageCells({
+      imageCount: 4,
+      rows: 2,
+      cols: 2,
+      cellWidth: 100,
+      cellHeight: 100,
+      gapPx: 0,
+    })
+    expect(cells).toHaveLength(4)
+    expect(cells.map((c) => c.imageIndex)).toEqual([0, 1, 2, 3])
+    expect(cells[0]).toMatchObject({ dx: 0, dy: 0 })
+    expect(cells[1]).toMatchObject({ dx: 100, dy: 0 })
+    expect(cells[2]).toMatchObject({ dx: 0, dy: 100 })
+    expect(cells[3]).toMatchObject({ dx: 100, dy: 100 })
+  })
+
+  it('marks extra empty cells as placeholders when imageCount < total cells', () => {
+    const cells = computeCollageCells({
+      imageCount: 2,
+      rows: 2,
+      cols: 2,
+      cellWidth: 100,
+      cellHeight: 100,
+      gapPx: 0,
+    })
+    expect(cells[0].imageIndex).toBe(0)
+    expect(cells[1].imageIndex).toBe(1)
+    expect(cells[2].imageIndex).toBeNull()
+    expect(cells[3].imageIndex).toBeNull()
+  })
+
+  it('only uses the first N images when imageCount > total cells', () => {
+    const cells = computeCollageCells({
+      imageCount: 6,
+      rows: 2,
+      cols: 2,
+      cellWidth: 100,
+      cellHeight: 100,
+      gapPx: 0,
+    })
+    expect(cells).toHaveLength(4)
+    expect(cells.map((c) => c.imageIndex)).toEqual([0, 1, 2, 3])
+  })
+
+  it('offsets destination coordinates by gapPx', () => {
+    const cells = computeCollageCells({
+      imageCount: 2,
+      rows: 1,
+      cols: 2,
+      cellWidth: 50,
+      cellHeight: 50,
+      gapPx: 8,
+    })
+    expect(cells[0]).toMatchObject({ dx: 0, dy: 0 })
+    expect(cells[1]).toMatchObject({ dx: 58, dy: 0 })
+  })
+})
+
+describe('computeCoverSourceRect', () => {
+  it('crops a wider-than-cell image symmetrically on the left and right', () => {
+    const rect = computeCoverSourceRect({ imageWidth: 400, imageHeight: 100, cellWidth: 100, cellHeight: 100 })
+    expect(rect).toEqual({ sx: 150, sy: 0, sWidth: 100, sHeight: 100 })
+  })
+
+  it('crops a taller-than-cell image symmetrically on the top and bottom', () => {
+    const rect = computeCoverSourceRect({ imageWidth: 100, imageHeight: 400, cellWidth: 100, cellHeight: 100 })
+    expect(rect).toEqual({ sx: 0, sy: 150, sWidth: 100, sHeight: 100 })
+  })
+
+  it('uses the whole image when its aspect ratio already matches the cell', () => {
+    const rect = computeCoverSourceRect({ imageWidth: 200, imageHeight: 100, cellWidth: 100, cellHeight: 50 })
+    expect(rect).toEqual({ sx: 0, sy: 0, sWidth: 200, sHeight: 100 })
+  })
+})
+
+describe('computeCollageCanvasSize', () => {
+  it('computes total canvas size from cell size, grid size, and gap', () => {
+    expect(computeCollageCanvasSize({ rows: 2, cols: 3, cellWidth: 100, cellHeight: 80, gapPx: 10 })).toEqual({
+      width: 100 * 3 + 10 * 2,
+      height: 80 * 2 + 10 * 1,
     })
   })
 })

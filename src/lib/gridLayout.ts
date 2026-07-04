@@ -97,3 +97,94 @@ export function computeSplitCanvasSize({
     height: imageHeight + gapPx * (rows - 1),
   }
 }
+
+export interface CollageCell {
+  imageIndex: number | null
+  dx: number
+  dy: number
+}
+
+interface CollageInput {
+  imageCount: number
+  rows: number
+  cols: number
+  cellWidth: number
+  cellHeight: number
+  gapPx: number
+}
+
+/**
+ * 拼图模式：按上传顺序从左到右、从上到下填入网格。
+ * 图片数少于格子数时，多余格子的 imageIndex 为 null（占位色块）；
+ * 图片数多于格子数时，只取前 rows*cols 张。
+ */
+export function computeCollageCells({ imageCount, rows, cols, cellWidth, cellHeight, gapPx }: CollageInput): CollageCell[] {
+  const totalCells = rows * cols
+  const cells: CollageCell[] = []
+  for (let i = 0; i < totalCells; i++) {
+    const row = Math.floor(i / cols)
+    const col = i % cols
+    cells.push({
+      imageIndex: i < imageCount ? i : null,
+      dx: col * (cellWidth + gapPx),
+      dy: row * (cellHeight + gapPx),
+    })
+  }
+  return cells
+}
+
+interface CoverInput {
+  imageWidth: number
+  imageHeight: number
+  cellWidth: number
+  cellHeight: number
+}
+
+export interface SourceRect {
+  sx: number
+  sy: number
+  sWidth: number
+  sHeight: number
+}
+
+/**
+ * cover 裁剪：算出源图里应该取的矩形区域，使得该区域的宽高比等于单元格宽高比，
+ * 居中裁剪（多出来的部分左右或上下对称裁掉）。
+ */
+export function computeCoverSourceRect({ imageWidth, imageHeight, cellWidth, cellHeight }: CoverInput): SourceRect {
+  const imageRatio = imageWidth / imageHeight
+  const cellRatio = cellWidth / cellHeight
+
+  if (imageRatio > cellRatio) {
+    const sWidth = imageHeight * cellRatio
+    return { sx: (imageWidth - sWidth) / 2, sy: 0, sWidth, sHeight: imageHeight }
+  }
+
+  if (imageRatio < cellRatio) {
+    const sHeight = imageWidth / cellRatio
+    return { sx: 0, sy: (imageHeight - sHeight) / 2, sWidth: imageWidth, sHeight }
+  }
+
+  return { sx: 0, sy: 0, sWidth: imageWidth, sHeight: imageHeight }
+}
+
+interface CollageCanvasInput {
+  rows: number
+  cols: number
+  cellWidth: number
+  cellHeight: number
+  gapPx: number
+}
+
+export function computeCollageCanvasSize({
+  rows,
+  cols,
+  cellWidth,
+  cellHeight,
+  gapPx,
+}: CollageCanvasInput): { width: number; height: number } {
+  return {
+    width: cellWidth * cols + gapPx * (cols - 1),
+    height: cellHeight * rows + gapPx * (rows - 1),
+  }
+}
