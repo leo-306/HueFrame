@@ -1,45 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { Image as CanvasImage, createCanvas } from 'canvas'
 import { GridCollagePanel } from './GridCollagePanel'
-
-/**
- * 同 GridSplitPanel.test.tsx 的说明：jsdom 原生 Image 不会真正解码图片，
- * onload 从不触发。这里用 node-canvas 的 Image 类替换全局 Image，
- * 拦截 src setter 忽略传入的 blob URL，改为加载一张预先准备好的假 PNG Buffer。
- * GridCollagePanel 会用 Promise.all(files.map(loadImage)) 并发加载多张图片，
- * 每个 MockImage 实例都是独立的，互不影响，能正确并发 resolve。
- */
-const FAKE_IMAGE_BUFFER = createCanvas(4, 4).toBuffer('image/png')
-
-// `canvas`'s Image class declares `src` as a plain property (backed by a native
-// accessor on the prototype), so TS forbids a subclass from redeclaring it as a
-// get/set pair. Defining the accessor per-instance in the constructor sidesteps
-// that static check while still delegating to the real (per-instance) native
-// accessor for storage, and redirecting every assignment to the fake buffer.
-const nativeSrcDescriptor = Object.getOwnPropertyDescriptor(CanvasImage.prototype, 'src')!
-
-class MockImage extends CanvasImage {
-  constructor() {
-    super()
-    Object.defineProperty(this, 'src', {
-      get: () => nativeSrcDescriptor.get!.call(this),
-      set: () => nativeSrcDescriptor.set!.call(this, FAKE_IMAGE_BUFFER),
-    })
-  }
-}
+import { installMockUploadImage } from '../../../tests/mockUploadImage'
 
 describe('GridCollagePanel', () => {
+  let restoreMockImage: () => void
+
   beforeEach(() => {
-    vi.stubGlobal('Image', MockImage)
-    vi.stubGlobal('URL', {
-      createObjectURL: vi.fn().mockReturnValue('blob:mock'),
-      revokeObjectURL: vi.fn(),
-    })
+    restoreMockImage = installMockUploadImage()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    restoreMockImage()
   })
 
   it('shows the multi-upload zone before any photos are selected', () => {
