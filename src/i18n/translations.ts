@@ -45,6 +45,9 @@ export interface Translations {
   templatePicker: {
     classicStrip: string
     magazineCover: string
+    previousTemplate: string
+    nextTemplate: string
+    viewAllTemplates: string
   }
   marginSlider: {
     label: string
@@ -143,12 +146,15 @@ export const zh: Translations = {
   templatePicker: {
     classicStrip: '经典色带',
     magazineCover: '杂志封面',
+    previousTemplate: '上一个模板',
+    nextTemplate: '下一个模板',
+    viewAllTemplates: '查看全部模板',
   },
   marginSlider: {
     label: '留白 (Margin)',
   },
   layoutControls: {
-    template: '版式模板',
+    template: '全部模板',
     aspectRatio: '比例 (Aspect Ratio)',
   },
   infoPanel: {
@@ -241,12 +247,15 @@ export const en: Translations = {
   templatePicker: {
     classicStrip: 'Classic Strip',
     magazineCover: 'Magazine Cover',
+    previousTemplate: 'Previous template',
+    nextTemplate: 'Next template',
+    viewAllTemplates: 'View all templates',
   },
   marginSlider: {
     label: 'Margin',
   },
   layoutControls: {
-    template: 'Template',
+    template: 'All templates',
     aspectRatio: 'Aspect Ratio',
   },
   infoPanel: {

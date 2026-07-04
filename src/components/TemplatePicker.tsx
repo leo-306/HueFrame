@@ -15,7 +15,7 @@ export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {
     { id: 'magazineCover', label: t.templatePicker.magazineCover },
   ]
   return (
-    <div className="mb-7">
+    <div id="template-picker" className="mb-7 scroll-mt-24">
       <div className="type-body mb-3 text-on-surface-variant">{t.layoutControls.template}</div>
       <div className="grid grid-cols-2 gap-3">
         {options.map((option) => (

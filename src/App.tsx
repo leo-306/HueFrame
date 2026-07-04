@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TopBar } from './components/TopBar'
 import { BottomNav, type AppTab } from './components/BottomNav'
 import { EmptyState } from './components/EmptyState'
@@ -24,11 +24,15 @@ import { loadImage } from './lib/loadImage'
 import { useTranslation } from './i18n/LocaleContext'
 import { LanguagePicker } from './components/LanguagePicker'
 import { LoadingOverlay } from './components/LoadingOverlay'
+import { fetchMockPhoto } from './lib/mockPhoto'
 
 const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   classicStrip: renderClassicStrip,
   magazineCover: renderMagazineCover,
 }
+
+const TEMPLATE_IDS = Object.keys(RENDERERS) as TemplateId[]
+const MOCK_ENABLED = import.meta.env.DEV
 
 function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promise<HTMLImageElement> {
   const canvas = document.createElement('canvas')
@@ -47,14 +51,16 @@ function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promis
 
 export default function App() {
   const t = useTranslation()
-  const [activeTab, setActiveTab] = useState<AppTab>('home')
+  const [activeTab, setActiveTab] = useState<AppTab>(MOCK_ENABLED ? 'card' : 'home')
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
+  const hasLoadedMockPhoto = useRef(false)
 
   // originalPhoto + baseConfig 保存取色/EXIF 等一次性处理结果（基于未加滤镜的原图，
   // 保证色卡反映照片真实色彩）；滤镜只影响展示用的 displayPhoto，不重新提取颜色。
   const [originalPhoto, setOriginalPhoto] = useState<HTMLImageElement | null>(null)
   const [baseConfig, setBaseConfig] = useState<CardConfig | null>(null)
   const [displayPhoto, setDisplayPhoto] = useState<HTMLImageElement | null>(null)
+  const [isMockPhoto, setIsMockPhoto] = useState(false)
 
   // 调色/信息 Tab 的手动编辑覆盖值：未编辑时为 null，读取 baseConfig 里的自动识别结果。
   const [paletteOverride, setPaletteOverride] = useState<PaletteEntry[] | null>(null)
@@ -102,7 +108,7 @@ export default function App() {
   ])
 
   const handleFileSelected = useCallback(
-    async (file: File) => {
+    async (file: File, isMock = false) => {
       setIsProcessing(true)
       setProcessingError(null)
       try {
@@ -116,6 +122,7 @@ export default function App() {
         })
         setOriginalPhoto(photo)
         setBaseConfig(cardConfig)
+        setIsMockPhoto(isMock)
         setPaletteOverride(null)
         setLocationOverride(null)
         setCapturedAtOverride(null)
@@ -127,6 +134,14 @@ export default function App() {
     },
     [language, width, height, t.common.unknownLocation, t.common.imageLoadFailed]
   )
+
+  useEffect(() => {
+    if (!MOCK_ENABLED || hasLoadedMockPhoto.current) return
+    hasLoadedMockPhoto.current = true
+    fetchMockPhoto()
+      .then((file) => handleFileSelected(file, true))
+      .catch(() => undefined)
+  }, [handleFileSelected])
 
   useEffect(() => {
     if (!originalPhoto) return
@@ -166,6 +181,7 @@ export default function App() {
       setOriginalPhoto(null)
       setBaseConfig(null)
       setDisplayPhoto(null)
+      setIsMockPhoto(false)
       setPaletteOverride(null)
       setLocationOverride(null)
       setCapturedAtOverride(null)
@@ -176,6 +192,20 @@ export default function App() {
     }
     setActiveTab('home')
   }, [activeTab, originalPhoto])
+
+  const switchTemplate = useCallback((direction: -1 | 1) => {
+    setTemplate((current) => {
+      const currentIndex = TEMPLATE_IDS.indexOf(current)
+      return TEMPLATE_IDS[(currentIndex + direction + TEMPLATE_IDS.length) % TEMPLATE_IDS.length]
+    })
+  }, [])
+
+  const handleShowAllTemplates = useCallback(() => {
+    setActiveSubTab('layout')
+    requestAnimationFrame(() => {
+      document.getElementById('template-picker')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }, [])
 
   return (
     <div className={`min-h-screen ${activeTab === 'card' && config ? 'pb-44' : 'pb-24'}`}>
@@ -196,7 +226,16 @@ export default function App() {
 
           {config && (
             <>
-              <CardPreview config={config} renderer={RENDERERS[template]} onReady={setExportCanvas} />
+              <CardPreview
+                config={config}
+                renderer={RENDERERS[template]}
+                templateName={t.templatePicker[template]}
+                isMock={isMockPhoto}
+                onPreviousTemplate={() => switchTemplate(-1)}
+                onNextTemplate={() => switchTemplate(1)}
+                onShowAllTemplates={handleShowAllTemplates}
+                onReady={setExportCanvas}
+              />
 
               <CardTabs
                 active={activeSubTab}
