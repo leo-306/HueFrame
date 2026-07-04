@@ -19,6 +19,19 @@ describe('GridSplitPanel', () => {
     expect(screen.getByText(/上传一张照片/)).toBeInTheDocument()
   })
 
+  it('loads initialFile as the current photo when provided', async () => {
+    const file = new File(['dummy'], 'from-home.jpg', { type: 'image/jpeg' })
+    render(<GridSplitPanel onGenerateCard={vi.fn()} initialFile={file} />)
+
+    await waitFor(() => expect(screen.getByText('3×3')).toBeInTheDocument())
+    expect(screen.queryByTestId('upload-input')).not.toBeInTheDocument()
+  })
+
+  it('does not show the grid size picker when initialFile is not provided', () => {
+    render(<GridSplitPanel onGenerateCard={vi.fn()} />)
+    expect(screen.queryByText('3×3')).not.toBeInTheDocument()
+  })
+
   it('shows the grid size picker and export button after a photo is uploaded', async () => {
     render(<GridSplitPanel onGenerateCard={vi.fn()} />)
 

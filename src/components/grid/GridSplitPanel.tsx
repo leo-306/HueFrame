@@ -10,9 +10,10 @@ import { loadImage } from '../../lib/loadImage'
 
 interface GridSplitPanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
+  initialFile?: File
 }
 
-export function GridSplitPanel({ onGenerateCard }: GridSplitPanelProps) {
+export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelProps) {
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null)
   const [rows, setRows] = useState(3)
   const [cols, setCols] = useState(3)
@@ -25,6 +26,11 @@ export function GridSplitPanel({ onGenerateCard }: GridSplitPanelProps) {
     const img = await loadImage(file)
     setPhoto(img)
   }, [])
+
+  useEffect(() => {
+    if (!initialFile) return
+    handleFileSelected(initialFile)
+  }, [initialFile, handleFileSelected])
 
   useEffect(() => {
     if (!photo) return
