@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 
-export type AppTab = 'card' | 'grid' | 'crop'
+export type AppTab = 'home' | 'card' | 'grid' | 'crop'
 
 interface TabOption {
   id: AppTab
@@ -9,6 +9,7 @@ interface TabOption {
 }
 
 const TABS: TabOption[] = [
+  { id: 'home', label: '首页' },
   { id: 'card', label: '卡片' },
   { id: 'grid', label: '宫格' },
   { id: 'crop', label: '裁剪', disabled: true },
