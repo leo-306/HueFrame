@@ -1,3 +1,5 @@
+import { Button } from './ui/button'
+
 export type TemplateId = 'classicStrip' | 'magazineCover'
 
 interface Option {
@@ -17,16 +19,17 @@ interface TemplatePickerProps {
 
 export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {
   return (
-    <div className="btn-group">
+    <div className="my-3 flex flex-wrap gap-2">
       {OPTIONS.map((option) => (
-        <button
+        <Button
           key={option.id}
-          className="btn"
+          variant={selected === option.id ? 'secondary' : 'outline'}
+          size="sm"
           onClick={() => onSelect(option.id)}
           aria-pressed={selected === option.id}
         >
           {option.label}
-        </button>
+        </Button>
       ))}
     </div>
   )

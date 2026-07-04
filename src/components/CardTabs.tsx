@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs'
 
 export type CardSubTab = 'filter' | 'layout' | 'palette' | 'info'
 
@@ -28,15 +29,17 @@ const PANEL_KEYS: Record<CardSubTab, 'filterPanel' | 'layoutPanel' | 'palettePan
 export function CardTabs(props: CardTabsProps) {
   const { active, onSelect } = props
   return (
-    <div className="card-tabs">
-      <div className="card-tabs-nav">
+    <Tabs value={active} onValueChange={(value) => onSelect(value as CardSubTab)} className="flex-col px-5">
+      <TabsList className="my-5 h-auto w-full bg-surface-container-low p-1">
         {SUB_TABS.map((tab) => (
-          <button key={tab.id} className="btn" aria-pressed={active === tab.id} onClick={() => onSelect(tab.id)}>
+          <TabsTrigger key={tab.id} value={tab.id} className="py-2">
             {tab.label}
-          </button>
+          </TabsTrigger>
         ))}
-      </div>
-      <div className="card-tabs-panel">{props[PANEL_KEYS[active]]}</div>
-    </div>
+      </TabsList>
+      <TabsContent value={active} className="pb-4">
+        {props[PANEL_KEYS[active]]}
+      </TabsContent>
+    </Tabs>
   )
 }

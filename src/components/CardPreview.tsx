@@ -21,9 +21,9 @@ export function CardPreview({ config, renderer, onReady }: CardPreviewProps) {
   }, [config, renderer, onReady])
 
   return (
-    <div className="card-preview">
-      <div className="card-preview-frame">
-        <canvas ref={canvasRef} width={config.width} height={config.height} />
+    <div className="p-5">
+      <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest leading-none">
+        <canvas ref={canvasRef} width={config.width} height={config.height} className="block h-auto w-full" />
       </div>
     </div>
   )

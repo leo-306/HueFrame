@@ -1,3 +1,5 @@
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
+
 export type AppTab = 'card' | 'grid' | 'crop'
 
 interface TabOption {
@@ -19,18 +21,18 @@ interface BottomNavProps {
 
 export function BottomNav({ active, onSelect }: BottomNavProps) {
   return (
-    <nav className="bottom-nav">
-      {TABS.map((tab) => (
-        <button
-          key={tab.id}
-          className="btn"
-          disabled={tab.disabled}
-          aria-pressed={active === tab.id}
-          onClick={() => onSelect(tab.id)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </nav>
+    <Tabs
+      value={active}
+      onValueChange={(value) => onSelect(value as AppTab)}
+      className="mt-6 border-t border-outline-variant px-4 pt-3 pb-3"
+    >
+      <TabsList className="h-auto w-full bg-transparent p-0">
+        {TABS.map((tab) => (
+          <TabsTrigger key={tab.id} value={tab.id} disabled={tab.disabled} className="flex-1 py-2">
+            {tab.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   )
 }

@@ -1,4 +1,5 @@
 import { ASPECT_RATIOS, type AspectRatioId } from '../lib/aspectRatio'
+import { Button } from './ui/button'
 
 interface AspectRatioPickerProps {
   selected: AspectRatioId
@@ -7,11 +8,17 @@ interface AspectRatioPickerProps {
 
 export function AspectRatioPicker({ selected, onSelect }: AspectRatioPickerProps) {
   return (
-    <div className="btn-group">
+    <div className="my-3 flex flex-wrap gap-2">
       {ASPECT_RATIOS.map((ratio) => (
-        <button key={ratio} className="btn" onClick={() => onSelect(ratio)} aria-pressed={selected === ratio}>
+        <Button
+          key={ratio}
+          variant={selected === ratio ? 'secondary' : 'outline'}
+          size="sm"
+          onClick={() => onSelect(ratio)}
+          aria-pressed={selected === ratio}
+        >
           {ratio}
-        </button>
+        </Button>
       ))}
     </div>
   )

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MarginSlider } from './MarginSlider'
 
 describe('MarginSlider', () => {
@@ -8,11 +9,13 @@ describe('MarginSlider', () => {
     expect(screen.getByText('24px')).toBeInTheDocument()
   })
 
-  it('calls onChange with the new numeric value when moved', () => {
+  it('calls onChange with the new numeric value when moved', async () => {
     const onChange = vi.fn()
+    const user = userEvent.setup()
     render(<MarginSlider valuePx={24} onChange={onChange} />)
     const slider = screen.getByRole('slider')
-    fireEvent.change(slider, { target: { value: '48' } })
-    expect(onChange).toHaveBeenCalledWith(48)
+    slider.focus()
+    await user.keyboard('[ArrowRight]')
+    expect(onChange).toHaveBeenCalledWith(25)
   })
 })

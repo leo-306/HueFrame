@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { CardTabs } from './CardTabs'
 
 describe('CardTabs', () => {
@@ -35,8 +36,9 @@ describe('CardTabs', () => {
     expect(screen.queryByText('滤镜面板')).not.toBeInTheDocument()
   })
 
-  it('calls onSelect with the clicked sub-tab id', () => {
+  it('calls onSelect with the clicked sub-tab id', async () => {
     const onSelect = vi.fn()
+    const user = userEvent.setup()
     render(
       <CardTabs
         active="filter"
@@ -47,7 +49,7 @@ describe('CardTabs', () => {
         infoPanel={<div>信息面板</div>}
       />
     )
-    fireEvent.click(screen.getByText('调色'))
+    await user.click(screen.getByText('调色'))
     expect(onSelect).toHaveBeenCalledWith('palette')
   })
 })

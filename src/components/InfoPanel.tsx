@@ -1,3 +1,7 @@
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { Checkbox } from './ui/checkbox'
+
 interface InfoPanelProps {
   locationName: string
   capturedAtText: string
@@ -17,9 +21,11 @@ export function InfoPanel({
 }: InfoPanelProps) {
   return (
     <div>
-      <div className="form-field">
-        <label htmlFor="location-input">地点</label>
-        <input
+      <div className="mb-4">
+        <Label htmlFor="location-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
+          地点
+        </Label>
+        <Input
           id="location-input"
           type="text"
           value={locationName}
@@ -27,9 +33,11 @@ export function InfoPanel({
         />
       </div>
 
-      <div className="form-field">
-        <label htmlFor="captured-at-input">时间</label>
-        <input
+      <div className="mb-4">
+        <Label htmlFor="captured-at-input" className="mb-1.5 text-[13px] tracking-wide text-on-surface-variant">
+          时间
+        </Label>
+        <Input
           id="captured-at-input"
           type="text"
           value={capturedAtText}
@@ -37,14 +45,13 @@ export function InfoPanel({
         />
       </div>
 
-      <div className="form-field watermark-toggle">
-        <input
+      <div className="mb-4 flex items-center gap-2.5">
+        <Checkbox
           id="watermark-toggle"
-          type="checkbox"
           checked={watermarkEnabled}
-          onChange={(e) => onWatermarkToggle(e.target.checked)}
+          onCheckedChange={(checked) => onWatermarkToggle(checked === true)}
         />
-        <label htmlFor="watermark-toggle">HueFrame 水印</label>
+        <Label htmlFor="watermark-toggle">HueFrame 水印</Label>
       </div>
     </div>
   )

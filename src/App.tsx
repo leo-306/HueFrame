@@ -147,14 +147,14 @@ export default function App() {
   )
 
   return (
-    <div className="app-shell">
+    <div className="mx-auto min-h-screen max-w-120">
       <TopBar language={language} onLanguageChange={setLanguage} />
 
       {activeTab === 'card' && (
         <>
           {!baseConfig && <EmptyState onFileSelected={handleFileSelected} />}
 
-          {isProcessing && <p className="processing-hint">处理中…</p>}
+          {isProcessing && <p className="px-5 py-3 text-sm text-on-surface-variant">处理中…</p>}
 
           {config && (
             <>
@@ -192,7 +192,7 @@ export default function App() {
                 }
               />
 
-              <div className="export-row">
+              <div className="px-5 pb-5">
                 <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
               </div>
             </>
@@ -200,7 +200,7 @@ export default function App() {
         </>
       )}
 
-      {activeTab !== 'card' && <p className="coming-soon">敬请期待</p>}
+      {activeTab !== 'card' && <p className="px-5 py-10 text-center text-on-surface-variant">敬请期待</p>}
 
       <BottomNav active={activeTab} onSelect={setActiveTab} />
     </div>

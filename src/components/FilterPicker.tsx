@@ -37,9 +37,18 @@ interface FilterPickerProps {
 
 export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
   return (
-    <div className="filter-picker">
+    <div className="flex w-full flex-wrap gap-2.5">
       {FILTERS.map((filter) => (
-        <button key={filter} className="filter-thumb-btn" onClick={() => onSelect(filter)} aria-pressed={selected === filter}>
+        <button
+          key={filter}
+          onClick={() => onSelect(filter)}
+          aria-pressed={selected === filter}
+          className={`flex flex-col items-center gap-1.5 rounded-md border px-1.5 py-1.5 font-body text-xs transition-colors ${
+            selected === filter
+              ? 'border-primary bg-primary-container text-on-primary-container'
+              : 'border-outline-variant bg-surface text-on-surface'
+          }`}
+        >
           <FilterThumbnail photo={photo} filter={filter} />
           {LABELS[filter]}
         </button>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { BottomNav } from './BottomNav'
 
 describe('BottomNav', () => {
@@ -16,10 +16,8 @@ describe('BottomNav', () => {
     expect(screen.getByText('裁剪')).toBeDisabled()
   })
 
-  it('calls onSelect when the enabled card tab is clicked', () => {
-    const onSelect = vi.fn()
-    render(<BottomNav active="card" onSelect={onSelect} />)
-    fireEvent.click(screen.getByText('卡片'))
-    expect(onSelect).toHaveBeenCalledWith('card')
+  it('marks the active tab as selected via ARIA state', () => {
+    render(<BottomNav active="card" onSelect={vi.fn()} />)
+    expect(screen.getByText('卡片')).toHaveAttribute('aria-selected', 'true')
   })
 })

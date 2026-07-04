@@ -1,5 +1,6 @@
+@import 'tailwindcss';
 @import './styles/theme.css';
-@import './styles/components.css';
+@import "tw-animate-css";
 
 * {
   box-sizing: border-box;
@@ -17,4 +18,66 @@ h2,
 h3 {
   font-family: var(--font-headline);
   font-weight: 400;
+}
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-headline);
+
+  /* shadcn semantic tokens, mapped onto our Ethereal Botanical palette */
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-on-surface);
+  --color-card: var(--color-surface-container-lowest);
+  --color-card-foreground: var(--color-on-surface);
+  --color-popover: var(--color-surface-container-lowest);
+  --color-popover-foreground: var(--color-on-surface);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary: var(--color-surface-container);
+  --color-secondary-foreground: var(--color-on-surface);
+  --color-muted: var(--color-surface-container);
+  --color-muted-foreground: var(--color-on-surface-variant);
+  --color-accent: var(--color-primary-container);
+  --color-accent-foreground: var(--color-on-primary-container);
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--color-outline-variant);
+  --color-input: var(--color-outline-variant);
+  --color-ring: var(--color-primary);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-default);
+  --radius-lg: var(--radius-md);
+  --radius-xl: var(--radius-lg);
+
+  /* raw Ethereal Botanical tokens, exposed directly for utilities like bg-surface-container, text-on-surface-variant */
+  --color-surface: var(--color-surface);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-on-primary: var(--color-on-primary);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-error: var(--color-error);
+}
+
+:root {
+  --radius: var(--radius-default);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
