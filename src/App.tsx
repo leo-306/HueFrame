@@ -53,6 +53,7 @@ export default function App() {
   const t = useTranslation()
   const [activeTab, setActiveTab] = useState<AppTab>(MOCK_ENABLED ? 'card' : 'home')
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
+  const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false)
   const hasLoadedMockPhoto = useRef(false)
 
   // originalPhoto + baseConfig 保存取色/EXIF 等一次性处理结果（基于未加滤镜的原图，
@@ -201,10 +202,12 @@ export default function App() {
   }, [])
 
   const handleShowAllTemplates = useCallback(() => {
-    setActiveSubTab('layout')
-    requestAnimationFrame(() => {
-      document.getElementById('template-picker')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    })
+    setIsTemplatePickerOpen(true)
+  }, [])
+
+  const handleTemplateSelect = useCallback((id: TemplateId) => {
+    setTemplate(id)
+    setIsTemplatePickerOpen(false)
   }, [])
 
   return (
@@ -237,6 +240,14 @@ export default function App() {
                 onReady={setExportCanvas}
               />
 
+              {isTemplatePickerOpen && (
+                <TemplatePicker
+                  selected={template}
+                  onSelect={handleTemplateSelect}
+                  onClose={() => setIsTemplatePickerOpen(false)}
+                />
+              )}
+
               <CardTabs
                 active={activeSubTab}
                 onSelect={setActiveSubTab}
@@ -245,7 +256,6 @@ export default function App() {
                 }
                 layoutPanel={
                   <>
-                    <TemplatePicker selected={template} onSelect={setTemplate} />
                     <AspectRatioPicker selected={aspectRatio} onSelect={setAspectRatio} />
                     <MarginSlider valuePx={marginPx} onChange={setMarginPx} />
                   </>

@@ -55,7 +55,7 @@ export function CardPreview({
       {(templateName || onPreviousTemplate || onNextTemplate || onShowAllTemplates) && (
         <div
           data-testid="template-controls"
-          className="mt-4 flex items-center justify-center gap-2 text-on-surface-variant"
+          className="relative mx-auto mt-4 flex h-8 w-full max-w-2xl items-center justify-between text-on-surface-variant"
         >
           {onPreviousTemplate && (
             <Button
@@ -69,25 +69,33 @@ export function CardPreview({
               <ChevronLeft />
             </Button>
           )}
-          {templateName && <span className="type-label px-1">{templateName}</span>}
-          {onShowAllTemplates && (
-            <Button type="button" variant="ghost" size="sm" onClick={onShowAllTemplates}>
+          {templateName && onShowAllTemplates ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onShowAllTemplates}
+              aria-label={t.templatePicker.viewAllTemplates}
+              className="absolute left-1/2 -translate-x-1/2 px-3"
+            >
               <LayoutGrid data-icon="inline-start" />
-              {t.templatePicker.viewAllTemplates}
+              {templateName}
+            </Button>
+          ) : templateName ? (
+            <span className="type-label absolute left-1/2 -translate-x-1/2 px-1">{templateName}</span>
+          ) : null}
+          {onNextTemplate && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              onClick={onNextTemplate}
+              aria-label={t.templatePicker.nextTemplate}
+              className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm hover:bg-primary-container"
+            >
+              <ChevronRight />
             </Button>
           )}
-          {onNextTemplate && (
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            onClick={onNextTemplate}
-            aria-label={t.templatePicker.nextTemplate}
-            className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm hover:bg-primary-container"
-          >
-            <ChevronRight />
-          </Button>
-        )}
         </div>
       )}
     </section>

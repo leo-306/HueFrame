@@ -48,6 +48,7 @@ export interface Translations {
     previousTemplate: string
     nextTemplate: string
     viewAllTemplates: string
+    closeTemplatePicker: string
   }
   marginSlider: {
     label: string
@@ -149,6 +150,7 @@ export const zh: Translations = {
     previousTemplate: '上一个模板',
     nextTemplate: '下一个模板',
     viewAllTemplates: '查看全部模板',
+    closeTemplatePicker: '关闭模板选择',
   },
   marginSlider: {
     label: '留白 (Margin)',
@@ -250,6 +252,7 @@ export const en: Translations = {
     previousTemplate: 'Previous template',
     nextTemplate: 'Next template',
     viewAllTemplates: 'View all templates',
+    closeTemplatePicker: 'Close template picker',
   },
   marginSlider: {
     label: 'Margin',

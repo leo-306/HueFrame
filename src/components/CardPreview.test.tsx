@@ -49,7 +49,9 @@ describe('CardPreview', () => {
     const controls = screen.getByTestId('template-controls')
     fireEvent.click(within(controls).getByRole('button', { name: '上一个模板' }))
     fireEvent.click(within(controls).getByRole('button', { name: '下一个模板' }))
-    fireEvent.click(within(controls).getByRole('button', { name: '查看全部模板' }))
+    const templateTitle = within(controls).getByRole('button', { name: '查看全部模板' })
+    expect(templateTitle).toHaveClass('absolute', 'left-1/2')
+    fireEvent.click(templateTitle)
 
     expect(onPreviousTemplate).toHaveBeenCalledOnce()
     expect(onNextTemplate).toHaveBeenCalledOnce()
