@@ -10,6 +10,10 @@ describe('FilterPicker', () => {
     expect(screen.getByText('暖调胶片')).toBeInTheDocument()
     expect(screen.getByText('冷调胶片')).toBeInTheDocument()
     expect(screen.getByText('复古正片')).toBeInTheDocument()
+    expect(screen.getByText('黑白纪实')).toBeInTheDocument()
+    expect(screen.getByText('柔雾')).toBeInTheDocument()
+    expect(screen.getByText('鲜艳')).toBeInTheDocument()
+    expect(screen.getByText('青橙电影')).toBeInTheDocument()
   })
 
   it('calls onSelect with the clicked filter name', () => {
@@ -24,7 +28,7 @@ describe('FilterPicker', () => {
   it('renders a thumbnail canvas for each filter option', () => {
     const { container } = render(<FilterPicker selected="none" photo={createTestPhoto()} onSelect={vi.fn()} />)
     const canvases = container.querySelectorAll('canvas')
-    expect(canvases.length).toBe(4)
+    expect(canvases.length).toBe(8)
   })
 
   it('shows fade hints only in directions with more content', () => {

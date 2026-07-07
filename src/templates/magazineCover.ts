@@ -26,7 +26,8 @@ export const renderMagazineCover: TemplateRenderer = (ctx, config) => {
 
   // 底部色卡角标
   const swatchSize = 36
-  const swatchGap = 8
+  const swatchGap = Math.max(0, config.swatchGapPx ?? 8)
+  const swatchRadius = Math.max(0, config.swatchRadiusPx ?? 0)
   const totalWidth = palette.length * swatchSize + (palette.length - 1) * swatchGap
   const startX = width - totalWidth - 24
   const swatchY = height - swatchSize - 24
@@ -34,8 +35,15 @@ export const renderMagazineCover: TemplateRenderer = (ctx, config) => {
   palette.forEach((entry, index) => {
     const x = startX + index * (swatchSize + swatchGap)
     ctx.fillStyle = entry.hex
-    ctx.fillRect(x, swatchY, swatchSize, swatchSize)
     ctx.strokeStyle = 'rgba(255,255,255,0.8)'
-    ctx.strokeRect(x, swatchY, swatchSize, swatchSize)
+    if (swatchRadius > 0) {
+      ctx.beginPath()
+      ctx.roundRect(x, swatchY, swatchSize, swatchSize, Math.min(swatchRadius, swatchSize / 2))
+      ctx.fill()
+      ctx.stroke()
+    } else {
+      ctx.fillRect(x, swatchY, swatchSize, swatchSize)
+      ctx.strokeRect(x, swatchY, swatchSize, swatchSize)
+    }
   })
 }

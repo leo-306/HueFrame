@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { buildCardConfig } from './photoPipeline'
+import { buildCardConfig, extractPaletteEntries } from './photoPipeline'
 
 vi.mock('./exifParser', () => ({
   parsePhotoMeta: vi.fn().mockResolvedValue({
@@ -24,6 +24,15 @@ vi.mock('./paletteWeights', () => ({
 }))
 
 describe('buildCardConfig', () => {
+  it('extracts palette entries without rebuilding photo metadata', async () => {
+    const photo = new Image(200, 200)
+
+    const palette = await extractPaletteEntries(photo)
+
+    expect(palette.map((entry) => entry.percentage)).toEqual([60, 40])
+    expect(palette.map((entry) => entry.hex)).toEqual(['#e63c50', '#28a0a0'])
+  })
+
   it('assembles a complete CardConfig from a photo image', async () => {
     const photo = new Image(200, 200)
     const file = new File([''], 'photo.jpg', { type: 'image/jpeg' })
@@ -37,7 +46,7 @@ describe('buildCardConfig', () => {
     })
 
     expect(config.locationName).toBe('Kyoto, Japan')
-    expect(config.capturedAtText).toContain('2026')
+    expect(config.capturedAtText).toBe('2026.04.10')
     expect(config.palette.length).toBe(2)
     expect(config.palette[0].hex).toMatch(/^#[0-9a-f]{6}$/i)
     expect(config.palette[0].percentage).toBe(60)
@@ -79,5 +88,23 @@ describe('buildCardConfig', () => {
     })
 
     expect(config.colorNameLanguage).toBe('en')
+  })
+
+  it('sorts palette colors by percentage from high to low', async () => {
+    const { computePalettePercentages } = await import('./paletteWeights')
+    vi.mocked(computePalettePercentages).mockReturnValueOnce([20, 80])
+    const photo = new Image(200, 200)
+    const file = new File([''], 'photo.jpg', { type: 'image/jpeg' })
+
+    const config = await buildCardConfig(file, photo, {
+      width: 800,
+      height: 1000,
+      titleFont: 'serif',
+      colorNameLanguage: 'zh',
+      unknownLocationLabel: '未知地点',
+    })
+
+    expect(config.palette.map((entry) => entry.percentage)).toEqual([80, 20])
+    expect(config.palette[0].rgb).toEqual([40, 160, 160])
   })
 })

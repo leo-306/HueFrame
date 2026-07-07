@@ -11,7 +11,16 @@ export interface PhotoMeta {
  */
 export async function parsePhotoMeta(file: File): Promise<PhotoMeta> {
   try {
-    const data = await exifr.parse(file, { gps: true, pick: ['DateTimeOriginal', 'latitude', 'longitude'] })
+    const data = await exifr.parse(file, {
+      gps: true,
+      pick: [
+        'DateTimeOriginal',
+        'GPSLatitude',
+        'GPSLatitudeRef',
+        'GPSLongitude',
+        'GPSLongitudeRef',
+      ],
+    })
 
     if (!data) {
       return { gps: null, capturedAt: null }

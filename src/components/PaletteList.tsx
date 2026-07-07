@@ -1,12 +1,17 @@
 import type { ColorNameLanguage, PaletteEntry } from '../templates/types'
+import { useTranslation } from '../i18n/LocaleContext'
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import { Button } from './ui/button'
 
 interface PaletteListProps {
   palette: PaletteEntry[]
   language: ColorNameLanguage
   onColorChange: (index: number, newHex: string) => void
+  onMove: (index: number, direction: 'up' | 'down') => void
 }
 
-export function PaletteList({ palette, language, onColorChange }: PaletteListProps) {
+export function PaletteList({ palette, language, onColorChange, onMove }: PaletteListProps) {
+  const t = useTranslation()
   return (
     <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
       {palette.map((entry, index) => (
@@ -24,8 +29,32 @@ export function PaletteList({ palette, language, onColorChange }: PaletteListPro
           <span className="type-label flex-1">{language === 'en' ? entry.name.en : entry.name.zh}</span>
           <span className="type-caption font-mono text-on-surface-variant">{entry.hex.toUpperCase()}</span>
           {entry.percentage !== undefined && (
-            <span className="type-caption min-w-8 text-right text-on-surface-variant">{entry.percentage}%</span>
+            <span className="type-caption min-w-16 text-right text-on-surface-variant">
+              {t.cardTabs.colorPercentage} {entry.percentage}%
+            </span>
           )}
+          <div className="flex shrink-0 gap-0.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              disabled={index === 0}
+              aria-label={`${t.cardTabs.moveUp} ${language === 'en' ? entry.name.en : entry.name.zh}`}
+              onClick={() => onMove(index, 'up')}
+            >
+              <ArrowUp />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              disabled={index === palette.length - 1}
+              aria-label={`${t.cardTabs.moveDown} ${language === 'en' ? entry.name.en : entry.name.zh}`}
+              onClick={() => onMove(index, 'down')}
+            >
+              <ArrowDown />
+            </Button>
+          </div>
         </li>
       ))}
     </ul>

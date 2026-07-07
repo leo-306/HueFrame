@@ -4,6 +4,7 @@ import type { CardConfig, TemplateRenderer } from '../templates/types'
 import { renderCardWithMargin } from '../lib/cardRenderer'
 import { useTranslation } from '../i18n/LocaleContext'
 import { Button } from './ui/button'
+import { CARD_INFO_FONT_LOAD } from '../lib/fonts'
 
 interface CardPreviewProps {
   config: CardConfig
@@ -34,8 +35,20 @@ export function CardPreview({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    renderCardWithMargin(ctx, config, renderer)
-    onReady?.(canvas)
+    let cancelled = false
+    const render = () => {
+      renderCardWithMargin(ctx, config, renderer)
+      onReady?.(canvas)
+    }
+
+    render()
+    document.fonts?.load(CARD_INFO_FONT_LOAD).then(() => {
+      if (!cancelled) render()
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [config, renderer, onReady])
 
   return (

@@ -20,6 +20,18 @@ export interface Translations {
     info: string
     toolConfig: string
     colorNameLanguage: string
+    colorPercentage: string
+    moveUp: string
+    moveDown: string
+    colorEditor: string
+    reextractColors: string
+    reextractingColors: string
+    spacingAndWhitespace: string
+    cardPadding: string
+    swatchGap: string
+    swatchRadius: string
+    decrease: string
+    increase: string
   }
   emptyState: {
     heading: string
@@ -41,6 +53,10 @@ export interface Translations {
     warmFilm: string
     coolFilm: string
     vintagePositive: string
+    monochrome: string
+    softFade: string
+    vivid: string
+    tealOrange: string
   }
   templatePicker: {
     classicStrip: string
@@ -61,6 +77,7 @@ export interface Translations {
     location: string
     capturedAt: string
     watermark: string
+    watermarkOpacity: string
   }
   homeTab: {
     heading: string
@@ -122,6 +139,18 @@ export const zh: Translations = {
     info: '信息',
     toolConfig: '工具配置',
     colorNameLanguage: '色名语言',
+    colorPercentage: '占比',
+    moveUp: '上移',
+    moveDown: '下移',
+    colorEditor: '颜色编辑',
+    reextractColors: '从图片重新提取',
+    reextractingColors: '正在重新提取',
+    spacingAndWhitespace: '间距与留白',
+    cardPadding: '卡片内边距',
+    swatchGap: '色块间距',
+    swatchRadius: '色块圆角',
+    decrease: '减少',
+    increase: '增加',
   },
   emptyState: {
     heading: '给照片，配一套颜色。',
@@ -143,6 +172,10 @@ export const zh: Translations = {
     warmFilm: '暖调胶片',
     coolFilm: '冷调胶片',
     vintagePositive: '复古正片',
+    monochrome: '黑白纪实',
+    softFade: '柔雾',
+    vivid: '鲜艳',
+    tealOrange: '青橙电影',
   },
   templatePicker: {
     classicStrip: '经典色带',
@@ -163,6 +196,7 @@ export const zh: Translations = {
     location: '地点',
     capturedAt: '时间',
     watermark: 'HueFrame 水印',
+    watermarkOpacity: '水印透明度',
   },
   homeTab: {
     heading: '给照片，配一套颜色。',
@@ -224,6 +258,18 @@ export const en: Translations = {
     info: 'Info',
     toolConfig: 'Tool Settings',
     colorNameLanguage: 'Color-name language',
+    colorPercentage: 'Share',
+    moveUp: 'Move up',
+    moveDown: 'Move down',
+    colorEditor: 'Color editing',
+    reextractColors: 'Extract from image again',
+    reextractingColors: 'Extracting colors',
+    spacingAndWhitespace: 'Spacing and whitespace',
+    cardPadding: 'Card padding',
+    swatchGap: 'Swatch gap',
+    swatchRadius: 'Swatch radius',
+    decrease: 'Decrease ',
+    increase: 'Increase ',
   },
   emptyState: {
     heading: 'A palette for your photo.',
@@ -245,6 +291,10 @@ export const en: Translations = {
     warmFilm: 'Warm Film',
     coolFilm: 'Cool Film',
     vintagePositive: 'Vintage Positive',
+    monochrome: 'Monochrome',
+    softFade: 'Soft Fade',
+    vivid: 'Vivid',
+    tealOrange: 'Teal & Orange',
   },
   templatePicker: {
     classicStrip: 'Classic Strip',
@@ -265,6 +315,7 @@ export const en: Translations = {
     location: 'Location',
     capturedAt: 'Time',
     watermark: 'HueFrame Watermark',
+    watermarkOpacity: 'Watermark opacity',
   },
   homeTab: {
     heading: 'A palette for your photo.',

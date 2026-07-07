@@ -55,6 +55,10 @@ export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
     warmFilm: t.filterPicker.warmFilm,
     coolFilm: t.filterPicker.coolFilm,
     vintagePositive: t.filterPicker.vintagePositive,
+    monochrome: t.filterPicker.monochrome,
+    softFade: t.filterPicker.softFade,
+    vivid: t.filterPicker.vivid,
+    tealOrange: t.filterPicker.tealOrange,
   }
   return (
     <div className="relative">

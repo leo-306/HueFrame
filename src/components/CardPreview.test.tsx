@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { CardPreview } from './CardPreview'
 import type { CardConfig } from '../templates/types'
 import { renderClassicStrip } from '../templates/classicStrip'
@@ -58,5 +58,14 @@ describe('CardPreview', () => {
     expect(onShowAllTemplates).toHaveBeenCalledOnce()
     expect(screen.getByText('经典色带')).toBeInTheDocument()
     expect(screen.getByText('MOCK')).toBeInTheDocument()
+  })
+
+  it('loads the bundled card information font for canvas rendering', async () => {
+    const load = vi.fn().mockResolvedValue([])
+    Object.defineProperty(document, 'fonts', { configurable: true, value: { load } })
+
+    render(<CardPreview config={makeConfig()} renderer={renderClassicStrip} />)
+
+    await waitFor(() => expect(load).toHaveBeenCalledWith('500 32px "LXGW WenKai"'))
   })
 })

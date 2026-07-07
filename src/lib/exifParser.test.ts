@@ -19,6 +19,13 @@ describe('parsePhotoMeta', () => {
 
     expect(meta.gps).toEqual({ lat: 35.0116, lon: 135.7681 })
     expect(meta.capturedAt).toEqual(new Date('2026-04-10T09:30:00'))
+    expect(exifr.parse).toHaveBeenCalledWith(
+      file,
+      expect.objectContaining({
+        gps: true,
+        pick: expect.arrayContaining(['GPSLatitude', 'GPSLatitudeRef', 'GPSLongitude', 'GPSLongitudeRef']),
+      })
+    )
   })
 
   it('returns null gps and capturedAt when EXIF has no data', async () => {

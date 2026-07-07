@@ -11,7 +11,7 @@ function formatDate(date: Date): string {
   const y = date.getFullYear()
   const m = String(date.getMonth() + 1).padStart(2, '0')
   const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
+  return `${y}.${m}.${d}`
 }
 
 export interface CardOptions {
@@ -20,6 +20,21 @@ export interface CardOptions {
   titleFont: string
   colorNameLanguage: ColorNameLanguage
   unknownLocationLabel: string
+}
+
+export async function extractPaletteEntries(photo: HTMLImageElement): Promise<PaletteEntry[]> {
+  const rawPalette = await extractPalette(photo, 6)
+  const percentages = computePalettePercentages(photo, rawPalette)
+
+  return rawPalette
+    .map((rgb, index) => ({
+      rgb,
+      hex: rgbToHex(rgb),
+      name: nearestColorName(rgb),
+      textColor: pickReadableTextColor(rgb),
+      percentage: percentages[index],
+    }))
+    .sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0))
 }
 
 /**
@@ -31,20 +46,10 @@ export async function buildCardConfig(
   photo: HTMLImageElement,
   options: CardOptions
 ): Promise<CardConfig> {
-  const [meta, rawPalette] = await Promise.all([parsePhotoMeta(file), extractPalette(photo, 6)])
+  const [meta, palette] = await Promise.all([parsePhotoMeta(file), extractPaletteEntries(photo)])
 
   const locationName = meta.gps ? await resolveLocationName(meta.gps) : options.unknownLocationLabel
   const capturedAtText = meta.capturedAt ? formatDate(meta.capturedAt) : ''
-  const percentages = computePalettePercentages(photo, rawPalette)
-
-  const palette: PaletteEntry[] = rawPalette.map((rgb, index) => ({
-    rgb,
-    hex: rgbToHex(rgb),
-    name: nearestColorName(rgb),
-    textColor: pickReadableTextColor(rgb),
-    percentage: percentages[index],
-  }))
-
   return {
     photo,
     palette,

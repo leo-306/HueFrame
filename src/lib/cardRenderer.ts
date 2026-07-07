@@ -33,10 +33,11 @@ export function renderCardWithMargin(
   ctx.drawImage(innerCanvas, marginPx, marginPx)
 
   if (config.watermarkEnabled) {
-    ctx.fillStyle = 'rgba(26, 28, 28, 0.55)'
-    ctx.font = '12px Inter, sans-serif'
+    const watermarkOpacity = Math.min(1, Math.max(0, config.watermarkOpacity ?? 0.55))
+    ctx.fillStyle = `rgba(26, 28, 28, ${watermarkOpacity})`
+    ctx.font = '20px Inter, sans-serif'
     ctx.textAlign = 'right'
-    ctx.fillText('HueFrame', width - 16, height - 16)
+    ctx.fillText('HueFrame', width - 20, height - 20)
   }
 }
 

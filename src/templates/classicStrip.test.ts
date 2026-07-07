@@ -54,4 +54,51 @@ describe('renderClassicStrip', () => {
 
     expect(drawImage).toHaveBeenCalledWith(config.photo, 0, 0, 800, 533)
   })
+
+  it('uses readable typography for swatch labels and photo information', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const renderedText: Array<{ text: string; font: string }> = []
+    vi.spyOn(ctx, 'fillText').mockImplementation((text) => {
+      renderedText.push({ text: String(text), font: ctx.font })
+    })
+
+    renderClassicStrip(ctx, makeConfig())
+
+    expect(renderedText.find(({ text }) => text === '绯樱')?.font).toBe('24px sans-serif')
+    expect(renderedText.find(({ text }) => text === '#E63C50')?.font).toBe('16px monospace')
+    expect(renderedText.find(({ text }) => text.includes('Kyoto, Japan'))?.font).toContain('LXGW WenKai')
+  })
+
+  it('centers the swatch name and hex vertically like the reference layout', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const fillText = vi.spyOn(ctx, 'fillText')
+
+    renderClassicStrip(ctx, makeConfig())
+
+    expect(fillText).toHaveBeenCalledWith('绯樱', 200, 935)
+    expect(fillText).toHaveBeenCalledWith('#E63C50', 200, 977)
+  })
+
+  it('omits the separator when capture time is unavailable', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const fillText = vi.spyOn(ctx, 'fillText')
+
+    renderClassicStrip(ctx, { ...makeConfig(), capturedAtText: '' })
+
+    expect(fillText).toHaveBeenCalledWith('Kyoto, Japan', 400, 968)
+  })
+
+  it('applies configured gaps and rounded corners to palette swatches', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const roundRect = vi.spyOn(ctx, 'roundRect')
+
+    renderClassicStrip(ctx, { ...makeConfig(), swatchGapPx: 16, swatchRadiusPx: 6 })
+
+    expect(roundRect).toHaveBeenNthCalledWith(1, 0, 800, 392, 300, 6)
+    expect(roundRect).toHaveBeenNthCalledWith(2, 408, 800, 392, 300, 6)
+  })
 })

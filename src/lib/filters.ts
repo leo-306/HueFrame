@@ -1,4 +1,13 @@
-export const FILTERS = ['none', 'warmFilm', 'coolFilm', 'vintagePositive'] as const
+export const FILTERS = [
+  'none',
+  'warmFilm',
+  'coolFilm',
+  'vintagePositive',
+  'monochrome',
+  'softFade',
+  'vivid',
+  'tealOrange',
+] as const
 export type FilterName = (typeof FILTERS)[number]
 
 type ChannelTransform = (r: number, g: number, b: number) => [number, number, number]
@@ -13,6 +22,33 @@ const TRANSFORMS: Record<FilterName, ChannelTransform> = {
   coolFilm: (r, g, b) => [clamp(r * 0.9), clamp(g * 1.02), clamp(b * 1.15 + 8)],
   // 复古正片：整体降低对比度并轻微偏黄绿
   vintagePositive: (r, g, b) => [clamp(r * 0.95 + 15), clamp(g * 0.97 + 10), clamp(b * 0.85)],
+  // 黑白纪实：按视觉亮度去色
+  monochrome: (r, g, b) => {
+    const luminance = r * 0.299 + g * 0.587 + b * 0.114
+    return [luminance, luminance, luminance]
+  },
+  // 柔雾：抬高暗部并压低高光，降低整体对比度
+  softFade: (r, g, b) => [clamp(r * 0.78 + 28), clamp(g * 0.78 + 28), clamp(b * 0.78 + 28)],
+  // 鲜艳：围绕亮度增强各通道之间的色彩差异
+  vivid: (r, g, b) => {
+    const luminance = r * 0.299 + g * 0.587 + b * 0.114
+    return [
+      clamp(luminance + (r - luminance) * 1.3),
+      clamp(luminance + (g - luminance) * 1.3),
+      clamp(luminance + (b - luminance) * 1.3),
+    ]
+  },
+  // 青橙电影：暗部偏青，高光偏暖
+  tealOrange: (r, g, b) => {
+    const luminance = (r + g + b) / 3
+    const highlight = luminance / 255
+    const shadow = 1 - highlight
+    return [
+      clamp(r + 20 * highlight - 6 * shadow),
+      clamp(g + 7 * shadow),
+      clamp(b + 20 * shadow - 10 * highlight),
+    ]
+  },
 }
 
 /**

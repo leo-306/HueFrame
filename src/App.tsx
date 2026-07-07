@@ -7,12 +7,13 @@ import { FilterPicker } from './components/FilterPicker'
 import { TemplatePicker } from './components/TemplatePicker'
 import { MarginSlider } from './components/MarginSlider'
 import { PaletteList } from './components/PaletteList'
+import { PaletteControls } from './components/PaletteControls'
 import { InfoPanel } from './components/InfoPanel'
 import { CardPreview } from './components/CardPreview'
 import { ExportButton } from './components/ExportButton'
 import { GridTool } from './components/grid/GridTool'
 import { HomeTab } from './components/HomeTab'
-import { buildCardConfig } from './lib/photoPipeline'
+import { buildCardConfig, extractPaletteEntries } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForTemplate } from './lib/cardDimensions'
 import { updatePaletteEntryColor } from './lib/paletteEditing'
@@ -71,9 +72,13 @@ export default function App() {
   const [filter, setFilter] = useState<FilterName>('none')
   const [language, setLanguage] = useState<ColorNameLanguage>('zh')
   const [marginPx, setMarginPx] = useState(24)
+  const [swatchGapPx, setSwatchGapPx] = useState(16)
+  const [swatchRadiusPx, setSwatchRadiusPx] = useState(6)
   const [watermarkEnabled, setWatermarkEnabled] = useState(true)
+  const [watermarkOpacity, setWatermarkOpacity] = useState(55)
 
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isExtractingColors, setIsExtractingColors] = useState(false)
   const [processingError, setProcessingError] = useState<string | null>(null)
   const [exportCanvas, setExportCanvas] = useState<HTMLCanvasElement | null>(null)
 
@@ -92,7 +97,10 @@ export default function App() {
       width,
       height,
       marginPx,
+      swatchGapPx,
+      swatchRadiusPx,
       watermarkEnabled,
+      watermarkOpacity: watermarkOpacity / 100,
       palette: paletteOverride ?? baseConfig.palette,
       locationName: locationOverride ?? baseConfig.locationName,
       capturedAtText: capturedAtOverride ?? baseConfig.capturedAtText,
@@ -103,7 +111,10 @@ export default function App() {
     template,
     language,
     marginPx,
+    swatchGapPx,
+    swatchRadiusPx,
     watermarkEnabled,
+    watermarkOpacity,
     paletteOverride,
     locationOverride,
     capturedAtOverride,
@@ -166,6 +177,31 @@ export default function App() {
     },
     [config, paletteOverride]
   )
+
+  const handlePaletteMove = useCallback(
+    (index: number, direction: 'up' | 'down') => {
+      if (!config) return
+      const current = paletteOverride ?? config.palette
+      const targetIndex = direction === 'up' ? index - 1 : index + 1
+      if (targetIndex < 0 || targetIndex >= current.length) return
+      const updated = [...current]
+      const movedEntry = updated[index]
+      updated[index] = updated[targetIndex]
+      updated[targetIndex] = movedEntry
+      setPaletteOverride(updated)
+    },
+    [config, paletteOverride]
+  )
+
+  const handleReextractPalette = useCallback(async () => {
+    if (!originalPhoto) return
+    setIsExtractingColors(true)
+    try {
+      setPaletteOverride(await extractPaletteEntries(originalPhoto))
+    } finally {
+      setIsExtractingColors(false)
+    }
+  }, [originalPhoto])
 
   const handleGenerateCardFromGrid = useCallback(
     (canvas: HTMLCanvasElement) => {
@@ -260,7 +296,16 @@ export default function App() {
                   <MarginSlider valuePx={marginPx} onChange={setMarginPx} />
                 }
                 palettePanel={
-                  <div className="flex flex-col gap-6">
+                  <PaletteControls
+                    marginPx={marginPx}
+                    swatchGapPx={swatchGapPx}
+                    swatchRadiusPx={swatchRadiusPx}
+                    isExtracting={isExtractingColors}
+                    onReextract={handleReextractPalette}
+                    onMarginChange={setMarginPx}
+                    onSwatchGapChange={setSwatchGapPx}
+                    onSwatchRadiusChange={setSwatchRadiusPx}
+                  >
                     <div>
                       <div className="mb-3 text-base text-on-surface-variant">{t.cardTabs.colorNameLanguage}</div>
                       <LanguagePicker selected={language} onSelect={setLanguage} />
@@ -269,17 +314,20 @@ export default function App() {
                       palette={config.palette}
                       language={language}
                       onColorChange={handlePaletteColorChange}
+                      onMove={handlePaletteMove}
                     />
-                  </div>
+                  </PaletteControls>
                 }
                 infoPanel={
                   <InfoPanel
                     locationName={config.locationName}
                     capturedAtText={config.capturedAtText}
                     watermarkEnabled={watermarkEnabled}
+                    watermarkOpacity={watermarkOpacity}
                     onLocationChange={setLocationOverride}
                     onCapturedAtChange={setCapturedAtOverride}
                     onWatermarkToggle={setWatermarkEnabled}
+                    onWatermarkOpacityChange={setWatermarkOpacity}
                   />
                 }
               />

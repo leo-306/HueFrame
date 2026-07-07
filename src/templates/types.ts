@@ -23,7 +23,10 @@ export interface CardConfig {
   height: number
   colorNameLanguage: ColorNameLanguage
   marginPx?: number
+  swatchGapPx?: number
+  swatchRadiusPx?: number
   watermarkEnabled?: boolean
+  watermarkOpacity?: number
 }
 
 export type TemplateRenderer = (ctx: CanvasRenderingContext2D, config: CardConfig) => void

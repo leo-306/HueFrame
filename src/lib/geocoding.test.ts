@@ -15,7 +15,10 @@ describe('resolveLocationName', () => {
     } as Response)
 
     const name = await resolveLocationName({ lat: 35.0116, lon: 135.7681 })
-    expect(name).toBe('Kyoto, Japan')
+    expect(name).toBe('Kyoto')
+    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('zoom=10'), {
+      headers: { Accept: 'application/json' },
+    })
   })
 
   it('falls back to coordinate text when the API call fails', async () => {

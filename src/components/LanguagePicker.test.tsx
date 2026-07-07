@@ -11,6 +11,7 @@ describe('LanguagePicker', () => {
     expect(zhButton).toBeInTheDocument()
     expect(enButton).toBeInTheDocument()
     expect(zhButton).toHaveAttribute('aria-pressed', 'true')
+    expect(zhButton).toHaveClass('h-8', 'min-w-20', 'px-3', 'text-xs')
   })
 
   it('calls onSelect with "en" when English is clicked', () => {

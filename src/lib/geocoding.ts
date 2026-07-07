@@ -12,7 +12,7 @@ function formatCoordinateFallback({ lat, lon }: Coordinates): string {
  * 网络失败或响应异常时，降级返回格式化的经纬度文本，不抛异常。
  */
 export async function resolveLocationName(coords: Coordinates): Promise<string> {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=json`
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${coords.lat}&lon=${coords.lon}&format=json&zoom=10`
 
   try {
     const response = await fetch(url, {
@@ -25,13 +25,9 @@ export async function resolveLocationName(coords: Coordinates): Promise<string> 
 
     const data = await response.json()
     const city = data.address?.city ?? data.address?.town ?? data.address?.village
-    const country = data.address?.country
 
-    if (city && country) {
-      return `${city}, ${country}`
-    }
-    if (country) {
-      return country
+    if (city) {
+      return city
     }
 
     return formatCoordinateFallback(coords)

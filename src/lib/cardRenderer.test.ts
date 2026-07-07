@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { exportCanvasToBlob, renderCardWithMargin } from './cardRenderer'
 import type { CardConfig } from '../templates/types'
 import { renderClassicStrip } from '../templates/classicStrip'
@@ -75,6 +75,34 @@ describe('renderCardWithMargin', () => {
     const regionWith = withCanvas.getContext('2d')!.getImageData(320, 460, 60, 20).data
 
     expect(Array.from(regionWith)).not.toEqual(Array.from(regionWithout))
+  })
+
+  it('renders the watermark at a readable size', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 400
+    canvas.height = 500
+    const ctx = canvas.getContext('2d')!
+    const fillText = vi.spyOn(ctx, 'fillText')
+
+    renderCardWithMargin(ctx, { ...makeConfig(), watermarkEnabled: true }, renderClassicStrip)
+
+    expect(fillText).toHaveBeenCalledWith('HueFrame', 380, 480)
+    expect(ctx.font).toBe('20px Inter, sans-serif')
+  })
+
+  it('uses the configured watermark opacity', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 400
+    canvas.height = 500
+    const ctx = canvas.getContext('2d')!
+
+    renderCardWithMargin(
+      ctx,
+      { ...makeConfig(), watermarkEnabled: true, watermarkOpacity: 0.25 },
+      renderClassicStrip
+    )
+
+    expect(ctx.fillStyle).toBe('rgba(26, 28, 28, 0.25)')
   })
 
   it('does not throw when marginPx and watermarkEnabled are omitted', () => {

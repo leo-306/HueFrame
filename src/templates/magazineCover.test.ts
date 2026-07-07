@@ -44,4 +44,16 @@ describe('renderMagazineCover', () => {
 
     expect(drawImage).toHaveBeenCalledWith(config.photo, 0, 0, 800, 533)
   })
+
+  it('applies configured gaps and rounded corners to palette swatches', () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const roundRect = vi.spyOn(ctx, 'roundRect')
+
+    renderMagazineCover(ctx, { ...makeConfig(), swatchGapPx: 16, swatchRadiusPx: 6 })
+
+    expect(roundRect).toHaveBeenCalledWith(636, 940, 36, 36, 6)
+    expect(roundRect).toHaveBeenCalledWith(688, 940, 36, 36, 6)
+    expect(roundRect).toHaveBeenCalledWith(740, 940, 36, 36, 6)
+  })
 })
