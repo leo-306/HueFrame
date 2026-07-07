@@ -77,7 +77,7 @@ export function CardPreview({
               size="icon-sm"
               onClick={onPreviousTemplate}
               aria-label={t.templatePicker.previousTemplate}
-              className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm hover:bg-primary-container"
+              className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm active:bg-primary-container"
             >
               <ChevronLeft />
             </Button>
@@ -104,7 +104,7 @@ export function CardPreview({
               size="icon-sm"
               onClick={onNextTemplate}
               aria-label={t.templatePicker.nextTemplate}
-              className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm hover:bg-primary-container"
+              className="rounded-full border-outline-variant/50 bg-surface-container-lowest shadow-sm active:bg-primary-container"
             >
               <ChevronRight />
             </Button>

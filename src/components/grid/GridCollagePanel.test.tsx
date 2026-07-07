@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GridCollagePanel } from './GridCollagePanel'
 import { installMockUploadImage } from '../../../tests/mockUploadImage'
 
@@ -16,11 +17,15 @@ describe('GridCollagePanel', () => {
 
   it('shows the multi-upload zone before any photos are selected', () => {
     render(<GridCollagePanel onGenerateCard={vi.fn()} />)
-    expect(screen.getByText(/上传多张照片/)).toBeInTheDocument()
+    const heading = screen.getByRole('heading')
+    expect(heading).toBeInTheDocument()
+    expect(heading.parentElement).toHaveClass('pt-10')
+    expect(screen.getByText('拼出灵感')).toHaveClass('font-semibold', 'text-[#00a86b]')
   })
 
   it('shows the grid size picker after photos are uploaded', async () => {
-    render(<GridCollagePanel onGenerateCard={vi.fn()} />)
+    const user = userEvent.setup()
+    const { container } = render(<GridCollagePanel onGenerateCard={vi.fn()} />)
 
     const files = [
       new File(['a'], 'a.jpg', { type: 'image/jpeg' }),
@@ -29,7 +34,16 @@ describe('GridCollagePanel', () => {
     const input = screen.getByTestId('grid-upload-input') as HTMLInputElement
     fireEvent.change(input, { target: { files } })
 
-    await waitFor(() => expect(screen.getByText('3×3')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByRole('button', { name: '3×3' })).toBeInTheDocument())
+    expect(screen.getByRole('tab', { name: '版式' })).toBeInTheDocument()
+    const spacingTab = screen.getByRole('tab', { name: '间距与留白' })
+    expect(spacingTab).toBeInTheDocument()
+    await user.click(spacingTab)
+    expect(screen.getAllByRole('slider')).toHaveLength(1)
+    expect(screen.getByTestId('replace-upload-input')).toHaveAttribute('multiple')
+    expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('tablist'))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
   })
 
   it('shows a hint when more photos are uploaded than grid cells', async () => {
@@ -39,8 +53,8 @@ describe('GridCollagePanel', () => {
     const input = screen.getByTestId('grid-upload-input') as HTMLInputElement
     fireEvent.change(input, { target: { files } })
 
-    await waitFor(() => screen.getByText('2×2'))
-    fireEvent.click(screen.getByText('2×2'))
+    await waitFor(() => screen.getByRole('button', { name: '2×2' }))
+    fireEvent.click(screen.getByRole('button', { name: '2×2' }))
 
     await waitFor(() => expect(screen.getByText('仅使用前 4 张')).toBeInTheDocument())
   })

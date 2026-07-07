@@ -19,6 +19,7 @@ describe('CardTabs', () => {
     expect(screen.getByText('版式')).toBeInTheDocument()
     expect(screen.getByText('调色')).toBeInTheDocument()
     expect(screen.getByText('信息')).toBeInTheDocument()
+    expect(screen.queryByText('工具配置')).not.toBeInTheDocument()
   })
 
   it('only renders the panel for the active tab', () => {

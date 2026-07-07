@@ -68,4 +68,5 @@ describe('CardPreview', () => {
 
     await waitFor(() => expect(load).toHaveBeenCalledWith('500 32px "LXGW WenKai"'))
   })
+
 })

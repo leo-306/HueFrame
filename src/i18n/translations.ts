@@ -18,7 +18,6 @@ export interface Translations {
     layout: string
     palette: string
     info: string
-    toolConfig: string
     colorNameLanguage: string
     colorPercentage: string
     moveUp: string
@@ -38,7 +37,9 @@ export interface Translations {
     headingHighlight: string
     supportedFormats: string
     gridSplitHeading: string
+    gridSplitHeadingHighlight: string
     gridCollageHeading: string
+    gridCollageHeadingHighlight: string
   }
   uploadZone: {
     prompt: string
@@ -48,7 +49,6 @@ export interface Translations {
   }
   exportButton: {
     export: string
-    exportPng: string
     saveAlbum: string
   }
   filterPicker: {
@@ -107,6 +107,8 @@ export interface Translations {
     collage: string
   }
   gridSizePicker: {
+    title: string
+    advanced: string
     customRows: string
     customCols: string
     clampHint: string
@@ -121,11 +123,13 @@ export interface Translations {
     resetRotation: string
     cellRotation: string
     cellCoord: string
+    rotationHint: string
   }
   common: {
     processing: string
     imageLoadFailed: string
     comingSoon: string
+    reupload: string
     unknownLocation: string
   }
 }
@@ -148,7 +152,6 @@ export const zh: Translations = {
     layout: '版式',
     palette: '调色',
     info: '信息',
-    toolConfig: '工具配置',
     colorNameLanguage: '色名语言',
     colorPercentage: '占比',
     moveUp: '上移',
@@ -164,11 +167,13 @@ export const zh: Translations = {
     increase: '增加',
   },
   emptyState: {
-    heading: '给照片，配一套颜色。',
+    heading: '给照片，配一套颜色',
     headingHighlight: '颜色',
     supportedFormats: '本地解析支持 JPG / PNG / WEBP / HEIF / HEIC',
-    gridSplitHeading: '上传照片，切出节奏。',
-    gridCollageHeading: '上传多张，拼出灵感。',
+    gridSplitHeading: '上传照片，切出节奏',
+    gridSplitHeadingHighlight: '切出节奏',
+    gridCollageHeading: '上传多张，拼出灵感',
+    gridCollageHeadingHighlight: '拼出灵感',
   },
   uploadZone: {
     prompt: '上传一张照片开始',
@@ -178,7 +183,6 @@ export const zh: Translations = {
   },
   exportButton: {
     export: '导出图片',
-    exportPng: '导出 PNG',
     saveAlbum: '保存到相册',
   },
   filterPicker: {
@@ -213,9 +217,9 @@ export const zh: Translations = {
     watermarkOpacity: '水印透明度',
   },
   homeTab: {
-    heading: '给照片，配一套颜色。',
+    heading: '给照片，配一套颜色',
     headingHighlight: '颜色',
-    subheading: '极简的照片色卡与切分工具，让每一份视觉表达都拥有呼吸感。',
+    subheading: '极简的照片色卡与切分工具，让每一份视觉表达都拥有呼吸感',
     subheadingHighlight: '呼吸感',
     cardEyebrow: 'Creative Tool',
     cardTitle: '色卡模式',
@@ -237,6 +241,8 @@ export const zh: Translations = {
     collage: '拼图',
   },
   gridSizePicker: {
+    title: '宫格布局',
+    advanced: '高级设置',
     customRows: '自定义行数',
     customCols: '自定义列数',
     clampHint: '已调整为 1-6 之间',
@@ -251,11 +257,13 @@ export const zh: Translations = {
     resetRotation: '重置旋转',
     cellRotation: '旋转',
     cellCoord: '第{row}行第{col}列',
+    rotationHint: '点击网格中的单元格，可单独调整其旋转角度',
   },
   common: {
     processing: '处理中…',
     imageLoadFailed: '图片解析失败，请确认文件有效或换一张图片重试。',
     comingSoon: '敬请期待',
+    reupload: '重新上传',
     unknownLocation: '未知地点',
   },
 }
@@ -278,7 +286,6 @@ export const en: Translations = {
     layout: 'Layout',
     palette: 'Palette',
     info: 'Info',
-    toolConfig: 'Tool Settings',
     colorNameLanguage: 'Color-name language',
     colorPercentage: 'Share',
     moveUp: 'Move up',
@@ -294,11 +301,13 @@ export const en: Translations = {
     increase: 'Increase ',
   },
   emptyState: {
-    heading: 'A palette for your photo.',
+    heading: 'A palette for your photo',
     headingHighlight: 'palette',
     supportedFormats: 'Local parsing supports JPG / PNG / WEBP / HEIF / HEIC',
-    gridSplitHeading: 'Upload a photo to split.',
-    gridCollageHeading: 'Upload photos to collage.',
+    gridSplitHeading: 'Upload a photo to split',
+    gridSplitHeadingHighlight: 'split',
+    gridCollageHeading: 'Upload photos to collage',
+    gridCollageHeadingHighlight: 'collage',
   },
   uploadZone: {
     prompt: 'Upload a photo to start',
@@ -308,7 +317,6 @@ export const en: Translations = {
   },
   exportButton: {
     export: 'Export Image',
-    exportPng: 'Export PNG',
     saveAlbum: 'Save to Photos',
   },
   filterPicker: {
@@ -343,9 +351,9 @@ export const en: Translations = {
     watermarkOpacity: 'Watermark opacity',
   },
   homeTab: {
-    heading: 'A palette for your photo.',
+    heading: 'A palette for your photo',
     headingHighlight: 'palette',
-    subheading: 'A minimalist palette and grid-splitting tool that gives every visual story room to breathe.',
+    subheading: 'A minimalist palette and grid-splitting tool that gives every visual story room to breathe',
     subheadingHighlight: 'breathe',
     cardEyebrow: 'Creative Tool',
     cardTitle: 'Palette Mode',
@@ -367,6 +375,8 @@ export const en: Translations = {
     collage: 'Collage',
   },
   gridSizePicker: {
+    title: 'Grid Layout',
+    advanced: 'Advanced',
     customRows: 'Custom Rows',
     customCols: 'Custom Cols',
     clampHint: 'Adjusted to between 1-6',
@@ -381,11 +391,13 @@ export const en: Translations = {
     resetRotation: 'Reset Rotation',
     cellRotation: 'Rotation',
     cellCoord: 'Row {row}, Col {col}',
+    rotationHint: 'Click a cell in the grid to adjust its rotation angle',
   },
   common: {
     processing: 'Processing…',
     imageLoadFailed: 'Could not process this image. Check the file or try another image.',
     comingSoon: 'Coming soon',
+    reupload: 'Replace',
     unknownLocation: 'Unknown Location',
   },
 }

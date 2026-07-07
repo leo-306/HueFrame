@@ -4,7 +4,7 @@ export function Highlight({ text, mark }: { text: string; mark: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <span className="rounded bg-primary-container px-1 text-primary">{mark}</span>
+      <span className="font-semibold text-[#00a86b]">{mark}</span>
       {text.slice(idx + mark.length)}
     </>
   )

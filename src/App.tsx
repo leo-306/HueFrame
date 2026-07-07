@@ -236,23 +236,6 @@ export default function App() {
     [handleFileSelected]
   )
 
-  const handleBack = useCallback(() => {
-    if (activeTab === 'card' && originalPhoto) {
-      setOriginalPhoto(null)
-      setBaseConfig(null)
-      setDisplayPhoto(null)
-      setIsMockPhoto(false)
-      setPaletteOverride(null)
-      setLocationOverride(null)
-      setCapturedAtOverride(null)
-      setExportCanvas(null)
-      setFilter('none')
-      setProcessingError(null)
-      return
-    }
-    setActiveTab('home')
-  }, [activeTab, originalPhoto])
-
   const switchTemplate = useCallback((direction: -1 | 1) => {
     setTemplate((current) => {
       const currentIndex = TEMPLATE_IDS.indexOf(current)
@@ -270,11 +253,12 @@ export default function App() {
   }, [])
 
   return (
-    <div className={`min-h-screen ${activeTab === 'card' && config ? 'pb-44' : 'pb-24'}`}>
-      <TopBar
-        onBack={activeTab === 'home' ? undefined : handleBack}
-        tabs={activeTab === 'grid' && <GridSubTabSwitcher value={gridSubTab} onChange={setGridSubTab} />}
-      />
+    <div className="h-dvh overflow-hidden">
+      <div className={`h-full overflow-y-auto ${(activeTab === 'card' && config) || activeTab === 'grid' ? 'pb-36' : 'pb-24'}`}>
+        <TopBar
+          onHome={activeTab === 'home' ? undefined : () => setActiveTab('home')}
+          tabs={activeTab === 'grid' && <GridSubTabSwitcher value={gridSubTab} onChange={setGridSubTab} />}
+        />
 
       {activeTab === 'card' && (
         <>
@@ -354,7 +338,11 @@ export default function App() {
                 }
               />
 
-              <ExportButton canvas={exportCanvas} fileName="hueframe-card.png" />
+              <ExportButton
+                canvas={exportCanvas}
+                fileName="hueframe-card.png"
+                onFilesReplaced={([file]) => file && handleFileSelected(file)}
+              />
             </>
           )}
         </>
@@ -368,7 +356,8 @@ export default function App() {
         <GridTool activeSubTab={gridSubTab} onGenerateCard={handleGenerateCardFromGrid} />
       )}
 
-      {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
+        {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
+      </div>
 
       {activeTab !== 'home' && <BottomNav active={activeTab} onSelect={setActiveTab} />}
     </div>

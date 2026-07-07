@@ -12,11 +12,11 @@ interface GridToolProps {
 
 export function GridTool({ activeSubTab, onGenerateCard, initialFile }: GridToolProps) {
   return (
-    <Tabs value={activeSubTab} className="flex-col px-5">
-      <TabsContent value="split" className="pb-4" forceMount hidden={activeSubTab !== 'split'}>
+    <Tabs value={activeSubTab} className="w-full flex-col">
+      <TabsContent value="split" className="w-full pb-4" forceMount hidden={activeSubTab !== 'split'}>
         <GridSplitPanel onGenerateCard={onGenerateCard} initialFile={initialFile} />
       </TabsContent>
-      <TabsContent value="collage" className="pb-4" forceMount hidden={activeSubTab !== 'collage'}>
+      <TabsContent value="collage" className="w-full pb-4" forceMount hidden={activeSubTab !== 'collage'}>
         <GridCollagePanel onGenerateCard={onGenerateCard} />
       </TabsContent>
     </Tabs>

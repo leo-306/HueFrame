@@ -11,16 +11,16 @@ export function GridSubTabSwitcher({ value, onChange }: GridSubTabSwitcherProps)
   const t = useTranslation()
   return (
     <Tabs value={value} onValueChange={(next) => onChange(next as GridSubTab)}>
-      <TabsList className="h-auto w-auto rounded-full border border-outline-variant/30 bg-surface-container-high p-1">
+      <TabsList className="h-8 min-w-28 rounded-full border-0 bg-surface-container-high p-0.5 shadow-none">
         <TabsTrigger
           value="split"
-          className="h-auto rounded-full px-4 py-1.5 text-on-surface-variant data-[state=active]:bg-primary-container data-[state=active]:text-on-primary-container data-[state=active]:shadow-sm"
+          className="h-full rounded-full px-2 py-0.5 text-sm text-on-surface-variant shadow-none data-[state=active]:bg-primary-container data-[state=active]:text-on-primary-container data-[state=active]:shadow-none"
         >
           {t.gridTool.split}
         </TabsTrigger>
         <TabsTrigger
           value="collage"
-          className="h-auto rounded-full px-4 py-1.5 text-on-surface-variant data-[state=active]:bg-primary-container data-[state=active]:text-on-primary-container data-[state=active]:shadow-sm"
+          className="h-full rounded-full px-2 py-0.5 text-sm text-on-surface-variant shadow-none data-[state=active]:bg-primary-container data-[state=active]:text-on-primary-container data-[state=active]:shadow-none"
         >
           {t.gridTool.collage}
         </TabsTrigger>

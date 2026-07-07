@@ -33,14 +33,14 @@ function ModeCard({
       type="button"
       onClick={onSelect}
       style={{ backgroundImage: `url('${backgroundImage}')` }}
-      className={`group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-4xl border border-outline-variant/30 bg-cover bg-center p-8 text-left transition-all duration-400 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(67,72,70,0.09)] ${containerClassName}`}
+      className={`group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-4xl border border-outline-variant/30 bg-cover bg-center p-8 text-left transition-all duration-200 active:scale-[0.99] active:shadow-[0_18px_50px_rgba(67,72,70,0.09)] ${containerClassName}`}
     >
       <span
         aria-hidden="true"
         className="absolute inset-0 bg-[linear-gradient(90deg,rgba(249,249,248,0.96)_0%,rgba(249,249,248,0.9)_48%,rgba(249,249,248,0.32)_100%)]"
       />
       <span
-        className="relative z-10 mb-4 flex size-11 shrink-0 self-start items-center justify-center overflow-hidden rounded-xl border border-primary/20 bg-primary-container text-primary backdrop-blur-sm transition-all duration-300 group-hover:border-primary/30 group-hover:bg-primary-container/80"
+        className="relative z-10 mb-4 flex size-11 shrink-0 self-start items-center justify-center overflow-hidden rounded-xl border border-primary/20 bg-primary-container text-primary backdrop-blur-sm transition-all duration-200 group-active:border-primary/30 group-active:bg-primary-container/80"
         aria-hidden="true"
       >
         {icon}
@@ -76,7 +76,7 @@ export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
           title={t.homeTab.cardTitle}
           description={t.homeTab.cardDescription}
           actionLabel={t.homeTab.cardAction}
-          containerClassName="min-h-[320px] bg-primary-container/30 hover:bg-primary-container/50"
+          containerClassName="min-h-[320px] bg-primary-container/30 active:bg-primary-container/50"
           backgroundImage="/images/home-palette-bg.jpg"
           onSelect={onSelectCard}
         />
@@ -86,7 +86,7 @@ export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
           title={t.homeTab.gridTitle}
           description={t.homeTab.gridDescription}
           actionLabel={t.homeTab.gridAction}
-          containerClassName="min-h-[320px] bg-secondary-container/30 hover:bg-secondary-container/50"
+          containerClassName="min-h-[320px] bg-secondary-container/30 active:bg-secondary-container/50"
           backgroundImage="/images/home-grid-bg.jpg"
           onSelect={onSelectGrid}
         />

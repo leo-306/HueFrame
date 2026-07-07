@@ -5,7 +5,7 @@ import { HomeTab } from './HomeTab'
 describe('HomeTab', () => {
   it('renders the hero headline and subheadline', () => {
     render(<HomeTab onSelectCard={vi.fn()} onSelectGrid={vi.fn()} />)
-    expect(screen.getByRole('heading', { name: '给照片，配一套颜色。' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '给照片，配一套颜色' })).toBeInTheDocument()
     expect(screen.getByText(/极简的照片色卡与切分工具/)).toBeInTheDocument()
   })
 

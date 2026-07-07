@@ -25,7 +25,7 @@ export function UploadZone({ onFileSelected }: UploadZoneProps) {
 
   return (
     <label
-      className="flex aspect-4/3 w-full max-w-120 cursor-pointer flex-col items-center justify-center rounded-4xl border-2 border-dashed border-[rgba(195,199,196,0.5)] bg-[rgba(255,255,255,0.4)] shadow-[0_0_50px_rgba(87,96,93,0.04)] backdrop-blur-md transition-[box-shadow,border-color,background-color] duration-400 hover:border-primary hover:bg-[rgba(255,255,255,0.8)] hover:shadow-[0_0_60px_rgba(87,96,93,0.08)]"
+      className="flex aspect-4/3 w-full max-w-120 cursor-pointer flex-col items-center justify-center rounded-4xl border-2 border-dashed border-[rgba(195,199,196,0.5)] bg-[rgba(255,255,255,0.4)] shadow-[0_0_50px_rgba(87,96,93,0.04)] backdrop-blur-md transition-[box-shadow,border-color,background-color] duration-200 active:border-primary active:bg-[rgba(255,255,255,0.8)] active:shadow-[0_0_60px_rgba(87,96,93,0.08)]"
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
     >

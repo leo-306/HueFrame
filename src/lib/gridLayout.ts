@@ -8,7 +8,10 @@ export interface GridPreset {
 export const GRID_PRESETS: GridPreset[] = [
   { id: '3x3', rows: 3, cols: 3, label: '3×3' },
   { id: '2x2', rows: 2, cols: 2, label: '2×2' },
+  { id: '2x3', rows: 2, cols: 3, label: '2×3' },
+  { id: '3x2', rows: 3, cols: 2, label: '3×2' },
   { id: '1x3', rows: 1, cols: 3, label: '1×3' },
+  { id: '3x1', rows: 3, cols: 1, label: '3×1' },
 ]
 
 const MIN_GRID_SIZE = 1

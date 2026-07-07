@@ -30,8 +30,7 @@ export function CardTabs(props: CardTabsProps) {
     { id: 'info', label: t.cardTabs.info },
   ]
   return (
-    <section className="mx-auto w-full max-w-[1140px] px-5 pt-10 pb-6 sm:px-8 sm:pt-14">
-      <h2 className="type-heading mb-5 text-on-surface">{t.cardTabs.toolConfig}</h2>
+    <section className="mx-auto w-full max-w-[1140px] px-5 pt-6 pb-6 sm:px-8 sm:pt-8">
       <Tabs value={active} onValueChange={(value) => onSelect(value as CardSubTab)} className="flex-col gap-5">
         <TabsList className="h-auto w-full bg-surface-container-low p-1.5 sm:w-fit">
           {subTabs.map((tab) => (

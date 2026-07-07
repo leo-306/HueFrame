@@ -135,6 +135,35 @@ h3 {
   .hueframe-loading-orbit {
     animation: hueframe-orbit 3.2s linear infinite;
   }
+
+  .hueframe-brand {
+    display: inline-block;
+    color: var(--color-outline);
+  }
+
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    .hueframe-brand {
+      background-image: linear-gradient(
+        to bottom right,
+        var(--color-outline) 0%,
+        var(--color-outline) 28%,
+        #2f7d68 50%,
+        #789588 62%,
+        var(--color-outline) 78%,
+        var(--color-outline) 100%
+      );
+      background-position: 0% 0%;
+      background-size: 220% 220%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: hueframe-brand-gradient 3.2s linear infinite;
+    }
+  }
+
+  .hueframe-brand-link:active .hueframe-brand {
+    transform: scale(0.98);
+  }
 }
 
 @keyframes hueframe-breathe {
@@ -155,9 +184,20 @@ h3 {
   }
 }
 
+@keyframes hueframe-brand-gradient {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hueframe-loading-halo,
-  .hueframe-loading-orbit {
+  .hueframe-loading-orbit,
+  .hueframe-brand {
     animation: none;
   }
+
 }

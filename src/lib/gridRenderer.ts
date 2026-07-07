@@ -107,17 +107,16 @@ interface RotatedSplitRenderInput {
   photo: HTMLImageElement
   layout: RotatedSplitLayout
   showGridLines?: boolean
-  /** 选中的格子索引（row*cols+col），传入时在预览态绘制高亮边框 */
-  selectedCell?: number | null
 }
 
 /**
  * 旋转切分模式：每格按各自旋转角绘制，外接框区域用背景色填充，不裁剪内容。
  * 调用方须预先将 canvas 尺寸设为 layout.canvasWidth × layout.canvasHeight。
+ * 选中格子的高亮边框由调用方在 DOM 层用绝对定位元素绘制（避免被容器的圆角裁剪）。
  */
 export function renderRotatedSplitGrid(
   ctx: CanvasRenderingContext2D,
-  { photo, layout, showGridLines = false, selectedCell = null }: RotatedSplitRenderInput
+  { photo, layout, showGridLines = false }: RotatedSplitRenderInput
 ): void {
   ctx.fillStyle = GAP_BACKGROUND
   ctx.fillRect(0, 0, layout.canvasWidth, layout.canvasHeight)
@@ -146,19 +145,5 @@ export function renderRotatedSplitGrid(
       ctx.stroke()
       ctx.restore()
     }
-  }
-
-  if (selectedCell !== null && layout.cells[selectedCell]) {
-    const cell = layout.cells[selectedCell]
-    const lineWidth = Math.max(3, Math.round(layout.canvasWidth / 200))
-    ctx.save()
-    ctx.translate(cell.centerX, cell.centerY)
-    ctx.rotate(cell.rotation)
-    ctx.strokeStyle = 'rgba(103, 80, 164, 0.85)'
-    ctx.lineWidth = lineWidth
-    ctx.beginPath()
-    ctx.rect(-cell.sWidth / 2, -cell.sHeight / 2, cell.sWidth, cell.sHeight)
-    ctx.stroke()
-    ctx.restore()
   }
 }

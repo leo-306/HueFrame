@@ -6,7 +6,7 @@ import { LocaleProvider } from '../i18n/LocaleContext'
 describe('TopBar', () => {
   it('renders the HueFrame title', () => {
     render(<TopBar />)
-    expect(screen.getByText('映色格')).toBeInTheDocument()
+    expect(screen.getByText('映色格')).toHaveClass('hueframe-brand')
   })
 
   it('switches the title to English with the interface locale', () => {
@@ -37,10 +37,17 @@ describe('TopBar', () => {
     expect(screen.queryByText('图片切分')).not.toBeInTheDocument()
   })
 
-  it('forwards back navigation', () => {
-    const onBack = vi.fn()
-    render(<TopBar onBack={onBack} />)
-    fireEvent.click(screen.getByRole('button', { name: '返回首页' }))
-    expect(onBack).toHaveBeenCalledOnce()
+  it('returns home when the brand is clicked', () => {
+    const onHome = vi.fn()
+    render(<TopBar onHome={onHome} />)
+    fireEvent.click(screen.getByRole('button', { name: '映色格' }))
+    expect(onHome).toHaveBeenCalledOnce()
+  })
+
+  it('renders tool tabs in the same header row as the title', () => {
+    render(<TopBar tabs={<span>切分拼图</span>} />)
+
+    const title = screen.getByRole('heading', { name: '映色格' })
+    expect(title.parentElement?.parentElement).toContainElement(screen.getByText('切分拼图'))
   })
 })

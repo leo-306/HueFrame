@@ -76,7 +76,7 @@ export function FilterPicker({ selected, photo, onSelect }: FilterPickerProps) {
             className={`type-caption flex min-w-24 flex-col items-center gap-2 rounded-xl border bg-surface-container-lowest p-1.5 pb-3 transition-all ${
               selected === filter
                 ? 'border-primary-container text-primary shadow-sm'
-                : 'border-outline-variant/30 text-on-surface-variant opacity-75 hover:opacity-100'
+                : 'border-outline-variant/30 text-on-surface-variant opacity-75 active:opacity-100'
             }`}
           >
             <span className="overflow-hidden rounded-lg [&_canvas]:block [&_canvas]:h-20 [&_canvas]:w-20">

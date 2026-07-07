@@ -28,8 +28,10 @@ describe('GridTool', () => {
   })
 
   it('renders the split panel by default', () => {
-    render(<GridTool activeSubTab="split" onGenerateCard={vi.fn()} />)
+    const { container } = render(<GridTool activeSubTab="split" onGenerateCard={vi.fn()} />)
     expect(screen.getByText(/上传一张照片/)).toBeInTheDocument()
+    expect(container.querySelector('[data-slot="tabs"]')).toHaveClass('w-full')
+    expect(container.querySelector('[data-slot="tabs"]')).not.toHaveClass('px-5')
   })
 
   it('renders the collage panel when activeSubTab is collage', () => {
@@ -71,6 +73,6 @@ describe('GridTool', () => {
     const file = new File(['dummy'], 'from-home.jpg', { type: 'image/jpeg' })
     render(<GridTool activeSubTab="split" onGenerateCard={vi.fn()} initialFile={file} />)
 
-    await waitFor(() => expect(screen.getByText('3×3')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByRole('button', { name: '3×3' })).toBeInTheDocument())
   })
 })

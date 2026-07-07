@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { UploadZone } from '../UploadZone'
 import { GridSizePicker } from './GridSizePicker'
+import { GridConfigTabs } from './GridConfigTabs'
+import { Highlight } from '../Highlight'
 import { MarginSlider } from '../MarginSlider'
+import { ExportButton } from '../ExportButton'
 import { Button } from '../ui/button'
 import { Slider } from '../ui/slider'
 import { computeRotatedSplitLayout } from '../../lib/gridLayout'
 import { renderRotatedSplitGrid } from '../../lib/gridRenderer'
-import { exportCanvasToBlob } from '../../lib/cardRenderer'
 import { loadImage } from '../../lib/loadImage'
 import { useTranslation } from '../../i18n/LocaleContext'
 
@@ -70,7 +72,7 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
     previewCanvas.height = layout.canvasHeight
     const previewCtx = previewCanvas.getContext('2d')
     if (previewCtx) {
-      renderRotatedSplitGrid(previewCtx, { photo, layout, showGridLines: true, selectedCell })
+      renderRotatedSplitGrid(previewCtx, { photo, layout, showGridLines: true })
     }
 
     exportCanvas.width = layout.canvasWidth
@@ -81,7 +83,7 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
     }
 
     setExportReady(true)
-  }, [photo, layout, selectedCell])
+  }, [photo, layout])
 
   // 点击画布选格：找最近中心点
   const handleCanvasClick = useCallback(
@@ -118,18 +120,6 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
     setSelectedCell(null)
   }, [rows, cols])
 
-  const handleExport = async () => {
-    const canvas = exportCanvasRef.current
-    if (!canvas) return
-    const blob = await exportCanvasToBlob(canvas)
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'hueframe-grid-split.png'
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
   const handleGenerateCard = () => {
     if (exportCanvasRef.current) onGenerateCard(exportCanvasRef.current)
   }
@@ -139,92 +129,121 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
   return (
     <div className="pb-5">
       {!photo && (
-        <div className="relative flex flex-col items-center overflow-hidden px-5 pt-8 pb-8">
+        <div className="relative flex flex-col items-center overflow-hidden px-5 pt-10 pb-8">
           <div className="absolute -left-[10%] top-[10%] -z-10 h-75 w-75 rounded-full bg-[rgba(224,233,228,0.5)] mix-blend-multiply blur-[80px]" aria-hidden="true" />
           <div className="absolute -right-[10%] bottom-[10%] -z-10 h-75 w-75 rounded-full bg-[rgba(223,233,227,0.5)] mix-blend-multiply blur-[80px]" aria-hidden="true" />
-          <h2 className="type-display mx-0 mb-6 mt-0 text-center">{t.emptyState.gridSplitHeading}</h2>
+          <h2 className="type-display mx-0 mb-6 mt-0 text-center">
+            <Highlight text={t.emptyState.gridSplitHeading} mark={t.emptyState.gridSplitHeadingHighlight} />
+          </h2>
           <UploadZone onFileSelected={handleFileSelected} />
           <p className="type-body mt-5 text-center text-outline opacity-75">{t.emptyState.supportedFormats}</p>
         </div>
       )}
 
       {photo && (
-        <div className="px-5">
-          <GridSizePicker
-            rows={rows}
-            cols={cols}
-            onChange={({ rows: r, cols: c }) => {
-              setRows(r)
-              setCols(c)
-            }}
-          />
-
-          <MarginSlider
-            id="gap-x"
-            label={t.gridPanel.gapHorizontal}
-            valuePx={gapXPx}
-            onChange={setGapXPx}
-            max={40}
-          />
-          <div className="mt-4">
-            <MarginSlider
-              id="gap-y"
-              label={t.gridPanel.gapVertical}
-              valuePx={gapYPx}
-              onChange={setGapYPx}
-              max={40}
-            />
-          </div>
-
-          <div className="my-4 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest leading-none">
-            <canvas
-              ref={previewCanvasRef}
-              className="block h-auto w-full cursor-pointer"
-              onClick={handleCanvasClick}
-            />
+        <div className="px-5 pb-20">
+          <div className="relative my-4">
+            <div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest leading-none">
+              <canvas
+                ref={previewCanvasRef}
+                className="block h-auto w-full cursor-pointer"
+                onClick={handleCanvasClick}
+              />
+            </div>
+            {selectedCell !== null && layout && layout.cells[selectedCell] && (
+              <div
+                className="pointer-events-none absolute border-[3px] border-primary"
+                style={{
+                  left: `${((layout.cells[selectedCell].centerX - layout.cells[selectedCell].sWidth / 2) / layout.canvasWidth) * 100}%`,
+                  top: `${((layout.cells[selectedCell].centerY - layout.cells[selectedCell].sHeight / 2) / layout.canvasHeight) * 100}%`,
+                  width: `${(layout.cells[selectedCell].sWidth / layout.canvasWidth) * 100}%`,
+                  height: `${(layout.cells[selectedCell].sHeight / layout.canvasHeight) * 100}%`,
+                  transform: `rotate(${rotations[selectedCell] ?? 0}deg)`,
+                }}
+              />
+            )}
           </div>
           <canvas ref={exportCanvasRef} className="hidden" />
 
-          {selectedCell !== null && (
-            <div className="mb-4">
-              <div className="type-body mb-3 flex items-center justify-between text-on-surface-variant">
-                <span>
-                  {t.gridPanel.cellRotation}：
-                  {t.gridPanel.cellCoord
-                    .replace('{row}', String(Math.floor(selectedCell / cols) + 1))
-                    .replace('{col}', String((selectedCell % cols) + 1))}
-                </span>
-                <span>{Math.round(selectedRotation)}°</span>
-              </div>
-              <Slider
-                min={-30}
-                max={30}
-                step={1}
-                value={[selectedRotation]}
-                onValueChange={([val]) =>
-                  setRotations((prev) => prev.map((r, i) => (i === selectedCell ? val : r)))
-                }
-              />
-            </div>
-          )}
+          <GridConfigTabs
+            tabs={[
+              {
+                id: 'layout',
+                label: t.cardTabs.layout,
+                content: (
+                  <GridSizePicker
+                    rows={rows}
+                    cols={cols}
+                    onChange={({ rows: r, cols: c }) => {
+                      setRows(r)
+                      setCols(c)
+                    }}
+                  />
+                ),
+              },
+              {
+                id: 'spacing',
+                label: t.cardTabs.spacingAndWhitespace,
+                content: (
+                  <div className="flex flex-col gap-5">
+                    <MarginSlider id="gap-x" label={t.gridPanel.gapHorizontal} valuePx={gapXPx} min={0} max={40} onChange={setGapXPx} />
+                    <MarginSlider id="gap-y" label={t.gridPanel.gapVertical} valuePx={gapYPx} min={0} max={40} onChange={setGapYPx} />
+                  </div>
+                ),
+              },
+              {
+                id: 'rotation',
+                label: t.gridPanel.cellRotation,
+                content: (
+                  <div className="flex flex-col gap-4">
+                    {selectedCell === null && (
+                      <p className="type-body text-on-surface-variant">{t.gridPanel.rotationHint}</p>
+                    )}
+                    {selectedCell !== null && (
+                      <div>
+                        <div className="type-body mb-3 flex items-center justify-between text-on-surface-variant">
+                          <span>
+                            {t.gridPanel.cellRotation}：
+                            {t.gridPanel.cellCoord
+                              .replace('{row}', String(Math.floor(selectedCell / cols) + 1))
+                              .replace('{col}', String((selectedCell % cols) + 1))}
+                          </span>
+                          <span>{Math.round(selectedRotation)}°</span>
+                        </div>
+                        <Slider
+                          min={-180}
+                          max={180}
+                          step={1}
+                          value={[selectedRotation]}
+                          onValueChange={([val]) =>
+                            setRotations((prev) => prev.map((r, i) => (i === selectedCell ? val : r)))
+                          }
+                        />
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={handleRandomRotate}>
+                        {t.gridPanel.randomRotate}
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleResetRotation}>
+                        {t.gridPanel.resetRotation}
+                      </Button>
+                    </div>
+                  </div>
+                ),
+              },
+            ]}
+          />
 
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleRandomRotate}>
-              {t.gridPanel.randomRotate}
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleResetRotation}>
-              {t.gridPanel.resetRotation}
-            </Button>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Button size="lg" onClick={handleExport} disabled={!exportReady}>
-              {t.gridPanel.export}
-            </Button>
-            <Button variant="secondary" size="lg" onClick={handleGenerateCard} disabled={!exportReady}>
-              {t.gridPanel.generateCard}
-            </Button>
-          </div>
+          <ExportButton
+            canvas={exportReady ? exportCanvasRef.current : null}
+            fileName="hueframe-grid-split.png"
+            saveLabel={t.gridPanel.export}
+            onFilesReplaced={([file]) => file && handleFileSelected(file)}
+            secondaryLabel={t.gridPanel.generateCard}
+            secondaryDisabled={!exportReady}
+            onSecondaryAction={handleGenerateCard}
+          />
         </div>
       )}
     </div>
