@@ -1,5 +1,6 @@
 import { SwatchBook, Grid3X3, LockKeyhole, Feather, Download } from 'lucide-react'
 import { useTranslation } from '../i18n/LocaleContext'
+import { Highlight } from './Highlight'
 
 interface HomeTabProps {
   onSelectCard: () => void
@@ -39,7 +40,7 @@ function ModeCard({
         className="absolute inset-0 bg-[linear-gradient(90deg,rgba(249,249,248,0.96)_0%,rgba(249,249,248,0.9)_48%,rgba(249,249,248,0.32)_100%)]"
       />
       <span
-        className="relative z-10 mb-4 flex size-11 self-start items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary backdrop-blur-sm transition-all duration-300 group-hover:border-primary/25 group-hover:bg-primary/10"
+        className="relative z-10 mb-4 flex size-11 shrink-0 self-start items-center justify-center overflow-hidden rounded-xl border border-primary/20 bg-primary-container text-primary backdrop-blur-sm transition-all duration-300 group-hover:border-primary/30 group-hover:bg-primary-container/80"
         aria-hidden="true"
       >
         {icon}
@@ -60,11 +61,11 @@ export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
   return (
     <div className="px-5 pb-12">
       <section className="py-12">
-        <h1 className="type-display mb-6 max-w-[12ch] text-on-surface">
-          {t.homeTab.heading}
+        <h1 className="type-display mb-6 text-on-surface">
+          <Highlight text={t.homeTab.heading} mark={t.homeTab.headingHighlight} />
         </h1>
         <p className="type-body max-w-md text-on-surface-variant opacity-80">
-          {t.homeTab.subheading}
+          <Highlight text={t.homeTab.subheading} mark={t.homeTab.subheadingHighlight} />
         </p>
       </section>
 
@@ -75,7 +76,7 @@ export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
           title={t.homeTab.cardTitle}
           description={t.homeTab.cardDescription}
           actionLabel={t.homeTab.cardAction}
-          containerClassName="aspect-4/3 bg-primary-container/30 hover:bg-primary-container/50"
+          containerClassName="min-h-[320px] bg-primary-container/30 hover:bg-primary-container/50"
           backgroundImage="/images/home-palette-bg.jpg"
           onSelect={onSelectCard}
         />
@@ -85,7 +86,7 @@ export function HomeTab({ onSelectCard, onSelectGrid }: HomeTabProps) {
           title={t.homeTab.gridTitle}
           description={t.homeTab.gridDescription}
           actionLabel={t.homeTab.gridAction}
-          containerClassName="aspect-4/3 bg-secondary-container/30 hover:bg-secondary-container/50"
+          containerClassName="min-h-[320px] bg-secondary-container/30 hover:bg-secondary-container/50"
           backgroundImage="/images/home-grid-bg.jpg"
           onSelect={onSelectGrid}
         />

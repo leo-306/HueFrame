@@ -35,7 +35,10 @@ export interface Translations {
   }
   emptyState: {
     heading: string
+    headingHighlight: string
     supportedFormats: string
+    gridSplitHeading: string
+    gridCollageHeading: string
   }
   uploadZone: {
     prompt: string
@@ -81,7 +84,9 @@ export interface Translations {
   }
   homeTab: {
     heading: string
+    headingHighlight: string
     subheading: string
+    subheadingHighlight: string
     cardEyebrow: string
     cardTitle: string
     cardDescription: string
@@ -110,6 +115,12 @@ export interface Translations {
     overflowHint: string
     export: string
     generateCard: string
+    gapHorizontal: string
+    gapVertical: string
+    randomRotate: string
+    resetRotation: string
+    cellRotation: string
+    cellCoord: string
   }
   common: {
     processing: string
@@ -154,7 +165,10 @@ export const zh: Translations = {
   },
   emptyState: {
     heading: '给照片，配一套颜色。',
+    headingHighlight: '颜色',
     supportedFormats: '本地解析支持 JPG / PNG / WEBP / HEIF / HEIC',
+    gridSplitHeading: '上传照片，切出节奏。',
+    gridCollageHeading: '上传多张，拼出灵感。',
   },
   uploadZone: {
     prompt: '上传一张照片开始',
@@ -200,7 +214,9 @@ export const zh: Translations = {
   },
   homeTab: {
     heading: '给照片，配一套颜色。',
+    headingHighlight: '颜色',
     subheading: '极简的照片色卡与切分工具，让每一份视觉表达都拥有呼吸感。',
+    subheadingHighlight: '呼吸感',
     cardEyebrow: 'Creative Tool',
     cardTitle: '色卡模式',
     cardDescription: '提取主色调，生成精致色卡，记录每一个瞬间的光影情绪。',
@@ -228,7 +244,13 @@ export const zh: Translations = {
   gridPanel: {
     overflowHint: '仅使用前 {count} 张',
     export: '导出图片',
-    generateCard: '生成色卡',
+    generateCard: '导入到色卡',
+    gapHorizontal: '横向间距',
+    gapVertical: '纵向间距',
+    randomRotate: '随机旋转',
+    resetRotation: '重置旋转',
+    cellRotation: '旋转',
+    cellCoord: '第{row}行第{col}列',
   },
   common: {
     processing: '处理中…',
@@ -273,7 +295,10 @@ export const en: Translations = {
   },
   emptyState: {
     heading: 'A palette for your photo.',
+    headingHighlight: 'palette',
     supportedFormats: 'Local parsing supports JPG / PNG / WEBP / HEIF / HEIC',
+    gridSplitHeading: 'Upload a photo to split.',
+    gridCollageHeading: 'Upload photos to collage.',
   },
   uploadZone: {
     prompt: 'Upload a photo to start',
@@ -319,7 +344,9 @@ export const en: Translations = {
   },
   homeTab: {
     heading: 'A palette for your photo.',
+    headingHighlight: 'palette',
     subheading: 'A minimalist palette and grid-splitting tool that gives every visual story room to breathe.',
+    subheadingHighlight: 'breathe',
     cardEyebrow: 'Creative Tool',
     cardTitle: 'Palette Mode',
     cardDescription: 'Extract dominant colors and generate a refined palette card that captures the mood of every moment.',
@@ -347,7 +374,13 @@ export const en: Translations = {
   gridPanel: {
     overflowHint: 'Only using the first {count} photos',
     export: 'Export Image',
-    generateCard: 'Generate Card',
+    generateCard: 'Open in Card Tab',
+    gapHorizontal: 'Horizontal Gap',
+    gapVertical: 'Vertical Gap',
+    randomRotate: 'Random Rotate',
+    resetRotation: 'Reset Rotation',
+    cellRotation: 'Rotation',
+    cellCoord: 'Row {row}, Col {col}',
   },
   common: {
     processing: 'Processing…',

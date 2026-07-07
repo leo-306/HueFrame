@@ -62,11 +62,19 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
   const showOverflowHint = photos.length > totalCells
 
   return (
-    <div className="px-5 pb-5">
-      {photos.length === 0 && <MultiUploadZone onFilesSelected={handleFilesSelected} />}
+    <div className="pb-5">
+      {photos.length === 0 && (
+        <div className="relative flex flex-col items-center overflow-hidden px-5 pt-8 pb-8">
+          <div className="absolute -left-[10%] top-[10%] -z-10 h-75 w-75 rounded-full bg-[rgba(224,233,228,0.5)] mix-blend-multiply blur-[80px]" aria-hidden="true" />
+          <div className="absolute -right-[10%] bottom-[10%] -z-10 h-75 w-75 rounded-full bg-[rgba(223,233,227,0.5)] mix-blend-multiply blur-[80px]" aria-hidden="true" />
+          <h2 className="type-display mx-0 mb-6 mt-0 text-center">{t.emptyState.gridCollageHeading}</h2>
+          <MultiUploadZone onFilesSelected={handleFilesSelected} />
+          <p className="type-body mt-5 text-center text-outline opacity-75">{t.emptyState.supportedFormats}</p>
+        </div>
+      )}
 
       {photos.length > 0 && (
-        <>
+        <div className="px-5">
           <GridSizePicker rows={rows} cols={cols} onChange={({ rows: r, cols: c }) => { setRows(r); setCols(c) }} />
           <MarginSlider valuePx={gapPx} onChange={setGapPx} />
 
@@ -88,7 +96,7 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
               {t.gridPanel.generateCard}
             </Button>
           </div>
-        </>
+        </div>
       )}
     </div>
   )

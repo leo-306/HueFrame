@@ -188,3 +188,124 @@ export function computeCollageCanvasSize({
     height: cellHeight * rows + gapPx * (rows - 1),
   }
 }
+
+// ─── 旋转切分布局 ───────────────────────────────────────────────────────────
+
+export interface RotatedLayoutCell {
+  sx: number
+  sy: number
+  sWidth: number
+  sHeight: number
+  /** 在导出画布上的中心点坐标（已含间距偏移），直接传给 ctx.translate */
+  centerX: number
+  centerY: number
+  /** 弧度，供 ctx.rotate() 直接使用 */
+  rotation: number
+  allocWidth: number
+  allocHeight: number
+  row: number
+  col: number
+}
+
+export interface RotatedSplitLayout {
+  colWidths: number[]
+  rowHeights: number[]
+  canvasWidth: number
+  canvasHeight: number
+  cells: RotatedLayoutCell[]
+}
+
+/** 旋转 angleDeg 度后的外接矩形尺寸 */
+export function computeRotatedBoundingBox(
+  cw: number,
+  ch: number,
+  angleDeg: number
+): { bw: number; bh: number } {
+  const rad = (angleDeg * Math.PI) / 180
+  const cosA = Math.abs(Math.cos(rad))
+  const sinA = Math.abs(Math.sin(rad))
+  return { bw: cw * cosA + ch * sinA, bh: cw * sinA + ch * cosA }
+}
+
+/**
+ * 带旋转的切分布局：
+ * - 每个格子在 rotationsDeg 里有一个旋转角度（度数）
+ * - 每列宽度 = 该列所有旋转后外接框宽度的最大值（防止内容被裁）
+ * - 每行高度同理
+ * - gapXPx / gapYPx 分别控制横向 / 纵向间距
+ */
+export function computeRotatedSplitLayout({
+  imageWidth,
+  imageHeight,
+  rows,
+  cols,
+  gapXPx,
+  gapYPx,
+  rotationsDeg,
+}: {
+  imageWidth: number
+  imageHeight: number
+  rows: number
+  cols: number
+  gapXPx: number
+  gapYPx: number
+  rotationsDeg: number[]
+}): RotatedSplitLayout {
+  const colBoundaries = axisBoundaries(imageWidth, cols)
+  const rowBoundaries = axisBoundaries(imageHeight, rows)
+
+  const srcColWidths = Array.from({ length: cols }, (_, j) => colBoundaries[j + 1] - colBoundaries[j])
+  const srcRowHeights = Array.from({ length: rows }, (_, i) => rowBoundaries[i + 1] - rowBoundaries[i])
+
+  // 每格旋转后的外接框
+  const bboxes = srcRowHeights.flatMap((ch, i) =>
+    srcColWidths.map((cw, j) => computeRotatedBoundingBox(cw, ch, rotationsDeg[i * cols + j] ?? 0))
+  )
+
+  // 分配给每列的宽度：该列所有格子 bw 的最大值（向上取整）
+  const colWidths = Array.from({ length: cols }, (_, j) => {
+    let max = 0
+    for (let i = 0; i < rows; i++) max = Math.max(max, bboxes[i * cols + j].bw)
+    return Math.ceil(max)
+  })
+
+  // 分配给每行的高度：该行所有格子 bh 的最大值
+  const rowHeights = Array.from({ length: rows }, (_, i) => {
+    let max = 0
+    for (let j = 0; j < cols; j++) max = Math.max(max, bboxes[i * cols + j].bh)
+    return Math.ceil(max)
+  })
+
+  const canvasWidth = colWidths.reduce((s, w) => s + w, 0) + gapXPx * (cols - 1)
+  const canvasHeight = rowHeights.reduce((s, h) => s + h, 0) + gapYPx * (rows - 1)
+
+  // 每列 / 每行的起始坐标
+  const colStarts = colWidths.map((_, j) =>
+    colWidths.slice(0, j).reduce((s, w) => s + w, 0) + gapXPx * j
+  )
+  const rowStarts = rowHeights.map((_, i) =>
+    rowHeights.slice(0, i).reduce((s, h) => s + h, 0) + gapYPx * i
+  )
+
+  const cells: RotatedLayoutCell[] = []
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const idx = i * cols + j
+      cells.push({
+        sx: colBoundaries[j],
+        sy: rowBoundaries[i],
+        sWidth: srcColWidths[j],
+        sHeight: srcRowHeights[i],
+        centerX: colStarts[j] + colWidths[j] / 2,
+        centerY: rowStarts[i] + rowHeights[i] / 2,
+        rotation: ((rotationsDeg[idx] ?? 0) * Math.PI) / 180,
+        allocWidth: colWidths[j],
+        allocHeight: rowHeights[i],
+        row: i,
+        col: j,
+      })
+    }
+  }
+
+  return { colWidths, rowHeights, canvasWidth, canvasHeight, cells }
+}

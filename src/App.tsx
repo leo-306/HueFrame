@@ -51,7 +51,25 @@ function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promis
 
 export default function App() {
   const t = useTranslation()
-  const [activeTab, setActiveTab] = useState<AppTab>(MOCK_ENABLED ? 'card' : 'home')
+  const [activeTab, setActiveTab] = useState<AppTab>(() => {
+    const hash = window.location.hash.slice(1)
+    return ['card', 'grid', 'crop'].includes(hash) ? (hash as AppTab) : MOCK_ENABLED ? 'card' : 'home'
+  })
+
+  useEffect(() => {
+    window.history.replaceState(null, '', activeTab === 'home' ? location.pathname : `#${activeTab}`)
+  }, [activeTab])
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.slice(1)
+      if (['card', 'grid', 'crop'].includes(hash)) {
+        setActiveTab(hash as AppTab)
+      }
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false)
   const hasLoadedMockPhoto = useRef(false)

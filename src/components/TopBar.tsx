@@ -18,7 +18,7 @@ export function TopBar({ onBack }: TopBarProps) {
               <ArrowLeft aria-hidden="true" size={21} />
             </Button>
           )}
-          <h1 className="m-0 truncate text-[30px] leading-none tracking-[0.08em] text-primary sm:text-[36px]">
+          <h1 className="m-0 truncate text-[30px] leading-none tracking-[0.08em] text-outline sm:text-[36px]">
             {t.topBar.title}
           </h1>
         </div>

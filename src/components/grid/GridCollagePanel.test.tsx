@@ -56,8 +56,8 @@ describe('GridCollagePanel', () => {
     const input = screen.getByTestId('grid-upload-input') as HTMLInputElement
     fireEvent.change(input, { target: { files } })
 
-    await waitFor(() => expect(screen.getByText('生成色卡')).not.toBeDisabled())
-    fireEvent.click(screen.getByText('生成色卡'))
+    await waitFor(() => expect(screen.getByText('导入到色卡')).not.toBeDisabled())
+    fireEvent.click(screen.getByText('导入到色卡'))
 
     expect(onGenerateCard).toHaveBeenCalledTimes(1)
     expect(onGenerateCard.mock.calls[0][0]).toBeInstanceOf(HTMLCanvasElement)

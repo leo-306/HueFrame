@@ -41,7 +41,7 @@ describe('GridSplitPanel', () => {
 
     await waitFor(() => expect(screen.getByText('3×3')).toBeInTheDocument())
     expect(screen.getByText('导出图片')).toBeInTheDocument()
-    expect(screen.getByText('生成色卡')).toBeInTheDocument()
+    expect(screen.getByText('导入到色卡')).toBeInTheDocument()
   })
 
   it('renders exactly two canvases: a preview canvas and a hidden export canvas', async () => {
@@ -62,8 +62,8 @@ describe('GridSplitPanel', () => {
     const input = screen.getByTestId('upload-input') as HTMLInputElement
     fireEvent.change(input, { target: { files: [file] } })
 
-    await waitFor(() => expect(screen.getByText('生成色卡')).not.toBeDisabled())
-    fireEvent.click(screen.getByText('生成色卡'))
+    await waitFor(() => expect(screen.getByText('导入到色卡')).not.toBeDisabled())
+    fireEvent.click(screen.getByText('导入到色卡'))
 
     expect(onGenerateCard).toHaveBeenCalledTimes(1)
     expect(onGenerateCard.mock.calls[0][0]).toBeInstanceOf(HTMLCanvasElement)
