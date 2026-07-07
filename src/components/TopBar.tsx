@@ -5,9 +5,10 @@ import { Button } from './ui/button'
 
 interface TopBarProps {
   onBack?: () => void
+  tabs?: React.ReactNode
 }
 
-export function TopBar({ onBack }: TopBarProps) {
+export function TopBar({ onBack, tabs }: TopBarProps) {
   const t = useTranslation()
   return (
     <header className="sticky top-0 z-50 border-b border-outline-variant/20 bg-surface/90 backdrop-blur-md">
@@ -27,6 +28,10 @@ export function TopBar({ onBack }: TopBarProps) {
         <UiLanguagePicker />
         </div>
       </div>
+
+      {tabs && (
+        <div className="mx-auto flex w-full max-w-[1140px] justify-center px-4 pb-3 sm:px-6">{tabs}</div>
+      )}
     </header>
   )
 }

@@ -1,27 +1,18 @@
-import { useState } from 'react'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
+import { Tabs, TabsContent } from '../ui/tabs'
 import { GridSplitPanel } from './GridSplitPanel'
 import { GridCollagePanel } from './GridCollagePanel'
-import { useTranslation } from '../../i18n/LocaleContext'
 
-type GridSubTab = 'split' | 'collage'
+export type GridSubTab = 'split' | 'collage'
 
 interface GridToolProps {
+  activeSubTab: GridSubTab
   onGenerateCard: (canvas: HTMLCanvasElement) => void
   initialFile?: File
 }
 
-export function GridTool({ onGenerateCard, initialFile }: GridToolProps) {
-  const [activeSubTab, setActiveSubTab] = useState<GridSubTab>('split')
-  const t = useTranslation()
-
+export function GridTool({ activeSubTab, onGenerateCard, initialFile }: GridToolProps) {
   return (
-    <Tabs value={activeSubTab} onValueChange={(value) => setActiveSubTab(value as GridSubTab)} className="flex-col px-5">
-      <TabsList className="my-5 h-auto w-full bg-surface-container-low p-1">
-        <TabsTrigger value="split" className="py-2">{t.gridTool.split}</TabsTrigger>
-        <TabsTrigger value="collage" className="py-2">{t.gridTool.collage}</TabsTrigger>
-      </TabsList>
-
+    <Tabs value={activeSubTab} className="flex-col px-5">
       <TabsContent value="split" className="pb-4" forceMount hidden={activeSubTab !== 'split'}>
         <GridSplitPanel onGenerateCard={onGenerateCard} initialFile={initialFile} />
       </TabsContent>

@@ -11,7 +11,8 @@ import { PaletteControls } from './components/PaletteControls'
 import { InfoPanel } from './components/InfoPanel'
 import { CardPreview } from './components/CardPreview'
 import { ExportButton } from './components/ExportButton'
-import { GridTool } from './components/grid/GridTool'
+import { GridTool, type GridSubTab } from './components/grid/GridTool'
+import { GridSubTabSwitcher } from './components/grid/GridSubTabSwitcher'
 import { HomeTab } from './components/HomeTab'
 import { buildCardConfig, extractPaletteEntries } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
@@ -55,6 +56,8 @@ export default function App() {
     const hash = window.location.hash.slice(1)
     return ['card', 'grid', 'crop'].includes(hash) ? (hash as AppTab) : MOCK_ENABLED ? 'card' : 'home'
   })
+
+  const [gridSubTab, setGridSubTab] = useState<GridSubTab>('split')
 
   useEffect(() => {
     window.history.replaceState(null, '', activeTab === 'home' ? location.pathname : `#${activeTab}`)
@@ -270,6 +273,7 @@ export default function App() {
     <div className={`min-h-screen ${activeTab === 'card' && config ? 'pb-44' : 'pb-24'}`}>
       <TopBar
         onBack={activeTab === 'home' ? undefined : handleBack}
+        tabs={activeTab === 'grid' && <GridSubTabSwitcher value={gridSubTab} onChange={setGridSubTab} />}
       />
 
       {activeTab === 'card' && (
@@ -361,7 +365,7 @@ export default function App() {
       )}
 
       {activeTab === 'grid' && (
-        <GridTool onGenerateCard={handleGenerateCardFromGrid} />
+        <GridTool activeSubTab={gridSubTab} onGenerateCard={handleGenerateCardFromGrid} />
       )}
 
       {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
