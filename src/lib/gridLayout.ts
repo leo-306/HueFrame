@@ -15,10 +15,10 @@ export const GRID_PRESETS: GridPreset[] = [
 ]
 
 const MIN_GRID_SIZE = 1
-const MAX_GRID_SIZE = 6
+const MAX_GRID_SIZE = 10
 
 /**
- * 自定义行列输入的合法范围是 1-6，超出范围钳制到边界值。
+ * 自定义行列输入的合法范围是 1-10，超出范围钳制到边界值。
  */
 export function clampGridSize(value: number): number {
   return Math.min(MAX_GRID_SIZE, Math.max(MIN_GRID_SIZE, value))
@@ -177,6 +177,7 @@ interface CollageCanvasInput {
   cellWidth: number
   cellHeight: number
   gapPx: number
+  paddingPx?: number
 }
 
 export function computeCollageCanvasSize({
@@ -185,10 +186,11 @@ export function computeCollageCanvasSize({
   cellWidth,
   cellHeight,
   gapPx,
+  paddingPx = 0,
 }: CollageCanvasInput): { width: number; height: number } {
   return {
-    width: cellWidth * cols + gapPx * (cols - 1),
-    height: cellHeight * rows + gapPx * (rows - 1),
+    width: cellWidth * cols + gapPx * (cols - 1) + paddingPx * 2,
+    height: cellHeight * rows + gapPx * (rows - 1) + paddingPx * 2,
   }
 }
 
@@ -244,6 +246,7 @@ export function computeRotatedSplitLayout({
   cols,
   gapXPx,
   gapYPx,
+  paddingPx = 0,
   rotationsDeg,
 }: {
   imageWidth: number
@@ -252,6 +255,7 @@ export function computeRotatedSplitLayout({
   cols: number
   gapXPx: number
   gapYPx: number
+  paddingPx?: number
   rotationsDeg: number[]
 }): RotatedSplitLayout {
   const colBoundaries = axisBoundaries(imageWidth, cols)
@@ -279,15 +283,15 @@ export function computeRotatedSplitLayout({
     return Math.ceil(max)
   })
 
-  const canvasWidth = colWidths.reduce((s, w) => s + w, 0) + gapXPx * (cols - 1)
-  const canvasHeight = rowHeights.reduce((s, h) => s + h, 0) + gapYPx * (rows - 1)
+  const canvasWidth = colWidths.reduce((s, w) => s + w, 0) + gapXPx * (cols - 1) + paddingPx * 2
+  const canvasHeight = rowHeights.reduce((s, h) => s + h, 0) + gapYPx * (rows - 1) + paddingPx * 2
 
   // 每列 / 每行的起始坐标
   const colStarts = colWidths.map((_, j) =>
-    colWidths.slice(0, j).reduce((s, w) => s + w, 0) + gapXPx * j
+    paddingPx + colWidths.slice(0, j).reduce((s, w) => s + w, 0) + gapXPx * j
   )
   const rowStarts = rowHeights.map((_, i) =>
-    rowHeights.slice(0, i).reduce((s, h) => s + h, 0) + gapYPx * i
+    paddingPx + rowHeights.slice(0, i).reduce((s, h) => s + h, 0) + gapYPx * i
   )
 
   const cells: RotatedLayoutCell[] = []

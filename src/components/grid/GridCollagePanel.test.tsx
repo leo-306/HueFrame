@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { GridCollagePanel } from './GridCollagePanel'
 import { installMockUploadImage } from '../../../tests/mockUploadImage'
 
@@ -24,7 +23,6 @@ describe('GridCollagePanel', () => {
   })
 
   it('shows the grid size picker after photos are uploaded', async () => {
-    const user = userEvent.setup()
     const { container } = render(<GridCollagePanel onGenerateCard={vi.fn()} />)
 
     const files = [
@@ -35,13 +33,13 @@ describe('GridCollagePanel', () => {
     fireEvent.change(input, { target: { files } })
 
     await waitFor(() => expect(screen.getByRole('button', { name: '3×3' })).toBeInTheDocument())
-    expect(screen.getByRole('tab', { name: '版式' })).toBeInTheDocument()
-    const spacingTab = screen.getByRole('tab', { name: '间距与留白' })
-    expect(spacingTab).toBeInTheDocument()
-    await user.click(spacingTab)
-    expect(screen.getAllByRole('slider')).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: '版式' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '间距与留白' })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('slider')).toHaveLength(2)
+    expect(screen.getByRole('slider', { name: '图片留白' })).toHaveAttribute('aria-valuemax', '80')
     expect(screen.getByTestId('replace-upload-input')).toHaveAttribute('multiple')
-    expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('tablist'))).toBe(
+    expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('heading', { name: '版式' }))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
   })

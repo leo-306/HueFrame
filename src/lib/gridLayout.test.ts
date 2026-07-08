@@ -7,6 +7,7 @@ import {
   computeCollageCells,
   computeCoverSourceRect,
   computeCollageCanvasSize,
+  computeRotatedSplitLayout,
 } from './gridLayout'
 
 describe('GRID_PRESETS', () => {
@@ -23,7 +24,7 @@ describe('GRID_PRESETS', () => {
 })
 
 describe('clampGridSize', () => {
-  it('leaves values within 1-6 unchanged', () => {
+  it('leaves values within 1-10 unchanged', () => {
     expect(clampGridSize(4)).toBe(4)
   })
 
@@ -31,8 +32,8 @@ describe('clampGridSize', () => {
     expect(clampGridSize(0)).toBe(1)
   })
 
-  it('clamps values above 6 down to 6', () => {
-    expect(clampGridSize(9)).toBe(6)
+  it('clamps values above 10 down to 10', () => {
+    expect(clampGridSize(11)).toBe(10)
   })
 })
 
@@ -163,5 +164,30 @@ describe('computeCollageCanvasSize', () => {
       width: 100 * 3 + 10 * 2,
       height: 80 * 2 + 10 * 1,
     })
+  })
+
+  it('adds equal padding around the collage', () => {
+    expect(
+      computeCollageCanvasSize({ rows: 2, cols: 2, cellWidth: 100, cellHeight: 80, gapPx: 10, paddingPx: 20 })
+    ).toEqual({ width: 250, height: 210 })
+  })
+})
+
+describe('computeRotatedSplitLayout padding', () => {
+  it('expands the canvas and offsets cell centers by the configured padding', () => {
+    const layout = computeRotatedSplitLayout({
+      imageWidth: 100,
+      imageHeight: 100,
+      rows: 1,
+      cols: 1,
+      gapXPx: 0,
+      gapYPx: 0,
+      paddingPx: 12,
+      rotationsDeg: [0],
+    })
+
+    expect(layout.canvasWidth).toBe(124)
+    expect(layout.canvasHeight).toBe(124)
+    expect(layout.cells[0]).toMatchObject({ centerX: 62, centerY: 62 })
   })
 })

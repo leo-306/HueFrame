@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { MultiUploadZone } from './MultiUploadZone'
 import { Highlight } from '../Highlight'
 import { GridSizePicker } from './GridSizePicker'
-import { GridConfigTabs } from './GridConfigTabs'
+import { GridConfigSections } from './GridConfigSections'
 import { MarginSlider } from '../MarginSlider'
 import { ExportButton } from '../ExportButton'
 import { computeCollageCanvasSize } from '../../lib/gridLayout'
@@ -22,6 +22,7 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
   const [rows, setRows] = useState(3)
   const [cols, setCols] = useState(3)
   const [gapPx, setGapPx] = useState(8)
+  const [paddingPx, setPaddingPx] = useState(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [exportReady, setExportReady] = useState(false)
 
@@ -34,14 +35,14 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
     if (photos.length === 0) return
     const canvas = canvasRef.current
     if (!canvas) return
-    const { width, height } = computeCollageCanvasSize({ rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx })
+    const { width, height } = computeCollageCanvasSize({ rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx, paddingPx })
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    renderCollageGrid(ctx, { photos, rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx })
+    renderCollageGrid(ctx, { photos, rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx, paddingPx })
     setExportReady(true)
-  }, [photos, rows, cols, gapPx])
+  }, [photos, rows, cols, gapPx, paddingPx])
 
   const handleGenerateCard = () => {
     if (canvasRef.current) onGenerateCard(canvasRef.current)
@@ -76,8 +77,8 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
             <canvas ref={canvasRef} className="block h-auto w-full" />
           </div>
 
-          <GridConfigTabs
-            tabs={[
+          <GridConfigSections
+            sections={[
               {
                 id: 'layout',
                 label: t.cardTabs.layout,
@@ -86,7 +87,12 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
               {
                 id: 'spacing',
                 label: t.cardTabs.spacingAndWhitespace,
-                content: <MarginSlider id="collage-gap" label={t.marginSlider.label} valuePx={gapPx} min={0} max={80} onChange={setGapPx} />,
+                content: (
+                  <div className="flex flex-col gap-5">
+                    <MarginSlider id="collage-gap" label={t.marginSlider.label} valuePx={gapPx} min={0} max={80} onChange={setGapPx} />
+                    <MarginSlider id="collage-padding" label={t.gridPanel.imagePadding} valuePx={paddingPx} min={0} max={80} onChange={setPaddingPx} />
+                  </div>
+                ),
               },
             ]}
           />

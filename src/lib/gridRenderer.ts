@@ -64,6 +64,7 @@ interface CollageRenderInput {
   cellWidth: number
   cellHeight: number
   gapPx: number
+  paddingPx?: number
 }
 
 /**
@@ -72,14 +73,21 @@ interface CollageRenderInput {
  */
 export function renderCollageGrid(
   ctx: CanvasRenderingContext2D,
-  { photos, rows, cols, cellWidth, cellHeight, gapPx }: CollageRenderInput
+  { photos, rows, cols, cellWidth, cellHeight, gapPx, paddingPx = 0 }: CollageRenderInput
 ): void {
   const cells = computeCollageCells({ imageCount: photos.length, rows, cols, cellWidth, cellHeight, gapPx })
 
+  if (paddingPx > 0) {
+    ctx.fillStyle = GAP_BACKGROUND
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  }
+
   for (const cell of cells) {
+    const dx = cell.dx + paddingPx
+    const dy = cell.dy + paddingPx
     if (cell.imageIndex === null) {
       ctx.fillStyle = PLACEHOLDER_COLOR
-      ctx.fillRect(cell.dx, cell.dy, cellWidth, cellHeight)
+      ctx.fillRect(dx, dy, cellWidth, cellHeight)
       continue
     }
 
@@ -93,8 +101,8 @@ export function renderCollageGrid(
       source.sy,
       source.sWidth,
       source.sHeight,
-      cell.dx,
-      cell.dy,
+      dx,
+      dy,
       cellWidth,
       cellHeight
     )

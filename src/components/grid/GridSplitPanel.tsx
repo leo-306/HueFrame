@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Lightbulb, RotateCcw, Shuffle } from 'lucide-react'
 import { UploadZone } from '../UploadZone'
 import { GridSizePicker } from './GridSizePicker'
-import { GridConfigTabs } from './GridConfigTabs'
+import { GridConfigSections } from './GridConfigSections'
 import { Highlight } from '../Highlight'
 import { MarginSlider } from '../MarginSlider'
 import { ExportButton } from '../ExportButton'
@@ -24,6 +25,7 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
   const [cols, setCols] = useState(3)
   const [gapXPx, setGapXPx] = useState(8)
   const [gapYPx, setGapYPx] = useState(8)
+  const [paddingPx, setPaddingPx] = useState(0)
   const [rotations, setRotations] = useState<number[]>(new Array(9).fill(0))
   const [selectedCell, setSelectedCell] = useState<number | null>(null)
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -57,9 +59,10 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
       cols,
       gapXPx,
       gapYPx,
+      paddingPx,
       rotationsDeg: rotations,
     })
-  }, [photo, rows, cols, gapXPx, gapYPx, rotations])
+  }, [photo, rows, cols, gapXPx, gapYPx, paddingPx, rotations])
 
   // 预览 + 导出画布同步渲染
   useEffect(() => {
@@ -112,7 +115,7 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
   )
 
   const handleRandomRotate = useCallback(() => {
-    setRotations(Array.from({ length: rows * cols }, () => Math.round(Math.random() * 40 - 20)))
+    setRotations(Array.from({ length: rows * cols }, () => Math.round(Math.random() * 10 - 5)))
   }, [rows, cols])
 
   const handleResetRotation = useCallback(() => {
@@ -165,8 +168,8 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
           </div>
           <canvas ref={exportCanvasRef} className="hidden" />
 
-          <GridConfigTabs
-            tabs={[
+          <GridConfigSections
+            sections={[
               {
                 id: 'layout',
                 label: t.cardTabs.layout,
@@ -188,6 +191,7 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
                   <div className="flex flex-col gap-5">
                     <MarginSlider id="gap-x" label={t.gridPanel.gapHorizontal} valuePx={gapXPx} min={0} max={40} onChange={setGapXPx} />
                     <MarginSlider id="gap-y" label={t.gridPanel.gapVertical} valuePx={gapYPx} min={0} max={40} onChange={setGapYPx} />
+                    <MarginSlider id="grid-padding" label={t.gridPanel.imagePadding} valuePx={paddingPx} min={0} max={80} onChange={setPaddingPx} />
                   </div>
                 ),
               },
@@ -197,18 +201,38 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
                 content: (
                   <div className="flex flex-col gap-4">
                     {selectedCell === null && (
-                      <p className="type-body text-on-surface-variant">{t.gridPanel.rotationHint}</p>
+                      <aside
+                        role="note"
+                        className="flex items-start gap-3 rounded-lg border border-primary/15 bg-primary-container/45 px-3.5 py-3 text-on-primary-container"
+                      >
+                        <span
+                          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-container-lowest/80 text-primary shadow-sm"
+                          aria-hidden="true"
+                        >
+                          <Lightbulb className="size-4" strokeWidth={1.8} />
+                        </span>
+                        <span className="min-w-0 pt-0.5">
+                          <span className="type-caption block font-semibold tracking-[0.08em] text-primary">
+                            {t.gridPanel.rotationTip}
+                          </span>
+                          <span className="type-label mt-0.5 block text-on-surface-variant">
+                            {t.gridPanel.rotationHint}
+                          </span>
+                        </span>
+                      </aside>
                     )}
                     {selectedCell !== null && (
                       <div>
-                        <div className="type-body mb-3 flex items-center justify-between text-on-surface-variant">
-                          <span>
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <span className="type-caption text-on-surface-variant">
                             {t.gridPanel.cellRotation}：
                             {t.gridPanel.cellCoord
                               .replace('{row}', String(Math.floor(selectedCell / cols) + 1))
                               .replace('{col}', String((selectedCell % cols) + 1))}
                           </span>
-                          <span>{Math.round(selectedRotation)}°</span>
+                          <span className="type-label font-medium tabular-nums text-on-surface">
+                            {Math.round(selectedRotation)}°
+                          </span>
                         </div>
                         <Slider
                           min={-180}
@@ -222,10 +246,12 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
                       </div>
                     )}
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={handleRandomRotate}>
+                      <Button variant="secondary" size="sm" className="shadow-none" onClick={handleRandomRotate}>
+                        <Shuffle aria-hidden="true" />
                         {t.gridPanel.randomRotate}
                       </Button>
-                      <Button variant="outline" size="sm" onClick={handleResetRotation}>
+                      <Button variant="secondary" size="sm" className="shadow-none" onClick={handleResetRotation}>
+                        <RotateCcw aria-hidden="true" />
                         {t.gridPanel.resetRotation}
                       </Button>
                     </div>

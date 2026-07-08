@@ -13,6 +13,7 @@ describe('GridSplitPanel', () => {
 
   afterEach(() => {
     restoreMockImage()
+    vi.restoreAllMocks()
   })
 
   it('shows the upload zone before any photo is selected', () => {
@@ -37,7 +38,6 @@ describe('GridSplitPanel', () => {
   })
 
   it('shows the grid size picker and export button after a photo is uploaded', async () => {
-    const user = userEvent.setup()
     const { container } = render(<GridSplitPanel onGenerateCard={vi.fn()} />)
 
     const file = new File(['dummy'], 'trip.jpg', { type: 'image/jpeg' })
@@ -45,14 +45,14 @@ describe('GridSplitPanel', () => {
     fireEvent.change(input, { target: { files: [file] } })
 
     await waitFor(() => expect(screen.getByRole('button', { name: '3×3' })).toBeInTheDocument())
-    expect(screen.getByRole('tab', { name: '版式' })).toBeInTheDocument()
-    const spacingTab = screen.getByRole('tab', { name: '间距与留白' })
-    expect(spacingTab).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: '旋转' })).toBeInTheDocument()
-    await user.click(spacingTab)
-    expect(screen.getAllByRole('slider')).toHaveLength(2)
+    expect(screen.getByRole('heading', { name: '版式' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '间距与留白' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '旋转' })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('slider')).toHaveLength(3)
+    expect(screen.getByRole('slider', { name: '图片留白' })).toHaveAttribute('aria-valuemax', '80')
     expect(screen.getByTestId('replace-upload-input')).not.toHaveAttribute('multiple')
-    expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('tablist'))).toBe(
+    expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('heading', { name: '版式' }))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
     expect(screen.getByText('导出图片')).toBeInTheDocument()
@@ -67,6 +67,44 @@ describe('GridSplitPanel', () => {
     fireEvent.change(input, { target: { files: [file] } })
 
     await waitFor(() => expect(container.querySelectorAll('canvas')).toHaveLength(2))
+  })
+
+  it('presents the rotation guidance as a tip', async () => {
+    render(<GridSplitPanel onGenerateCard={vi.fn()} initialFile={new File(['dummy'], 'trip.jpg', { type: 'image/jpeg' })} />)
+
+    await screen.findByRole('heading', { name: '旋转' })
+
+    const tip = screen.getByRole('note')
+    expect(tip).toHaveClass('bg-primary-container/45', 'border-primary/15')
+    expect(tip).toHaveTextContent('操作提示')
+    expect(tip).toHaveTextContent('点击网格中的单元格，可单独调整其旋转角度')
+  })
+
+  it('limits random rotation to plus or minus 5 degrees', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(Math, 'random').mockReturnValue(1)
+    const { container } = render(
+      <GridSplitPanel onGenerateCard={vi.fn()} initialFile={new File(['dummy'], 'trip.jpg', { type: 'image/jpeg' })} />
+    )
+
+    await screen.findByRole('heading', { name: '旋转' })
+    await user.click(screen.getByRole('button', { name: '随机旋转' }))
+
+    const previewCanvas = container.querySelector('canvas:not(.hidden)') as HTMLCanvasElement
+    vi.spyOn(previewCanvas, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 300,
+      height: 300,
+      right: 300,
+      bottom: 300,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    })
+    fireEvent.click(previewCanvas, { clientX: 50, clientY: 50 })
+
+    expect(screen.getByText('5°')).toBeInTheDocument()
   })
 
   it('disables the generate-card button until export canvas is ready, then calls onGenerateCard when clicked', async () => {

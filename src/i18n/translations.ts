@@ -119,10 +119,12 @@ export interface Translations {
     generateCard: string
     gapHorizontal: string
     gapVertical: string
+    imagePadding: string
     randomRotate: string
     resetRotation: string
     cellRotation: string
     cellCoord: string
+    rotationTip: string
     rotationHint: string
   }
   common: {
@@ -245,7 +247,7 @@ export const zh: Translations = {
     advanced: '高级设置',
     customRows: '自定义行数',
     customCols: '自定义列数',
-    clampHint: '已调整为 1-6 之间',
+    clampHint: '已调整为 1-10 之间',
   },
   gridPanel: {
     overflowHint: '仅使用前 {count} 张',
@@ -253,10 +255,12 @@ export const zh: Translations = {
     generateCard: '导入到色卡',
     gapHorizontal: '横向间距',
     gapVertical: '纵向间距',
+    imagePadding: '图片留白',
     randomRotate: '随机旋转',
     resetRotation: '重置旋转',
     cellRotation: '旋转',
     cellCoord: '第{row}行第{col}列',
+    rotationTip: '操作提示',
     rotationHint: '点击网格中的单元格，可单独调整其旋转角度',
   },
   common: {
@@ -379,7 +383,7 @@ export const en: Translations = {
     advanced: 'Advanced',
     customRows: 'Custom Rows',
     customCols: 'Custom Cols',
-    clampHint: 'Adjusted to between 1-6',
+    clampHint: 'Adjusted to between 1-10',
   },
   gridPanel: {
     overflowHint: 'Only using the first {count} photos',
@@ -387,10 +391,12 @@ export const en: Translations = {
     generateCard: 'Open in Card Tab',
     gapHorizontal: 'Horizontal Gap',
     gapVertical: 'Vertical Gap',
+    imagePadding: 'Image Padding',
     randomRotate: 'Random Rotate',
     resetRotation: 'Reset Rotation',
     cellRotation: 'Rotation',
     cellCoord: 'Row {row}, Col {col}',
+    rotationTip: 'Tip',
     rotationHint: 'Click a cell in the grid to adjust its rotation angle',
   },
   common: {

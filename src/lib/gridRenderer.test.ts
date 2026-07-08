@@ -62,4 +62,23 @@ describe('renderCollageGrid', () => {
 
     expect(fillRectSpy).toHaveBeenCalledWith(50, 0, 50, 50)
   })
+
+  it('offsets collage cells by the configured padding', () => {
+    const photos = [createTestPhoto(50, 50)]
+    const canvas = makeCanvas(70, 70)
+    const ctx = canvas.getContext('2d')!
+    const drawImageSpy = vi.spyOn(ctx, 'drawImage')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 1,
+      cols: 1,
+      cellWidth: 50,
+      cellHeight: 50,
+      gapPx: 0,
+      paddingPx: 10,
+    })
+
+    expect(drawImageSpy.mock.calls[0].slice(-4)).toEqual([10, 10, 50, 50])
+  })
 })

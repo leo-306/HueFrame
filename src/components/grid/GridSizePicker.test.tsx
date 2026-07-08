@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GridSizePicker } from './GridSizePicker'
 
 describe('GridSizePicker', () => {
@@ -19,8 +20,8 @@ describe('GridSizePicker', () => {
 
     expect(screen.queryByLabelText('自定义行数')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
-    expect(screen.getByLabelText('自定义行数')).toBeInTheDocument()
-    expect(screen.getByLabelText('自定义列数')).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: '自定义行数' })).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: '自定义列数' })).toBeInTheDocument()
   })
 
   it('calls onChange with the preset rows/cols when a preset is clicked', () => {
@@ -32,41 +33,40 @@ describe('GridSizePicker', () => {
     expect(onChange).toHaveBeenCalledWith({ rows: 2, cols: 2 })
   })
 
-  it('calls onChange with a clamped value when the custom rows input changes', () => {
-    const onChange = vi.fn()
-    render(<GridSizePicker rows={3} cols={3} onChange={onChange} />)
-
-    fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
-    fireEvent.change(screen.getByLabelText('自定义行数'), { target: { value: '9' } })
-
-    expect(onChange).toHaveBeenCalledWith({ rows: 6, cols: 3 })
-  })
-
-  it('calls onChange with a clamped value when the custom cols input changes', () => {
-    const onChange = vi.fn()
-    render(<GridSizePicker rows={3} cols={3} onChange={onChange} />)
-
-    fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
-    fireEvent.change(screen.getByLabelText('自定义列数'), { target: { value: '0' } })
-
-    expect(onChange).toHaveBeenCalledWith({ rows: 3, cols: 1 })
-  })
-
-  it('shows a clamp hint when an out-of-range custom value is entered', () => {
+  it('uses sliders with a range from 1 to 10 for custom rows and columns', () => {
     render(<GridSizePicker rows={3} cols={3} onChange={vi.fn()} />)
 
     fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
-    fireEvent.change(screen.getByLabelText('自定义行数'), { target: { value: '9' } })
 
-    expect(screen.getByText('已调整为 1-6 之间')).toBeInTheDocument()
+    for (const slider of screen.getAllByRole('slider')) {
+      expect(slider).toHaveAttribute('aria-valuemin', '1')
+      expect(slider).toHaveAttribute('aria-valuemax', '10')
+    }
   })
 
-  it('does not show a clamp hint when a value within range is entered', () => {
-    render(<GridSizePicker rows={3} cols={3} onChange={vi.fn()} />)
+  it('calls onChange when the custom rows slider changes', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    render(<GridSizePicker rows={3} cols={3} onChange={onChange} />)
 
     fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
-    fireEvent.change(screen.getByLabelText('自定义行数'), { target: { value: '4' } })
+    const rowsSlider = screen.getByRole('slider', { name: '自定义行数' })
+    rowsSlider.focus()
+    await user.keyboard('[ArrowRight]')
 
-    expect(screen.queryByText('已调整为 1-6 之间')).not.toBeInTheDocument()
+    expect(onChange).toHaveBeenCalledWith({ rows: 4, cols: 3 })
+  })
+
+  it('calls onChange when the custom columns slider changes', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    render(<GridSizePicker rows={3} cols={3} onChange={onChange} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '高级设置' }))
+    const colsSlider = screen.getByRole('slider', { name: '自定义列数' })
+    colsSlider.focus()
+    await user.keyboard('[ArrowLeft]')
+
+    expect(onChange).toHaveBeenCalledWith({ rows: 3, cols: 2 })
   })
 })
