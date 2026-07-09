@@ -16,12 +16,22 @@ export const GRID_PRESETS: GridPreset[] = [
 
 const MIN_GRID_SIZE = 1
 const MAX_GRID_SIZE = 10
+const GRID_LOGICAL_WIDTH = 800
 
 /**
  * 自定义行列输入的合法范围是 1-10，超出范围钳制到边界值。
  */
 export function clampGridSize(value: number): number {
   return Math.min(MAX_GRID_SIZE, Math.max(MIN_GRID_SIZE, value))
+}
+
+/**
+ * 配置面板使用与色卡一致的 800px 逻辑宽度；导出时按实际内容宽度同比换算，
+ * 避免高分辨率原图中的间距在缩放预览后显得过小。
+ */
+export function scaleGridSpacing(valuePx: number, contentWidth: number): number {
+  if (valuePx <= 0 || contentWidth <= 0) return 0
+  return Math.max(1, Math.round(valuePx * (contentWidth / GRID_LOGICAL_WIDTH)))
 }
 
 export interface CellRect {

@@ -50,6 +50,8 @@ describe('GridSplitPanel', () => {
     expect(screen.getByRole('heading', { name: '旋转' })).toBeInTheDocument()
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(screen.getAllByRole('slider')).toHaveLength(3)
+    expect(screen.getByRole('slider', { name: '横向间距' })).toHaveAttribute('aria-valuemax', '80')
+    expect(screen.getByRole('slider', { name: '纵向间距' })).toHaveAttribute('aria-valuemax', '80')
     expect(screen.getByRole('slider', { name: '图片留白' })).toHaveAttribute('aria-valuemax', '80')
     expect(screen.getByTestId('replace-upload-input')).not.toHaveAttribute('multiple')
     expect(container.querySelector('canvas')?.compareDocumentPosition(screen.getByRole('heading', { name: '版式' }))).toBe(

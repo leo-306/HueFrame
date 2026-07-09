@@ -8,7 +8,7 @@ import { MarginSlider } from '../MarginSlider'
 import { ExportButton } from '../ExportButton'
 import { Button } from '../ui/button'
 import { Slider } from '../ui/slider'
-import { computeRotatedSplitLayout } from '../../lib/gridLayout'
+import { computeRotatedSplitLayout, scaleGridSpacing } from '../../lib/gridLayout'
 import { renderRotatedSplitGrid } from '../../lib/gridRenderer'
 import { loadImage } from '../../lib/loadImage'
 import { useTranslation } from '../../i18n/LocaleContext'
@@ -52,14 +52,15 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
 
   const layout = useMemo(() => {
     if (!photo) return null
+    const imageWidth = photo.naturalWidth || photo.width
     return computeRotatedSplitLayout({
-      imageWidth: photo.naturalWidth || photo.width,
+      imageWidth,
       imageHeight: photo.naturalHeight || photo.height,
       rows,
       cols,
-      gapXPx,
-      gapYPx,
-      paddingPx,
+      gapXPx: scaleGridSpacing(gapXPx, imageWidth),
+      gapYPx: scaleGridSpacing(gapYPx, imageWidth),
+      paddingPx: scaleGridSpacing(paddingPx, imageWidth),
       rotationsDeg: rotations,
     })
   }, [photo, rows, cols, gapXPx, gapYPx, paddingPx, rotations])
@@ -189,8 +190,8 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
                 label: t.cardTabs.spacingAndWhitespace,
                 content: (
                   <div className="flex flex-col gap-5">
-                    <MarginSlider id="gap-x" label={t.gridPanel.gapHorizontal} valuePx={gapXPx} min={0} max={40} onChange={setGapXPx} />
-                    <MarginSlider id="gap-y" label={t.gridPanel.gapVertical} valuePx={gapYPx} min={0} max={40} onChange={setGapYPx} />
+                    <MarginSlider id="gap-x" label={t.gridPanel.gapHorizontal} valuePx={gapXPx} min={0} max={80} onChange={setGapXPx} />
+                    <MarginSlider id="gap-y" label={t.gridPanel.gapVertical} valuePx={gapYPx} min={0} max={80} onChange={setGapYPx} />
                     <MarginSlider id="grid-padding" label={t.gridPanel.imagePadding} valuePx={paddingPx} min={0} max={80} onChange={setPaddingPx} />
                   </div>
                 ),

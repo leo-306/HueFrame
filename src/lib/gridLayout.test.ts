@@ -8,6 +8,7 @@ import {
   computeCoverSourceRect,
   computeCollageCanvasSize,
   computeRotatedSplitLayout,
+  scaleGridSpacing,
 } from './gridLayout'
 
 describe('GRID_PRESETS', () => {
@@ -34,6 +35,21 @@ describe('clampGridSize', () => {
 
   it('clamps values above 10 down to 10', () => {
     expect(clampGridSize(11)).toBe(10)
+  })
+})
+
+describe('scaleGridSpacing', () => {
+  it('keeps values unchanged at the 800px logical width', () => {
+    expect(scaleGridSpacing(8, 800)).toBe(8)
+  })
+
+  it('scales values to the actual canvas content width', () => {
+    expect(scaleGridSpacing(8, 4000)).toBe(40)
+    expect(scaleGridSpacing(8, 400)).toBe(4)
+  })
+
+  it('keeps zero spacing at zero', () => {
+    expect(scaleGridSpacing(0, 4000)).toBe(0)
   })
 })
 

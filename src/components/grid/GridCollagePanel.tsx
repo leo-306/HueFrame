@@ -5,7 +5,7 @@ import { GridSizePicker } from './GridSizePicker'
 import { GridConfigSections } from './GridConfigSections'
 import { MarginSlider } from '../MarginSlider'
 import { ExportButton } from '../ExportButton'
-import { computeCollageCanvasSize } from '../../lib/gridLayout'
+import { computeCollageCanvasSize, scaleGridSpacing } from '../../lib/gridLayout'
 import { renderCollageGrid } from '../../lib/gridRenderer'
 import { loadImage } from '../../lib/loadImage'
 import { useTranslation } from '../../i18n/LocaleContext'
@@ -35,12 +35,30 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
     if (photos.length === 0) return
     const canvas = canvasRef.current
     if (!canvas) return
-    const { width, height } = computeCollageCanvasSize({ rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx, paddingPx })
+    const contentWidth = CELL_SIZE * cols
+    const canvasGapPx = scaleGridSpacing(gapPx, contentWidth)
+    const canvasPaddingPx = scaleGridSpacing(paddingPx, contentWidth)
+    const { width, height } = computeCollageCanvasSize({
+      rows,
+      cols,
+      cellWidth: CELL_SIZE,
+      cellHeight: CELL_SIZE,
+      gapPx: canvasGapPx,
+      paddingPx: canvasPaddingPx,
+    })
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    renderCollageGrid(ctx, { photos, rows, cols, cellWidth: CELL_SIZE, cellHeight: CELL_SIZE, gapPx, paddingPx })
+    renderCollageGrid(ctx, {
+      photos,
+      rows,
+      cols,
+      cellWidth: CELL_SIZE,
+      cellHeight: CELL_SIZE,
+      gapPx: canvasGapPx,
+      paddingPx: canvasPaddingPx,
+    })
     setExportReady(true)
   }, [photos, rows, cols, gapPx, paddingPx])
 
