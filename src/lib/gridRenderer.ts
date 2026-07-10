@@ -8,6 +8,31 @@ import {
 
 const PLACEHOLDER_COLOR = '#eeeeed' // --color-surface-container
 const GAP_BACKGROUND = '#f9f9f8' // --color-surface
+const GRID_LINE_COLOR = '#d8d8d7'
+
+export interface GridBackground {
+  color: string
+  opacity: number
+}
+
+export type GridCellBorderStyle = 'none' | 'solid' | 'dashed' | 'dotted'
+
+export interface GridCellBorder {
+  color: string
+  widthPx: number
+  style: GridCellBorderStyle
+}
+
+const DEFAULT_GRID_BORDER: GridCellBorder = {
+  color: GRID_LINE_COLOR,
+  widthPx: 1,
+  style: 'solid',
+}
+
+const DEFAULT_GRID_BACKGROUND: GridBackground = {
+  color: GAP_BACKGROUND,
+  opacity: 1,
+}
 
 interface SplitRenderInput {
   photo: HTMLImageElement
@@ -16,13 +41,12 @@ interface SplitRenderInput {
   gapPx: number
   /**
    * 预览态传 true，在每个切分块周围描一圈细线，方便用户判断切分位置；
-   * 导出态（默认 false）不画线，只用 gapPx 的背景色间距分隔——
-   * 保证导出的图片是纯净的网格大图，不含辅助线。
+   * 默认 false 时不画线，只用 gapPx 的背景色间距分隔。
    */
   showGridLines?: boolean
+  gridBorder?: GridCellBorder
+  gridBackground?: GridBackground
 }
-
-const GRID_LINE_COLOR = 'rgba(26, 28, 28, 0.15)' // 半透明的 --color-on-surface，仅用于预览辅助线
 
 /**
  * 切分模式：把原图按行列切开，各块之间留 gapPx 的背景色间距，绘制到目标 canvas。
@@ -30,30 +54,28 @@ const GRID_LINE_COLOR = 'rgba(26, 28, 28, 0.15)' // 半透明的 --color-on-surf
  */
 export function renderSplitGrid(
   ctx: CanvasRenderingContext2D,
-  { photo, rows, cols, gapPx, showGridLines = false }: SplitRenderInput
+  { photo, rows, cols, gapPx, showGridLines = false, gridBorder, gridBackground }: SplitRenderInput
 ): void {
   const imageWidth = photo.naturalWidth || photo.width
   const imageHeight = photo.naturalHeight || photo.height
   const { width, height } = computeSplitCanvasSize({ imageWidth, imageHeight, rows, cols, gapPx })
 
-  if (gapPx > 0) {
-    ctx.fillStyle = GAP_BACKGROUND
-    ctx.fillRect(0, 0, width, height)
-  }
+  fillGridBackground(ctx, width, height, gridBackground)
 
   const cells = computeSplitCells({ imageWidth, imageHeight, rows, cols, gapPx })
   for (const cell of cells) {
     ctx.drawImage(photo, cell.sx, cell.sy, cell.sWidth, cell.sHeight, cell.dx, cell.dy, cell.dWidth, cell.dHeight)
   }
 
-  if (showGridLines) {
-    ctx.strokeStyle = GRID_LINE_COLOR
-    ctx.lineWidth = 1
+  const border = resolveGridBorder(showGridLines, gridBorder)
+  if (border) {
+    applyGridBorderStyle(ctx, border)
     for (const cell of cells) {
       ctx.beginPath()
       ctx.rect(cell.dx, cell.dy, cell.dWidth, cell.dHeight)
       ctx.stroke()
     }
+    ctx.restore()
   }
 }
 
@@ -115,6 +137,8 @@ interface RotatedSplitRenderInput {
   photo: HTMLImageElement
   layout: RotatedSplitLayout
   showGridLines?: boolean
+  gridBorder?: GridCellBorder
+  gridBackground?: GridBackground
 }
 
 /**
@@ -124,10 +148,9 @@ interface RotatedSplitRenderInput {
  */
 export function renderRotatedSplitGrid(
   ctx: CanvasRenderingContext2D,
-  { photo, layout, showGridLines = false }: RotatedSplitRenderInput
+  { photo, layout, showGridLines = false, gridBorder, gridBackground }: RotatedSplitRenderInput
 ): void {
-  ctx.fillStyle = GAP_BACKGROUND
-  ctx.fillRect(0, 0, layout.canvasWidth, layout.canvasHeight)
+  fillGridBackground(ctx, layout.canvasWidth, layout.canvasHeight, gridBackground)
 
   for (const cell of layout.cells) {
     ctx.save()
@@ -141,9 +164,9 @@ export function renderRotatedSplitGrid(
     ctx.restore()
   }
 
-  if (showGridLines) {
-    ctx.strokeStyle = GRID_LINE_COLOR
-    ctx.lineWidth = 1
+  const border = resolveGridBorder(showGridLines, gridBorder)
+  if (border) {
+    applyGridBorderStyle(ctx, border)
     for (const cell of layout.cells) {
       ctx.save()
       ctx.translate(cell.centerX, cell.centerY)
@@ -153,5 +176,44 @@ export function renderRotatedSplitGrid(
       ctx.stroke()
       ctx.restore()
     }
+    ctx.restore()
+  }
+}
+
+function fillGridBackground(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  background = DEFAULT_GRID_BACKGROUND
+): void {
+  ctx.clearRect(0, 0, width, height)
+  const opacity = Math.min(1, Math.max(0, background.opacity))
+  if (opacity === 0) return
+
+  ctx.save()
+  ctx.fillStyle = background.color
+  ctx.globalAlpha = opacity
+  ctx.fillRect(0, 0, width, height)
+  ctx.restore()
+}
+
+function resolveGridBorder(showGridLines: boolean, gridBorder?: GridCellBorder): GridCellBorder | null {
+  const border = gridBorder ?? (showGridLines ? DEFAULT_GRID_BORDER : null)
+  if (!border || border.style === 'none' || border.widthPx <= 0) return null
+  return border
+}
+
+function applyGridBorderStyle(ctx: CanvasRenderingContext2D, border: GridCellBorder): void {
+  ctx.save()
+  ctx.strokeStyle = border.color
+  ctx.lineWidth = border.widthPx
+  ctx.lineCap = border.style === 'dotted' ? 'round' : 'butt'
+
+  if (border.style === 'dashed') {
+    ctx.setLineDash([border.widthPx * 6, border.widthPx * 4])
+  } else if (border.style === 'dotted') {
+    ctx.setLineDash([0, border.widthPx * 2.5])
+  } else {
+    ctx.setLineDash([])
   }
 }

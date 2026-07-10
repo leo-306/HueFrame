@@ -39,6 +39,66 @@ describe('renderSplitGrid', () => {
 
     expect(strokeSpy).not.toHaveBeenCalled()
   })
+
+  it('uses the configured grid border style when provided', () => {
+    const photo = createTestPhoto(120, 90)
+    const canvas = makeCanvas(120, 90)
+    const ctx = canvas.getContext('2d')!
+    const lineDashSpy = vi.spyOn(ctx, 'setLineDash')
+    const strokeSpy = vi.spyOn(ctx, 'stroke')
+
+    renderSplitGrid(ctx, {
+      photo,
+      rows: 3,
+      cols: 3,
+      gapPx: 0,
+      gridBorder: { color: '#ff5500', widthPx: 2, style: 'dashed' },
+    })
+
+    expect(lineDashSpy).toHaveBeenCalledWith([12, 8])
+    expect(strokeSpy).toHaveBeenCalled()
+  })
+
+  it('skips grid borders when the style is none', () => {
+    const photo = createTestPhoto(120, 90)
+    const canvas = makeCanvas(120, 90)
+    const ctx = canvas.getContext('2d')!
+    const strokeSpy = vi.spyOn(ctx, 'stroke')
+
+    renderSplitGrid(ctx, {
+      photo,
+      rows: 3,
+      cols: 3,
+      gapPx: 0,
+      showGridLines: true,
+      gridBorder: { color: '#ff5500', widthPx: 2, style: 'none' },
+    })
+
+    expect(strokeSpy).not.toHaveBeenCalled()
+  })
+
+  it('uses the configured background color and opacity', () => {
+    const photo = createTestPhoto(120, 90)
+    const canvas = makeCanvas(140, 110)
+    const ctx = canvas.getContext('2d')!
+    let fillStyle = ''
+    let globalAlpha = 0
+    vi.spyOn(ctx, 'fillRect').mockImplementation(() => {
+      fillStyle = String(ctx.fillStyle)
+      globalAlpha = ctx.globalAlpha
+    })
+
+    renderSplitGrid(ctx, {
+      photo,
+      rows: 3,
+      cols: 3,
+      gapPx: 10,
+      gridBackground: { color: '#336699', opacity: 0.35 },
+    })
+
+    expect(fillStyle).toBe('#336699')
+    expect(globalAlpha).toBeCloseTo(0.35)
+  })
 })
 
 describe('renderCollageGrid', () => {

@@ -122,6 +122,17 @@ export interface Translations {
     imagePadding: string
     randomRotate: string
     resetRotation: string
+    background: string
+    backgroundColor: string
+    backgroundOpacity: string
+    cellBorder: string
+    cellBorderColor: string
+    cellBorderWidth: string
+    cellBorderStyle: string
+    cellBorderNone: string
+    cellBorderSolid: string
+    cellBorderDashed: string
+    cellBorderDotted: string
     cellRotation: string
     cellCoord: string
     rotationTip: string
@@ -258,6 +269,17 @@ export const zh: Translations = {
     imagePadding: '图片留白',
     randomRotate: '随机旋转',
     resetRotation: '重置旋转',
+    background: '背景',
+    backgroundColor: '背景颜色',
+    backgroundOpacity: '背景透明度',
+    cellBorder: '单元格边框',
+    cellBorderColor: '边框颜色',
+    cellBorderWidth: '边框粗细',
+    cellBorderStyle: '边框样式',
+    cellBorderNone: '无',
+    cellBorderSolid: '实线',
+    cellBorderDashed: '虚线',
+    cellBorderDotted: '点线',
     cellRotation: '旋转',
     cellCoord: '第{row}行第{col}列',
     rotationTip: '操作提示',
@@ -394,6 +416,17 @@ export const en: Translations = {
     imagePadding: 'Image Padding',
     randomRotate: 'Random Rotate',
     resetRotation: 'Reset Rotation',
+    background: 'Background',
+    backgroundColor: 'Background Color',
+    backgroundOpacity: 'Background Opacity',
+    cellBorder: 'Cell Border',
+    cellBorderColor: 'Border Color',
+    cellBorderWidth: 'Border Width',
+    cellBorderStyle: 'Border Style',
+    cellBorderNone: 'None',
+    cellBorderSolid: 'Solid',
+    cellBorderDashed: 'Dashed',
+    cellBorderDotted: 'Dotted',
     cellRotation: 'Rotation',
     cellCoord: 'Row {row}, Col {col}',
     rotationTip: 'Tip',
