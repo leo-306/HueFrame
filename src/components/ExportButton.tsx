@@ -33,8 +33,12 @@ export function ExportButton({
     const link = document.createElement('a')
     link.href = url
     link.download = fileName
+    link.style.display = 'none'
+    document.body.appendChild(link)
     link.click()
-    URL.revokeObjectURL(url)
+    link.remove()
+    // Safari 与部分内置浏览器需要等下载任务接管 Blob URL 后再释放。
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000)
   }
 
   return (

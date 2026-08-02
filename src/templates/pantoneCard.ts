@@ -1,5 +1,5 @@
 import type { TemplateRenderer } from './types'
-import { drawImageCover, paletteName } from './drawing'
+import { drawImageContain, drawImageCover, paletteName } from './drawing'
 
 /** 潘通主色卡：用一张作品、一个主色和清晰编号构成收藏卡片。 */
 export const renderPantoneCard: TemplateRenderer = (ctx, config) => {
@@ -7,14 +7,38 @@ export const renderPantoneCard: TemplateRenderer = (ctx, config) => {
   const dominant = palette[0]
   const pad = width * 0.055
   const photoHeight = height * 0.66
+  const photoWidth = width - pad * 2
   const colorTop = pad + photoHeight + height * 0.025
+  const imageWidth = photo.naturalWidth || photo.width
+  const imageHeight = photo.naturalHeight || photo.height
+  const isPortraitInWideSlot = imageWidth / imageHeight < (photoWidth / photoHeight) * 0.85
 
   ctx.fillStyle = '#f4f1e9'
   ctx.fillRect(0, 0, width, height)
-  drawImageCover(ctx, photo, pad, pad, width - pad * 2, photoHeight, width * 0.012)
+  if (isPortraitInWideSlot) {
+    drawImageContain(
+      ctx,
+      photo,
+      pad,
+      pad,
+      photoWidth,
+      photoHeight,
+      width * 0.012,
+      dominant?.hex ?? '#ded9cf'
+    )
+  } else {
+    drawImageCover(ctx, photo, pad, pad, photoWidth, photoHeight, width * 0.012)
+  }
 
   ctx.fillStyle = dominant?.hex ?? '#ded8cb'
-  ctx.fillRect(pad, colorTop, width - pad * 2, height * 0.105)
+  ctx.fillRect(pad, colorTop, photoWidth, height * 0.105)
+  ctx.strokeStyle = 'rgba(29, 33, 31, 0.28)'
+  ctx.lineWidth = Math.max(1.5, width * 0.002)
+  ctx.strokeRect(pad + ctx.lineWidth / 2, colorTop + ctx.lineWidth / 2, photoWidth - ctx.lineWidth, height * 0.105 - ctx.lineWidth)
+  ctx.fillStyle = dominant?.textColor ?? '#000000'
+  ctx.textAlign = 'left'
+  ctx.font = `700 ${Math.round(width * 0.015)}px Inter, sans-serif`
+  ctx.fillText('PRIMARY COLOR', pad + width * 0.018, colorTop + height * 0.06)
 
   ctx.fillStyle = '#191b1a'
   ctx.textAlign = 'left'

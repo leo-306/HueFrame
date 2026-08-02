@@ -36,6 +36,37 @@ export function drawImageCover(
   ctx.restore()
 }
 
+/** 完整显示照片，在目标区域不足的方向保留背景，不裁掉竖图标题或边缘内容。 */
+export function drawImageContain(
+  ctx: CanvasRenderingContext2D,
+  photo: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius = 0,
+  background = '#ded9cf'
+): void {
+  const imageWidth = photo.naturalWidth || photo.width
+  const imageHeight = photo.naturalHeight || photo.height
+  const scale = Math.min(width / imageWidth, height / imageHeight)
+  const drawWidth = imageWidth * scale
+  const drawHeight = imageHeight * scale
+  const drawX = x + (width - drawWidth) / 2
+  const drawY = y + (height - drawHeight) / 2
+
+  ctx.save()
+  if (radius > 0) {
+    ctx.beginPath()
+    ctx.roundRect(x, y, width, height, radius)
+    ctx.clip()
+  }
+  ctx.fillStyle = background
+  ctx.fillRect(x, y, width, height)
+  ctx.drawImage(photo, drawX, drawY, drawWidth, drawHeight)
+  ctx.restore()
+}
+
 export function rgba([r, g, b]: RGB, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }

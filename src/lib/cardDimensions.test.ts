@@ -30,4 +30,12 @@ describe('dimensionsForTemplate', () => {
     expect(dimensionsForTemplate('pantoneCard', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
     expect(dimensionsForTemplate('colorAnnotation', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
   })
+
+  it('keeps fixed social ratios when an outer margin is applied', () => {
+    expect(dimensionsForTemplate('editorialFrame', 1200, 800, 24)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('polaroidJournal', 1200, 800, 24)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('pantoneCard', 1200, 800, 24)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('colorAnnotation', 1200, 800, 24)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('colorArchive', 1200, 800, 24)).toEqual({ width: 800, height: 896 })
+  })
 })

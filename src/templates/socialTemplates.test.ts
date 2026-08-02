@@ -47,3 +47,34 @@ describe.each(templates)('%s template', (_name, renderer) => {
     expect(ctx.getImageData(2, 2, 1, 1).data[3]).toBeGreaterThan(0)
   })
 })
+
+describe('social template safeguards', () => {
+  it('keeps a portrait source fully visible in the Pantone photo slot', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 800
+    canvas.height = 1000
+    const ctx = canvas.getContext('2d')!
+    const config = makeConfig()
+    config.photo = createTestPhoto(300, 600)
+    const drawImage = vi.spyOn(ctx, 'drawImage')
+    const strokeRect = vi.spyOn(ctx, 'strokeRect')
+
+    renderPantoneCard(ctx, config)
+
+    const photoCall = drawImage.mock.calls.find(([source]) => source === config.photo)
+    expect(photoCall).toHaveLength(5)
+    expect(strokeRect).toHaveBeenCalled()
+  })
+
+  it('draws a two-tone connector underneath each annotation line', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 800
+    canvas.height = 1000
+    const ctx = canvas.getContext('2d')!
+    const stroke = vi.spyOn(ctx, 'stroke')
+
+    renderColorAnnotation(ctx, makeConfig())
+
+    expect(stroke.mock.calls.length).toBeGreaterThanOrEqual(9)
+  })
+})

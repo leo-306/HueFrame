@@ -7,7 +7,7 @@ export const renderColorAnnotation: TemplateRenderer = (ctx, config) => {
   const pad = width * 0.055
   const photoX = pad
   const photoY = height * 0.11
-  const photoWidth = width * 0.68
+  const photoWidth = width * 0.65
   const photoHeight = height * 0.69
   const railX = photoX + photoWidth + width * 0.035
   const railWidth = width - railX - pad
@@ -36,12 +36,15 @@ export const renderColorAnnotation: TemplateRenderer = (ctx, config) => {
     const targetX = railX
     const targetY = swatchY + swatchSize / 2
 
-    ctx.strokeStyle = 'rgba(247, 245, 239, 0.9)'
-    ctx.lineWidth = Math.max(2, width * 0.003)
+    ctx.strokeStyle = 'rgba(29, 33, 31, 0.42)'
+    ctx.lineWidth = Math.max(3, width * 0.004)
     ctx.beginPath()
     ctx.moveTo(pointX, pointY)
     ctx.lineTo(photoX + photoWidth, pointY)
     ctx.lineTo(targetX, targetY)
+    ctx.stroke()
+    ctx.strokeStyle = 'rgba(247, 245, 239, 0.94)'
+    ctx.lineWidth = Math.max(1.5, width * 0.002)
     ctx.stroke()
 
     ctx.fillStyle = entry.hex
@@ -56,7 +59,7 @@ export const renderColorAnnotation: TemplateRenderer = (ctx, config) => {
     ctx.fillRect(targetX, swatchY, swatchSize, swatchSize)
     ctx.fillStyle = '#242825'
     ctx.textAlign = 'left'
-    ctx.font = `700 ${Math.max(10, Math.round(width * 0.013))}px Inter, sans-serif`
+    ctx.font = `700 ${Math.max(14, Math.round(width * 0.0175))}px Inter, sans-serif`
     ctx.fillText(entry.hex.toUpperCase(), targetX, swatchY + swatchSize + height * 0.017)
   })
 

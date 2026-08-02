@@ -249,6 +249,7 @@ describe('renderCollageGrid', () => {
     const canvas = makeCanvas(900, 1200)
     const ctx = canvas.getContext('2d')!
     const fillTextSpy = vi.spyOn(ctx, 'fillText')
+    const strokeRectSpy = vi.spyOn(ctx, 'strokeRect')
 
     renderCollageGrid(ctx, {
       photos,
@@ -263,6 +264,7 @@ describe('renderCollageGrid', () => {
 
     expect(fillTextSpy).toHaveBeenCalledWith('LIGHT / 光', expect.any(Number), expect.any(Number))
     expect(fillTextSpy.mock.calls.some(([text]) => String(text).startsWith('#'))).toBe(true)
+    expect(strokeRectSpy).toHaveBeenCalledTimes(3)
   })
 
   it('renders five seamless horizontal cinematic frames', () => {

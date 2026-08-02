@@ -15,6 +15,18 @@ export function dimensionsForTemplate(
   photoHeight: number,
   marginPx: number
 ): { width: number; height: number } {
+  if (
+    template === 'editorialFrame' ||
+    template === 'polaroidJournal' ||
+    template === 'pantoneCard' ||
+    template === 'colorAnnotation'
+  ) {
+    return { width: CARD_WIDTH, height: 1000 }
+  }
+  if (template === 'colorArchive') {
+    return { width: CARD_WIDTH, height: 896 }
+  }
+
   const innerWidth = CARD_WIDTH - marginPx * 2
   const renderedPhotoHeight = photoHeightForWidth(photoWidth, photoHeight, innerWidth)
   const templateHeight =
@@ -22,14 +34,7 @@ export function dimensionsForTemplate(
       ? renderedPhotoHeight +
         Math.round(innerWidth * CLASSIC_STRIP_HEIGHT_RATIO) +
         Math.round(innerWidth * CLASSIC_INFO_HEIGHT_RATIO)
-      : template === 'editorialFrame' ||
-          template === 'polaroidJournal' ||
-          template === 'pantoneCard' ||
-          template === 'colorAnnotation'
-        ? Math.round(innerWidth * 1.25)
-        : template === 'colorArchive'
-          ? Math.round(innerWidth * 1.12)
-          : renderedPhotoHeight
+      : renderedPhotoHeight
 
   return {
     width: CARD_WIDTH,

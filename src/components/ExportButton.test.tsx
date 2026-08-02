@@ -7,10 +7,17 @@ describe('ExportButton', () => {
     vi.stubGlobal('URL', { createObjectURL: vi.fn().mockReturnValue('blob:mock'), revokeObjectURL: vi.fn() })
   })
 
-  it('saves the card image to the album action', () => {
+  it('saves the card image through a mounted link and delays URL cleanup', async () => {
     const canvas = document.createElement('canvas')
     const toBlobSpy = vi.spyOn(canvas, 'toBlob').mockImplementation((cb) => {
       cb!(new Blob(['fake'], { type: 'image/png' }))
+    })
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
+    const removeSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove')
+    const appendSpy = vi.spyOn(document.body, 'appendChild')
+    const timeoutSpy = vi.spyOn(window, 'setTimeout').mockImplementation((callback) => {
+      if (typeof callback === 'function') callback()
+      return 1 as unknown as ReturnType<typeof setTimeout>
     })
 
     render(<ExportButton canvas={canvas} fileName="card.png" onFilesReplaced={vi.fn()} />)
@@ -18,8 +25,15 @@ describe('ExportButton', () => {
     expect(saveButton).toHaveClass('bg-[#2f7d68]', 'text-white')
     expect(saveButton).not.toBeDisabled()
     fireEvent.click(saveButton!)
+    await Promise.resolve()
+    await Promise.resolve()
 
     expect(toBlobSpy).toHaveBeenCalled()
+    expect(appendSpy).toHaveBeenCalledWith(expect.any(HTMLAnchorElement))
+    expect(clickSpy).toHaveBeenCalledOnce()
+    expect(removeSpy).toHaveBeenCalledOnce()
+    expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1_000)
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock')
   })
 
   it('sits above the fixed tool navigation', () => {

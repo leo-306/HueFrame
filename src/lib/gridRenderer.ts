@@ -397,6 +397,9 @@ function renderColorStoryCollage(
     const color = samplePhotoColor(colorSources[colorIndex], ['#c65a43', '#6f8378', '#d8c6a4'][colorIndex])
     ctx.fillStyle = color
     ctx.fillRect(x, y, tileWidth, tileHeight)
+    ctx.strokeStyle = colorBoundary(color, '#f4f0e7')
+    ctx.lineWidth = 2
+    ctx.strokeRect(x + 1, y + 1, tileWidth - 2, tileHeight - 2)
     ctx.fillStyle = contrastTextColor(color)
     ctx.textAlign = 'left'
     ctx.font = '800 18px Inter, sans-serif'
@@ -500,6 +503,25 @@ function contrastTextColor(hex: string): '#ffffff' | '#171917' {
   const green = Number.parseInt(hex.slice(3, 5), 16)
   const blue = Number.parseInt(hex.slice(5, 7), 16)
   return red * 0.299 + green * 0.587 + blue * 0.114 > 156 ? '#171917' : '#ffffff'
+}
+
+function colorBoundary(color: string, background: string): string {
+  const colorRgb = hexToRgb(color)
+  const backgroundRgb = hexToRgb(background)
+  const distance = Math.sqrt(
+    (colorRgb[0] - backgroundRgb[0]) ** 2 +
+      (colorRgb[1] - backgroundRgb[1]) ** 2 +
+      (colorRgb[2] - backgroundRgb[2]) ** 2
+  )
+  return distance < 70 ? 'rgba(29, 33, 31, 0.34)' : 'rgba(255, 255, 255, 0.26)'
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  return [
+    Number.parseInt(hex.slice(1, 3), 16),
+    Number.parseInt(hex.slice(3, 5), 16),
+    Number.parseInt(hex.slice(5, 7), 16),
+  ]
 }
 
 function formatCanvasDate(): string {
