@@ -17,6 +17,11 @@ export function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerPr
   const options: { id: TemplateId; label: string }[] = [
     { id: 'classicStrip', label: t.templatePicker.classicStrip },
     { id: 'magazineCover', label: t.templatePicker.magazineCover },
+    { id: 'editorialFrame', label: t.templatePicker.editorialFrame },
+    { id: 'polaroidJournal', label: t.templatePicker.polaroidJournal },
+    { id: 'colorArchive', label: t.templatePicker.colorArchive },
+    { id: 'pantoneCard', label: t.templatePicker.pantoneCard },
+    { id: 'colorAnnotation', label: t.templatePicker.colorAnnotation },
   ]
 
   useEffect(() => {
@@ -49,7 +54,7 @@ export function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerPr
         >
           <X />
         </Button>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {options.map((option) => (
             <Button
               key={option.id}

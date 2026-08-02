@@ -64,6 +64,11 @@ export interface Translations {
   templatePicker: {
     classicStrip: string
     magazineCover: string
+    editorialFrame: string
+    polaroidJournal: string
+    colorArchive: string
+    pantoneCard: string
+    colorAnnotation: string
     previousTemplate: string
     nextTemplate: string
     viewAllTemplates: string
@@ -114,6 +119,15 @@ export interface Translations {
     clampHint: string
   }
   gridPanel: {
+    template: string
+    templateClean: string
+    templateFocus: string
+    templateFilm: string
+    templateScrapbook: string
+    templatePlog: string
+    templateMagazine: string
+    templateColorStory: string
+    templateCinematic: string
     overflowHint: string
     export: string
     generateCard: string
@@ -211,6 +225,11 @@ export const zh: Translations = {
   templatePicker: {
     classicStrip: '经典色带',
     magazineCover: '杂志封面',
+    editorialFrame: '留白刊物',
+    polaroidJournal: '拍立得手记',
+    colorArchive: '色彩档案',
+    pantoneCard: '潘通主色卡',
+    colorAnnotation: '色彩注记',
     previousTemplate: '上一个模板',
     nextTemplate: '下一个模板',
     viewAllTemplates: '查看全部模板',
@@ -261,6 +280,15 @@ export const zh: Translations = {
     clampHint: '已调整为 1-10 之间',
   },
   gridPanel: {
+    template: '九宫格模板',
+    templateClean: '纯净网格',
+    templateFocus: '中心主角',
+    templateFilm: '胶片印样',
+    templateScrapbook: '旅行手帐',
+    templatePlog: '日常 PLOG',
+    templateMagazine: '杂志矩阵',
+    templateColorStory: '色块叙事',
+    templateCinematic: '电影无痕',
     overflowHint: '仅使用前 {count} 张',
     export: '导出图片',
     generateCard: '导入到色卡',
@@ -358,6 +386,11 @@ export const en: Translations = {
   templatePicker: {
     classicStrip: 'Classic Strip',
     magazineCover: 'Magazine Cover',
+    editorialFrame: 'Editorial Frame',
+    polaroidJournal: 'Polaroid Journal',
+    colorArchive: 'Color Archive',
+    pantoneCard: 'Pantone Card',
+    colorAnnotation: 'Palette Map',
     previousTemplate: 'Previous template',
     nextTemplate: 'Next template',
     viewAllTemplates: 'View all templates',
@@ -408,6 +441,15 @@ export const en: Translations = {
     clampHint: 'Adjusted to between 1-10',
   },
   gridPanel: {
+    template: 'Grid Template',
+    templateClean: 'Clean Grid',
+    templateFocus: 'Center Focus',
+    templateFilm: 'Contact Sheet',
+    templateScrapbook: 'Travel Journal',
+    templatePlog: 'Daily PLOG',
+    templateMagazine: 'Editorial Mosaic',
+    templateColorStory: 'Color Story',
+    templateCinematic: 'Cinematic Flow',
     overflowHint: 'Only using the first {count} photos',
     export: 'Export Image',
     generateCard: 'Open in Card Tab',

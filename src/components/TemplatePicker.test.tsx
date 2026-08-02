@@ -3,12 +3,17 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { TemplatePicker, type TemplateId } from './TemplatePicker'
 
 describe('TemplatePicker', () => {
-  it('renders both template options', () => {
+  it('renders all template options', () => {
     render(<TemplatePicker selected="classicStrip" onSelect={vi.fn()} onClose={vi.fn()} />)
     expect(screen.getByRole('dialog', { name: '全部模板' })).toBeInTheDocument()
     expect(screen.getByText('全部模板')).toBeInTheDocument()
     expect(screen.getByText('经典色带')).toBeInTheDocument()
     expect(screen.getByText('杂志封面')).toBeInTheDocument()
+    expect(screen.getByText('留白刊物')).toBeInTheDocument()
+    expect(screen.getByText('拍立得手记')).toBeInTheDocument()
+    expect(screen.getByText('色彩档案')).toBeInTheDocument()
+    expect(screen.getByText('潘通主色卡')).toBeInTheDocument()
+    expect(screen.getByText('色彩注记')).toBeInTheDocument()
   })
 
   it('calls onSelect with the clicked template id', () => {

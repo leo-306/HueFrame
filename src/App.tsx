@@ -20,6 +20,11 @@ import { dimensionsForTemplate } from './lib/cardDimensions'
 import { updatePaletteEntryColor } from './lib/paletteEditing'
 import { renderClassicStrip } from './templates/classicStrip'
 import { renderMagazineCover } from './templates/magazineCover'
+import { renderEditorialFrame } from './templates/editorialFrame'
+import { renderPolaroidJournal } from './templates/polaroidJournal'
+import { renderColorArchive } from './templates/colorArchive'
+import { renderPantoneCard } from './templates/pantoneCard'
+import { renderColorAnnotation } from './templates/colorAnnotation'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateId, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
 import { useTranslation } from './i18n/LocaleContext'
@@ -30,6 +35,11 @@ import { fetchMockPhoto } from './lib/mockPhoto'
 const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   classicStrip: renderClassicStrip,
   magazineCover: renderMagazineCover,
+  editorialFrame: renderEditorialFrame,
+  polaroidJournal: renderPolaroidJournal,
+  colorArchive: renderColorArchive,
+  pantoneCard: renderPantoneCard,
+  colorAnnotation: renderColorAnnotation,
 }
 
 const TEMPLATE_IDS = Object.keys(RENDERERS) as TemplateId[]

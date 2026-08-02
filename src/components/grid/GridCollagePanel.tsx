@@ -6,11 +6,37 @@ import { GridConfigSections } from './GridConfigSections'
 import { MarginSlider } from '../MarginSlider'
 import { ExportButton } from '../ExportButton'
 import { computeCollageCanvasSize, scaleGridSpacing } from '../../lib/gridLayout'
-import { renderCollageGrid } from '../../lib/gridRenderer'
+import {
+  FIXED_COLLAGE_TEMPLATE_CAPACITY,
+  isFixedCollageTemplate,
+  renderCollageGrid,
+  type CollageTemplateId,
+} from '../../lib/gridRenderer'
 import { loadImage } from '../../lib/loadImage'
 import { useTranslation } from '../../i18n/LocaleContext'
 
 const CELL_SIZE = 300
+const COLLAGE_TEMPLATES: CollageTemplateId[] = [
+  'clean',
+  'focus',
+  'film',
+  'scrapbook',
+  'plog',
+  'magazine',
+  'colorStory',
+  'cinematic',
+]
+const FIXED_CANVAS_SIZE = { width: 900, height: 1200 }
+const TEMPLATE_SPACING: Record<CollageTemplateId, { gap: number; padding: number }> = {
+  clean: { gap: 8, padding: 0 },
+  focus: { gap: 18, padding: 24 },
+  film: { gap: 14, padding: 20 },
+  scrapbook: { gap: 28, padding: 38 },
+  plog: { gap: 12, padding: 30 },
+  magazine: { gap: 14, padding: 32 },
+  colorStory: { gap: 16, padding: 32 },
+  cinematic: { gap: 8, padding: 24 },
+}
 
 interface GridCollagePanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
@@ -23,6 +49,7 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
   const [cols, setCols] = useState(3)
   const [gapPx, setGapPx] = useState(8)
   const [paddingPx, setPaddingPx] = useState(0)
+  const [templateId, setTemplateId] = useState<CollageTemplateId>('clean')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [exportReady, setExportReady] = useState(false)
 
@@ -35,17 +62,20 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
     if (photos.length === 0) return
     const canvas = canvasRef.current
     if (!canvas) return
-    const contentWidth = CELL_SIZE * cols
+    const fixedTemplate = isFixedCollageTemplate(templateId)
+    const contentWidth = fixedTemplate ? FIXED_CANVAS_SIZE.width : CELL_SIZE * cols
     const canvasGapPx = scaleGridSpacing(gapPx, contentWidth)
     const canvasPaddingPx = scaleGridSpacing(paddingPx, contentWidth)
-    const { width, height } = computeCollageCanvasSize({
-      rows,
-      cols,
-      cellWidth: CELL_SIZE,
-      cellHeight: CELL_SIZE,
-      gapPx: canvasGapPx,
-      paddingPx: canvasPaddingPx,
-    })
+    const { width, height } = fixedTemplate
+      ? FIXED_CANVAS_SIZE
+      : computeCollageCanvasSize({
+          rows,
+          cols,
+          cellWidth: CELL_SIZE,
+          cellHeight: CELL_SIZE,
+          gapPx: canvasGapPx,
+          paddingPx: canvasPaddingPx,
+        })
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
@@ -58,16 +88,34 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
       cellHeight: CELL_SIZE,
       gapPx: canvasGapPx,
       paddingPx: canvasPaddingPx,
+      templateId,
     })
     setExportReady(true)
-  }, [photos, rows, cols, gapPx, paddingPx])
+  }, [photos, rows, cols, gapPx, paddingPx, templateId])
+
+  const handleTemplateChange = (nextTemplate: CollageTemplateId) => {
+    setTemplateId(nextTemplate)
+    setGapPx(TEMPLATE_SPACING[nextTemplate].gap)
+    setPaddingPx(TEMPLATE_SPACING[nextTemplate].padding)
+  }
 
   const handleGenerateCard = () => {
     if (canvasRef.current) onGenerateCard(canvasRef.current)
   }
 
-  const totalCells = rows * cols
+  const fixedTemplate = isFixedCollageTemplate(templateId)
+  const totalCells = FIXED_COLLAGE_TEMPLATE_CAPACITY[templateId] ?? rows * cols
   const showOverflowHint = photos.length > totalCells
+  const templateLabels: Record<CollageTemplateId, string> = {
+    clean: t.gridPanel.templateClean,
+    focus: t.gridPanel.templateFocus,
+    film: t.gridPanel.templateFilm,
+    scrapbook: t.gridPanel.templateScrapbook,
+    plog: t.gridPanel.templatePlog,
+    magazine: t.gridPanel.templateMagazine,
+    colorStory: t.gridPanel.templateColorStory,
+    cinematic: t.gridPanel.templateCinematic,
+  }
 
   return (
     <div className="pb-5">
@@ -98,10 +146,48 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
           <GridConfigSections
             sections={[
               {
-                id: 'layout',
-                label: t.cardTabs.layout,
-                content: <GridSizePicker rows={rows} cols={cols} onChange={({ rows: r, cols: c }) => { setRows(r); setCols(c) }} />,
+                id: 'template',
+                label: t.gridPanel.template,
+                content: (
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {COLLAGE_TEMPLATES.map((id) => {
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          aria-pressed={templateId === id}
+                          onClick={() => handleTemplateChange(id)}
+                          className={`rounded-xl border p-2.5 text-left transition-colors ${
+                            templateId === id
+                              ? 'border-primary/35 bg-primary-container/65 text-primary'
+                              : 'border-outline-variant/45 bg-surface text-on-surface-variant'
+                          }`}
+                        >
+                          <span className={`mb-2 grid aspect-[4/3] grid-cols-3 gap-0.5 overflow-hidden rounded-md p-1 ${templatePreviewBackground(id)}`} aria-hidden="true">
+                            {Array.from({ length: 9 }, (_, index) => (
+                              <span
+                                key={index}
+                                className={templatePreviewCell(id, index)}
+                                style={id === 'scrapbook' ? { transform: `rotate(${[-3, 2, -1, 2, 0, -2, 1, -2, 3][index]}deg)` } : undefined}
+                              />
+                            ))}
+                          </span>
+                          <span className="type-label block text-center font-medium">{templateLabels[id]}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                ),
               },
+              ...(!fixedTemplate
+                ? [
+                    {
+                      id: 'layout',
+                      label: t.cardTabs.layout,
+                      content: <GridSizePicker rows={rows} cols={cols} onChange={({ rows: r, cols: c }) => { setRows(r); setCols(c) }} />,
+                    },
+                  ]
+                : []),
               {
                 id: 'spacing',
                 label: t.cardTabs.spacingAndWhitespace,
@@ -129,4 +215,28 @@ export function GridCollagePanel({ onGenerateCard }: GridCollagePanelProps) {
       )}
     </div>
   )
+}
+
+function templatePreviewBackground(templateId: CollageTemplateId): string {
+  if (templateId === 'film' || templateId === 'cinematic') return 'bg-[#151816]'
+  if (templateId === 'scrapbook') return 'bg-[#e9dfcf]'
+  if (templateId === 'plog' || templateId === 'colorStory') return 'bg-[#f4f0e7]'
+  return 'bg-[#eee9de]'
+}
+
+function templatePreviewCell(templateId: CollageTemplateId, index: number): string {
+  if (templateId === 'cinematic') return 'col-span-3 min-h-2 bg-[#68736d]'
+  if (templateId === 'magazine') {
+    if (index === 0) return 'col-span-2 row-span-2 bg-[#75837c]'
+    if (index === 5) return 'col-span-2 bg-[#aab3ad]'
+    return 'bg-[#8f9b94]'
+  }
+  if (templateId === 'colorStory' && [2, 4, 8].includes(index)) {
+    return ['bg-[#c65a43]', 'bg-[#6f8378]', 'bg-[#d8c6a4]'][[2, 4, 8].indexOf(index)]
+  }
+  if (templateId === 'film') return 'border border-[#e7e2d7] bg-[#68736d]'
+  if (templateId === 'scrapbook') return 'border-2 border-white bg-[#a8b4ad] shadow-sm'
+  if (templateId === 'plog') return 'border border-white bg-[#8f9c95] shadow-sm'
+  if (templateId === 'focus' && index === 4) return 'border-2 border-[#c65a43] bg-[#7f9187]'
+  return 'bg-[#a8b4ad]'
 }

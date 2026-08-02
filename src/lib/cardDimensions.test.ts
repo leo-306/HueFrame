@@ -22,4 +22,12 @@ describe('dimensionsForTemplate', () => {
       height: 1176,
     })
   })
+
+  it('uses portrait editorial ratios for the new social templates', () => {
+    expect(dimensionsForTemplate('editorialFrame', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('polaroidJournal', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('colorArchive', 1200, 800, 0)).toEqual({ width: 800, height: 896 })
+    expect(dimensionsForTemplate('pantoneCard', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
+    expect(dimensionsForTemplate('colorAnnotation', 1200, 800, 0)).toEqual({ width: 800, height: 1000 })
+  })
 })

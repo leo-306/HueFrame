@@ -141,4 +141,149 @@ describe('renderCollageGrid', () => {
 
     expect(drawImageSpy.mock.calls[0].slice(-4)).toEqual([10, 10, 50, 50])
   })
+
+  it('renders a dark numbered contact sheet in film mode', () => {
+    const photos = [createTestPhoto(80, 120)]
+    const canvas = makeCanvas(120, 120)
+    const ctx = canvas.getContext('2d')!
+    const fillTextSpy = vi.spyOn(ctx, 'fillText')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 1,
+      cols: 1,
+      cellWidth: 100,
+      cellHeight: 100,
+      gapPx: 0,
+      paddingPx: 10,
+      templateId: 'film',
+    })
+
+    expect(fillTextSpy).toHaveBeenCalledWith('01', expect.any(Number), expect.any(Number))
+    expect(Array.from(ctx.getImageData(2, 2, 1, 1).data).slice(0, 3)).toEqual([21, 24, 22])
+  })
+
+  it('rotates paper frames in scrapbook mode', () => {
+    const photos = [createTestPhoto(80, 120)]
+    const canvas = makeCanvas(120, 120)
+    const ctx = canvas.getContext('2d')!
+    const rotateSpy = vi.spyOn(ctx, 'rotate')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 1,
+      cols: 1,
+      cellWidth: 100,
+      cellHeight: 100,
+      gapPx: 0,
+      paddingPx: 10,
+      templateId: 'scrapbook',
+    })
+
+    expect(rotateSpy).toHaveBeenCalledWith(expect.any(Number))
+  })
+
+  it('adds an accent frame to the center cell in focus mode', () => {
+    const photos = Array.from({ length: 9 }, () => createTestPhoto(20, 20))
+    const canvas = makeCanvas(90, 90)
+    const ctx = canvas.getContext('2d')!
+    const fillRectSpy = vi.spyOn(ctx, 'fillRect')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 3,
+      cols: 3,
+      cellWidth: 30,
+      cellHeight: 30,
+      gapPx: 0,
+      templateId: 'focus',
+    })
+
+    expect(fillRectSpy).toHaveBeenCalledWith(30, 30, 30, 30)
+  })
+
+  it('renders a dated nine-photo PLOG with per-photo captions', () => {
+    const photos = Array.from({ length: 9 }, () => createTestPhoto(60, 60))
+    const canvas = makeCanvas(900, 1200)
+    const ctx = canvas.getContext('2d')!
+    const fillTextSpy = vi.spyOn(ctx, 'fillText')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 3,
+      cols: 3,
+      cellWidth: 300,
+      cellHeight: 300,
+      gapPx: 12,
+      paddingPx: 30,
+      templateId: 'plog',
+    })
+
+    expect(fillTextSpy).toHaveBeenCalledWith('DAILY PLOG', expect.any(Number), expect.any(Number))
+    expect(fillTextSpy).toHaveBeenCalledWith('MOMENT 09', expect.any(Number), expect.any(Number))
+  })
+
+  it('uses uneven destination sizes in the magazine mosaic', () => {
+    const photos = Array.from({ length: 7 }, () => createTestPhoto(80, 60))
+    const canvas = makeCanvas(900, 1200)
+    const ctx = canvas.getContext('2d')!
+    const drawImageSpy = vi.spyOn(ctx, 'drawImage')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 3,
+      cols: 3,
+      cellWidth: 300,
+      cellHeight: 300,
+      gapPx: 14,
+      paddingPx: 32,
+      templateId: 'magazine',
+    })
+
+    const destinationWidths = drawImageSpy.mock.calls.slice(0, 7).map((call) => Number(call.at(-2)))
+    expect(new Set(destinationWidths).size).toBeGreaterThan(2)
+  })
+
+  it('derives labeled color blocks from photos in color story mode', () => {
+    const photos = Array.from({ length: 6 }, () => createTestPhoto(60, 60))
+    const canvas = makeCanvas(900, 1200)
+    const ctx = canvas.getContext('2d')!
+    const fillTextSpy = vi.spyOn(ctx, 'fillText')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 3,
+      cols: 3,
+      cellWidth: 300,
+      cellHeight: 300,
+      gapPx: 16,
+      paddingPx: 32,
+      templateId: 'colorStory',
+    })
+
+    expect(fillTextSpy).toHaveBeenCalledWith('LIGHT / 光', expect.any(Number), expect.any(Number))
+    expect(fillTextSpy.mock.calls.some(([text]) => String(text).startsWith('#'))).toBe(true)
+  })
+
+  it('renders five seamless horizontal cinematic frames', () => {
+    const photos = Array.from({ length: 5 }, () => createTestPhoto(80, 60))
+    const canvas = makeCanvas(900, 1200)
+    const ctx = canvas.getContext('2d')!
+    const fillTextSpy = vi.spyOn(ctx, 'fillText')
+
+    renderCollageGrid(ctx, {
+      photos,
+      rows: 3,
+      cols: 3,
+      cellWidth: 300,
+      cellHeight: 300,
+      gapPx: 8,
+      paddingPx: 24,
+      templateId: 'cinematic',
+    })
+
+    expect(fillTextSpy).toHaveBeenCalledWith('CINEMA / 01', expect.any(Number), expect.any(Number))
+    expect(fillTextSpy).toHaveBeenCalledWith('SHOT 05', expect.any(Number), expect.any(Number))
+    expect(Array.from(ctx.getImageData(2, 2, 1, 1).data).slice(0, 3)).toEqual([13, 15, 14])
+  })
 })

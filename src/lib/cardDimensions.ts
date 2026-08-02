@@ -22,7 +22,14 @@ export function dimensionsForTemplate(
       ? renderedPhotoHeight +
         Math.round(innerWidth * CLASSIC_STRIP_HEIGHT_RATIO) +
         Math.round(innerWidth * CLASSIC_INFO_HEIGHT_RATIO)
-      : renderedPhotoHeight
+      : template === 'editorialFrame' ||
+          template === 'polaroidJournal' ||
+          template === 'pantoneCard' ||
+          template === 'colorAnnotation'
+        ? Math.round(innerWidth * 1.25)
+        : template === 'colorArchive'
+          ? Math.round(innerWidth * 1.12)
+          : renderedPhotoHeight
 
   return {
     width: CARD_WIDTH,

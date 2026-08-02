@@ -11,7 +11,14 @@ export interface PaletteEntry {
 
 export type ColorNameLanguage = 'zh' | 'en'
 
-export type TemplateId = 'classicStrip' | 'magazineCover'
+export type TemplateId =
+  | 'classicStrip'
+  | 'magazineCover'
+  | 'editorialFrame'
+  | 'polaroidJournal'
+  | 'colorArchive'
+  | 'pantoneCard'
+  | 'colorAnnotation'
 
 export interface CardConfig {
   photo: HTMLImageElement
