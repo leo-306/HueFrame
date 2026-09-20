@@ -1,5 +1,6 @@
 import type { TemplateRenderer } from './types'
 import { drawImageCover, rgba } from './drawing'
+import { CARD_INFO_FONT_FAMILY } from '../lib/fonts'
 
 /** 拍立得手记：暖纸背景、轻微倾斜相纸与圆形调色盘。 */
 export const renderPolaroidJournal: TemplateRenderer = (ctx, config) => {
@@ -38,7 +39,7 @@ export const renderPolaroidJournal: TemplateRenderer = (ctx, config) => {
   )
   ctx.fillStyle = '#37332e'
   ctx.textAlign = 'left'
-  ctx.font = `500 ${Math.round(width * 0.025)}px "LXGW WenKai", serif`
+  ctx.font = `500 ${Math.round(width * 0.025)}px ${CARD_INFO_FONT_FAMILY}`
   ctx.fillText(locationName, -cardWidth / 2 + inset, cardHeight / 2 - height * 0.055, cardWidth - inset * 2)
   ctx.fillStyle = '#8b8175'
   ctx.textAlign = 'right'

@@ -1,7 +1,4 @@
-@font-face {
-  font-family: 'LXGW WenKai';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url('@fontsource/lxgw-wenkai/files/lxgw-wenkai-latin-500-normal.woff2') format('woff2');
-}
+/**
+ * 界面字体在 styles/theme.css 里以 CSS 变量定义；
+ * 卡片内的中文字体栈见 src/lib/fonts.ts（刻意不打包体积 7MB 的中文 Web 字体）。
+ */

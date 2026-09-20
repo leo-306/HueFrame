@@ -66,7 +66,7 @@ describe('CardPreview', () => {
 
     render(<CardPreview config={makeConfig()} renderer={renderClassicStrip} />)
 
-    await waitFor(() => expect(load).toHaveBeenCalledWith('500 32px "LXGW WenKai"'))
+    await waitFor(() => expect(load).toHaveBeenCalledWith('500 32px "Kaiti SC", "Kaiti TC", STKaiti, KaiTi, 楷体, "Noto Serif CJK SC", serif'))
   })
 
 })

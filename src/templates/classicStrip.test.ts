@@ -67,7 +67,7 @@ describe('renderClassicStrip', () => {
 
     expect(renderedText.find(({ text }) => text === '绯樱')?.font).toBe('24px sans-serif')
     expect(renderedText.find(({ text }) => text === '#E63C50')?.font).toBe('16px monospace')
-    expect(renderedText.find(({ text }) => text.includes('Kyoto, Japan'))?.font).toContain('LXGW WenKai')
+    expect(renderedText.find(({ text }) => text.includes('Kyoto, Japan'))?.font).toContain('Kaiti SC')
   })
 
   it('centers the swatch name and hex vertically like the reference layout', () => {
