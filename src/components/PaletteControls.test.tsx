@@ -9,10 +9,12 @@ describe('PaletteControls', () => {
         marginPx={24}
         swatchGapPx={16}
         swatchRadiusPx={6}
+        paletteSize={6}
         onReextract={vi.fn()}
         onMarginChange={vi.fn()}
         onSwatchGapChange={vi.fn()}
         onSwatchRadiusChange={vi.fn()}
+        onPaletteSizeChange={vi.fn()}
       >
         <div>颜色列表</div>
       </PaletteControls>
@@ -29,15 +31,18 @@ describe('PaletteControls', () => {
     const onReextract = vi.fn()
     const onMarginChange = vi.fn()
     const onSwatchGapChange = vi.fn()
+    const onPaletteSizeChange = vi.fn()
     render(
       <PaletteControls
         marginPx={24}
         swatchGapPx={16}
         swatchRadiusPx={6}
+        paletteSize={6}
         onReextract={onReextract}
         onMarginChange={onMarginChange}
         onSwatchGapChange={onSwatchGapChange}
         onSwatchRadiusChange={vi.fn()}
+        onPaletteSizeChange={onPaletteSizeChange}
       >
         <div />
       </PaletteControls>
@@ -60,16 +65,63 @@ describe('PaletteControls', () => {
         marginPx={24}
         swatchGapPx={16}
         swatchRadiusPx={6}
+        paletteSize={6}
         isExtracting
         onReextract={vi.fn()}
         onMarginChange={vi.fn()}
         onSwatchGapChange={vi.fn()}
         onSwatchRadiusChange={vi.fn()}
+        onPaletteSizeChange={vi.fn()}
       >
         <div />
       </PaletteControls>
     )
 
     expect(screen.getByRole('button', { name: '正在重新提取' })).toBeDisabled()
+  })
+})
+
+describe('PaletteControls 色块数量', () => {
+  it('shows the swatch-count stepper clamped to 3–9', () => {
+    render(
+      <PaletteControls
+        marginPx={24}
+        swatchGapPx={16}
+        swatchRadiusPx={6}
+        paletteSize={6}
+        onReextract={vi.fn()}
+        onMarginChange={vi.fn()}
+        onSwatchGapChange={vi.fn()}
+        onSwatchRadiusChange={vi.fn()}
+        onPaletteSizeChange={vi.fn()}
+      >
+        <div />
+      </PaletteControls>
+    )
+    const stepper = screen.getByRole('spinbutton', { name: '色块数量' })
+    expect(stepper).toHaveValue(6)
+    expect(stepper).toHaveAttribute('min', '3')
+    expect(stepper).toHaveAttribute('max', '9')
+  })
+
+  it('dispatches swatch-count changes', () => {
+    const onPaletteSizeChange = vi.fn()
+    render(
+      <PaletteControls
+        marginPx={24}
+        swatchGapPx={16}
+        swatchRadiusPx={6}
+        paletteSize={6}
+        onReextract={vi.fn()}
+        onMarginChange={vi.fn()}
+        onSwatchGapChange={vi.fn()}
+        onSwatchRadiusChange={vi.fn()}
+        onPaletteSizeChange={onPaletteSizeChange}
+      >
+        <div />
+      </PaletteControls>
+    )
+    fireEvent.click(screen.getByRole('button', { name: '增加色块数量' }))
+    expect(onPaletteSizeChange).toHaveBeenCalledWith(7)
   })
 })

@@ -9,11 +9,13 @@ interface PaletteControlsProps {
   marginPx: number
   swatchGapPx: number
   swatchRadiusPx: number
+  paletteSize: number
   isExtracting?: boolean
   onReextract: () => void
   onMarginChange: (value: number) => void
   onSwatchGapChange: (value: number) => void
   onSwatchRadiusChange: (value: number) => void
+  onPaletteSizeChange: (value: number) => void
 }
 
 export function PaletteControls({
@@ -21,11 +23,13 @@ export function PaletteControls({
   marginPx,
   swatchGapPx,
   swatchRadiusPx,
+  paletteSize,
   isExtracting = false,
   onReextract,
   onMarginChange,
   onSwatchGapChange,
   onSwatchRadiusChange,
+  onPaletteSizeChange,
 }: PaletteControlsProps) {
   const t = useTranslation()
 
@@ -41,6 +45,16 @@ export function PaletteControls({
           {isExtracting ? t.cardTabs.reextractingColors : t.cardTabs.reextractColors}
         </Button>
       </div>
+
+      <NumberStepper
+        id="palette-size"
+        label={t.cardTabs.paletteSize}
+        value={paletteSize}
+        min={3}
+        max={9}
+        unit=""
+        onChange={onPaletteSizeChange}
+      />
 
       {children}
 

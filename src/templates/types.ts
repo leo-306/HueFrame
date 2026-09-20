@@ -23,6 +23,7 @@ export type TemplateId =
   | 'designerSpec'
   | 'heroHex'
   | 'bandList'
+  | 'colorSpectrum'
 
 export interface CardConfig {
   photo: HTMLImageElement

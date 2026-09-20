@@ -22,7 +22,8 @@ export function dimensionsForTemplate(
     template === 'colorAnnotation' ||
     template === 'designerSpec' ||
     template === 'heroHex' ||
-    template === 'bandList'
+    template === 'bandList' ||
+    template === 'colorSpectrum'
   ) {
     return { width: CARD_WIDTH, height: 1000 }
   }

@@ -22,16 +22,22 @@ export interface CardOptions {
   titleFont: string
   colorNameLanguage: ColorNameLanguage
   unknownLocationLabel: string
+  /** 色卡展示的色块数量，默认 PALETTE_SIZE。 */
+  paletteSize?: number
 }
 
-/** 色卡展示的色块数量。 */
+/** 色卡默认展示的色块数量。 */
 export const PALETTE_SIZE = 6
 
-export async function extractPaletteEntries(photo: HTMLImageElement): Promise<PaletteEntry[]> {
+export async function extractPaletteEntries(
+  photo: HTMLImageElement,
+  targetCount: number = PALETTE_SIZE
+): Promise<PaletteEntry[]> {
+  const target = Math.max(1, Math.round(targetCount))
   // 多取一倍候选色，去重后才凑得出足够多"看得出的差别"的颜色；
   // 占比过低的量化噪声不占展示位，否则一色独大时剩下的都是近乎重复的残色。
-  const rawPalette = await extractPalette(photo, PALETTE_SIZE * 2)
-  const distinct = buildDistinctPalette(rawPalette)
+  const rawPalette = await extractPalette(photo, target * 2)
+  const distinct = buildDistinctPalette(rawPalette, target)
   const percentages = dropNegligiblePercentages(computePalettePercentages(photo, distinct))
 
   return disambiguateColorNames(
@@ -56,7 +62,10 @@ export async function buildCardConfig(
   photo: HTMLImageElement,
   options: CardOptions
 ): Promise<CardConfig> {
-  const [meta, palette] = await Promise.all([parsePhotoMeta(file), extractPaletteEntries(photo)])
+  const [meta, palette] = await Promise.all([
+    parsePhotoMeta(file),
+    extractPaletteEntries(photo, options.paletteSize),
+  ])
 
   const locationName = meta.gps ? await resolveLocationName(meta.gps) : options.unknownLocationLabel
   const capturedAtText = meta.capturedAt ? formatDate(meta.capturedAt) : ''

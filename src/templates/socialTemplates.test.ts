@@ -9,6 +9,7 @@ import { renderColorAnnotation } from './colorAnnotation'
 import { renderDesignerSpec } from './designerSpec'
 import { renderHeroHex } from './heroHex'
 import { renderBandList } from './bandList'
+import { renderColorSpectrum } from './colorSpectrum'
 
 function makeConfig(): CardConfig {
   return {
@@ -36,6 +37,7 @@ const templates: Array<[string, TemplateRenderer]> = [
   ['designer spec', renderDesignerSpec],
   ['hero hex', renderHeroHex],
   ['band list', renderBandList],
+  ['color spectrum', renderColorSpectrum],
 ]
 
 describe.each(templates)('%s template', (_name, renderer) => {
@@ -165,5 +167,42 @@ describe('band list template', () => {
 
   it('renders the selected format on the bands', () => {
     expect(render('rgb')).toContain('rgb(196, 90, 67)')
+  })
+})
+
+describe('color spectrum template', () => {
+  function render() {
+    const canvas = document.createElement('canvas')
+    canvas.width = 800
+    canvas.height = 1000
+    const ctx = canvas.getContext('2d')!
+    const gradients: Array<{ stops: number }> = []
+    const texts: string[] = []
+    const realGradient = ctx.createLinearGradient.bind(ctx)
+    vi.spyOn(ctx, 'createLinearGradient').mockImplementation((...args) => {
+      const g = realGradient(...args)
+      const original = g.addColorStop.bind(g)
+      let stops = 0
+      g.addColorStop = (offset: number, color: string) => { stops++; original(offset, color) }
+      gradients.push({ get stops() { return stops } })
+      return g
+    })
+    vi.spyOn(ctx, 'fillText').mockImplementation((t) => { texts.push(String(t)) })
+    renderColorSpectrum(ctx, makeConfig())
+    return { gradients, texts }
+  }
+
+  it('builds a gradient with one stop region per palette color', () => {
+    const { gradients } = render()
+    // 每个色贡献 2 个色标（区间两端收一点）
+    const main = gradients[0]
+    expect(main.stops).toBe(6) // 3 色 × 2
+  })
+
+  it('labels the discrete swatches with value and name', () => {
+    const { texts } = render()
+    expect(texts).toContain('#C45A43')
+    expect(texts.some((t) => t === '陶红')).toBe(true)
+    expect(texts).toContain('COLOR SPECTRUM')
   })
 })

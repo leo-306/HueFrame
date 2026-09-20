@@ -17,7 +17,7 @@ import { HomeTab } from './components/HomeTab'
 import { CropPanel } from './components/CropPanel'
 import { Button } from './components/ui/button'
 import { COLOR_FORMATS } from './lib/colorFormat'
-import { buildCardConfig, extractPaletteEntries } from './lib/photoPipeline'
+import { buildCardConfig, extractPaletteEntries, PALETTE_SIZE } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForTemplate } from './lib/cardDimensions'
 import { updatePaletteEntryColor } from './lib/paletteEditing'
@@ -31,6 +31,7 @@ import { renderColorAnnotation } from './templates/colorAnnotation'
 import { renderDesignerSpec } from './templates/designerSpec'
 import { renderHeroHex } from './templates/heroHex'
 import { renderBandList } from './templates/bandList'
+import { renderColorSpectrum } from './templates/colorSpectrum'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateId, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
 import type { ColorFormat } from './lib/colorFormat'
@@ -50,6 +51,7 @@ const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   designerSpec: renderDesignerSpec,
   heroHex: renderHeroHex,
   bandList: renderBandList,
+  colorSpectrum: renderColorSpectrum,
 }
 
 const TEMPLATE_IDS = Object.keys(RENDERERS) as TemplateId[]
@@ -113,6 +115,7 @@ export default function App() {
   const [filter, setFilter] = useState<FilterName>('none')
   const [language, setLanguage] = useState<ColorNameLanguage>('zh')
   const [colorFormat, setColorFormat] = useState<ColorFormat>('hex')
+  const [paletteSize, setPaletteSize] = useState(PALETTE_SIZE)
   const [marginPx, setMarginPx] = useState(24)
   const [swatchGapPx, setSwatchGapPx] = useState(16)
   const [swatchRadiusPx, setSwatchRadiusPx] = useState(6)
@@ -177,6 +180,7 @@ export default function App() {
           titleFont: 'Georgia, serif',
           colorNameLanguage: language,
           unknownLocationLabel: t.common.unknownLocation,
+          paletteSize,
         })
         setOriginalPhoto(photo)
         setBaseConfig(cardConfig)
@@ -190,7 +194,7 @@ export default function App() {
         setIsProcessing(false)
       }
     },
-    [language, template, marginPx, t.common.unknownLocation, t.common.imageLoadFailed]
+    [language, template, marginPx, paletteSize, t.common.unknownLocation, t.common.imageLoadFailed]
   )
 
   useEffect(() => {
@@ -241,11 +245,31 @@ export default function App() {
     if (!originalPhoto) return
     setIsExtractingColors(true)
     try {
-      setPaletteOverride(await extractPaletteEntries(originalPhoto))
+      setPaletteOverride(await extractPaletteEntries(originalPhoto, paletteSize))
     } finally {
       setIsExtractingColors(false)
     }
-  }, [originalPhoto])
+  }, [originalPhoto, paletteSize])
+
+  // 改变色块数量时立即按新数量重新取色，卡片所见即所得；
+  // 用 ref 记录上次提取的数量，跳过与首次上传一致的情况，避免重复劳动。
+  const lastExtractedSize = useRef(paletteSize)
+  useEffect(() => {
+    if (!originalPhoto || paletteSize === lastExtractedSize.current) return
+    lastExtractedSize.current = paletteSize
+    let cancelled = false
+    setIsExtractingColors(true)
+    extractPaletteEntries(originalPhoto, paletteSize)
+      .then((entries) => {
+        if (!cancelled) setPaletteOverride(entries)
+      })
+      .finally(() => {
+        if (!cancelled) setIsExtractingColors(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [originalPhoto, paletteSize])
 
   const handleGenerateCardFromGrid = useCallback(
     (canvas: HTMLCanvasElement) => {
@@ -329,11 +353,13 @@ export default function App() {
                     marginPx={marginPx}
                     swatchGapPx={swatchGapPx}
                     swatchRadiusPx={swatchRadiusPx}
+                    paletteSize={paletteSize}
                     isExtracting={isExtractingColors}
                     onReextract={handleReextractPalette}
                     onMarginChange={setMarginPx}
                     onSwatchGapChange={setSwatchGapPx}
                     onSwatchRadiusChange={setSwatchRadiusPx}
+                    onPaletteSizeChange={setPaletteSize}
                   >
                     <div>
                       <div className="mb-3 text-base text-on-surface-variant">{t.cardTabs.colorNameLanguage}</div>

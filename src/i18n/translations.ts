@@ -21,6 +21,7 @@ export interface Translations {
     colorNameLanguage: string
     colorFormat: string
     colorFormatValue: { hex: string; rgb: string; hsl: string }
+    paletteSize: string
     colorPercentage: string
     moveUp: string
     moveDown: string
@@ -74,6 +75,7 @@ export interface Translations {
     designerSpec: string
     heroHex: string
     bandList: string
+    colorSpectrum: string
     previousTemplate: string
     nextTemplate: string
     viewAllTemplates: string
@@ -195,6 +197,7 @@ export const zh: Translations = {
     colorNameLanguage: '色名语言',
     colorFormat: '色值格式',
     colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
+    paletteSize: '色块数量',
     colorPercentage: '占比',
     moveUp: '上移',
     moveDown: '下移',
@@ -248,6 +251,7 @@ export const zh: Translations = {
     designerSpec: '设计师规格卡',
     heroHex: '主色巨卡',
     bandList: '横带色谱',
+    colorSpectrum: '色彩光谱',
     previousTemplate: '上一个模板',
     nextTemplate: '下一个模板',
     viewAllTemplates: '查看全部模板',
@@ -369,6 +373,7 @@ export const en: Translations = {
     colorNameLanguage: 'Color-name language',
     colorFormat: 'Color format',
     colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
+    paletteSize: 'Swatch count',
     colorPercentage: 'Share',
     moveUp: 'Move up',
     moveDown: 'Move down',
@@ -422,6 +427,7 @@ export const en: Translations = {
     designerSpec: 'Designer Spec',
     heroHex: 'Hero Hex',
     bandList: 'Band List',
+    colorSpectrum: 'Color Spectrum',
     previousTemplate: 'Previous template',
     nextTemplate: 'Next template',
     viewAllTemplates: 'View all templates',

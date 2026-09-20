@@ -25,6 +25,7 @@ export function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerPr
     { id: 'designerSpec', label: t.templatePicker.designerSpec },
     { id: 'heroHex', label: t.templatePicker.heroHex },
     { id: 'bandList', label: t.templatePicker.bandList },
+    { id: 'colorSpectrum', label: t.templatePicker.colorSpectrum },
   ]
 
   useEffect(() => {
