@@ -5,6 +5,8 @@ import { pickReadableTextColor } from './contrastColor'
 import { parsePhotoMeta } from './exifParser'
 import { resolveLocationName } from './geocoding'
 import { computePalettePercentages } from './paletteWeights'
+import { buildDistinctPalette, dropNegligiblePercentages } from './paletteDedup'
+import { disambiguateColorNames } from './colorNames'
 import type { CardConfig, ColorNameLanguage, PaletteEntry } from '../templates/types'
 
 function formatDate(date: Date): string {
@@ -22,19 +24,27 @@ export interface CardOptions {
   unknownLocationLabel: string
 }
 
-export async function extractPaletteEntries(photo: HTMLImageElement): Promise<PaletteEntry[]> {
-  const rawPalette = await extractPalette(photo, 6)
-  const percentages = computePalettePercentages(photo, rawPalette)
+/** 色卡展示的色块数量。 */
+export const PALETTE_SIZE = 6
 
-  return rawPalette
-    .map((rgb, index) => ({
-      rgb,
-      hex: rgbToHex(rgb),
-      name: nearestColorName(rgb),
-      textColor: pickReadableTextColor(rgb),
-      percentage: percentages[index],
-    }))
-    .sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0))
+export async function extractPaletteEntries(photo: HTMLImageElement): Promise<PaletteEntry[]> {
+  // 多取一倍候选色，去重后才凑得出足够多"看得出的差别"的颜色；
+  // 占比过低的量化噪声不占展示位，否则一色独大时剩下的都是近乎重复的残色。
+  const rawPalette = await extractPalette(photo, PALETTE_SIZE * 2)
+  const distinct = buildDistinctPalette(rawPalette)
+  const percentages = dropNegligiblePercentages(computePalettePercentages(photo, distinct))
+
+  return disambiguateColorNames(
+    distinct
+      .slice(0, percentages.length)
+      .map((rgb, index) => ({
+        rgb,
+        hex: rgbToHex(rgb),
+        name: nearestColorName(rgb),
+        textColor: pickReadableTextColor(rgb),
+        percentage: percentages[index],
+      }))
+  ).sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0))
 }
 
 /**

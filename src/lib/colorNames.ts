@@ -1,5 +1,5 @@
 import type { RGB } from './colorExtraction'
-import { distanceSquared } from './colorMath'
+import { distanceSquared, rgbToLab } from './colorMath'
 
 export interface ColorName {
   zh: string
@@ -41,4 +41,73 @@ export function nearestColorName(rgb: RGB): ColorName {
   }
 
   return best
+}
+
+/** 色名表粒度远粗于去重阈值，同一张色卡里常出现两个同名色块。 */
+export interface NamedColor {
+  name: ColorName
+  rgb: RGB
+}
+
+interface Qualifier {
+  zh: string
+  en: string
+}
+
+/** 组内差异落在某个 Lab 轴上时，用来区分同名色块的前缀。 */
+function qualifierFor(axis: 0 | 1 | 2, delta: number): Qualifier {
+  if (axis === 0) return delta < 0 ? { zh: '深', en: 'Deep' } : { zh: '浅', en: 'Light' }
+  if (axis === 1) return delta < 0 ? { zh: '偏青', en: 'Greenish' } : { zh: '偏红', en: 'Reddish' }
+  return delta < 0 ? { zh: '偏蓝', en: 'Bluish' } : { zh: '偏黄', en: 'Yellowish' }
+}
+
+/**
+ * 给同一份色卡里重名的色块加前缀，避免用户看到两块都叫"姜黄"。
+ * 先找出组内差异最大的 Lab 轴：明暗差得多用"深/浅"，色相差得多用"偏青/偏红"
+ * 或"偏黄/偏蓝"——两块同明度的黄，说一个"深"一个"浅"反而是错的。
+ */
+export function disambiguateColorNames<T extends NamedColor>(entries: T[]): T[] {
+  const groups = new Map<string, T[]>()
+  for (const entry of entries) {
+    const key = `${entry.name.zh}/${entry.name.en}`
+    const group = groups.get(key)
+    if (group) group.push(entry)
+    else groups.set(key, [entry])
+  }
+
+  const qualified = new Map<T, ColorName>()
+  for (const group of groups.values()) {
+    if (group.length < 2) continue
+
+    const labs = group.map((entry) => rgbToLab(entry.rgb))
+    const mean = [0, 1, 2].map((axis) => labs.reduce((sum, l) => sum + l[axis], 0) / labs.length)
+    const spreads = [0, 1, 2].map(
+      (axis) => Math.max(...labs.map((l) => l[axis])) - Math.min(...labs.map((l) => l[axis]))
+    )
+    const axis = spreads.indexOf(Math.max(...spreads)) as 0 | 1 | 2
+
+    group.forEach((entry, index) => {
+      const qualifier = qualifierFor(axis, labs[index][axis] - mean[axis])
+      qualified.set(entry, {
+        zh: `${qualifier.zh}${entry.name.zh}`,
+        en: `${qualifier.en} ${entry.name.en}`,
+        rgb: entry.name.rgb,
+      })
+    })
+  }
+
+  // 兜底：万一修饰后仍有同名（例如三块以上撞名且恰好同轴同侧），
+  // 用色相表中相邻项的名称补一个可区分的后缀，保证卡上没有两块同名。
+  const seen = new Map<string, number>()
+  return entries.map((entry) => {
+    const name = qualified.get(entry)
+    if (!name) return entry
+    const count = seen.get(name.zh) ?? 0
+    seen.set(name.zh, count + 1)
+    if (count === 0) return { ...entry, name }
+    return {
+      ...entry,
+      name: { ...name, zh: `${name.zh}·${count + 1}`, en: `${name.en} ${count + 1}` },
+    }
+  })
 }
