@@ -44,6 +44,8 @@ export function CardPreview({
     render()
     document.fonts?.load(CARD_INFO_FONT_LOAD).then(() => {
       if (!cancelled) render()
+    }).catch(() => {
+      // 字体加载失败不该冒成 unhandled rejection；首帧已用系统字体渲染过
     })
 
     return () => {

@@ -22,6 +22,8 @@ import { useTranslation } from '../../i18n/LocaleContext'
 const DEFAULT_CELL_BORDER_COLOR = '#d8d8d7'
 const DEFAULT_GRID_BACKGROUND_COLOR = '#f9f9f8'
 const BORDER_STYLES: GridCellBorderStyle[] = ['none', 'solid', 'dashed', 'dotted']
+/** 宫格预览画布长边上限，导出仍按原图全分辨率。 */
+const PREVIEW_MAX_EDGE = 1080
 
 interface GridSplitPanelProps {
   onGenerateCard: (canvas: HTMLCanvasElement) => void
@@ -95,29 +97,43 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
     [backgroundColor, backgroundOpacity]
   )
 
-  // 预览 + 导出画布同步渲染
-  useEffect(() => {
-    if (!photo || !layout || !gridBorder) return
-    const previewCanvas = previewCanvasRef.current
+  // 预览画布按上限分辨率渲染：宫格画布尺寸来自原图，4000px 原图会让每次
+  // 拖动旋转滑块都做一次 9 格全分辨率 drawImage，移动端必掉帧。预览本是 CSS
+  // 缩小显示，降到 1080px 长边视觉无损。
+  const renderExportCanvas = useCallback(() => {
     const exportCanvas = exportCanvasRef.current
-    if (!previewCanvas || !exportCanvas) return
-
-    previewCanvas.width = layout.canvasWidth
-    previewCanvas.height = layout.canvasHeight
-    const previewCtx = previewCanvas.getContext('2d')
-    if (previewCtx) {
-      renderRotatedSplitGrid(previewCtx, { photo, layout, showGridLines: true, gridBorder, gridBackground })
-    }
-
+    if (!photo || !layout || !gridBorder || !exportCanvas) return
     exportCanvas.width = layout.canvasWidth
     exportCanvas.height = layout.canvasHeight
     const exportCtx = exportCanvas.getContext('2d')
     if (exportCtx) {
       renderRotatedSplitGrid(exportCtx, { photo, layout, gridBorder, gridBackground })
     }
-
     setExportReady(true)
   }, [photo, layout, gridBorder, gridBackground])
+
+  useEffect(() => {
+    if (!photo || !layout || !gridBorder) return
+    const previewCanvas = previewCanvasRef.current
+    if (!previewCanvas) return
+
+    const previewScale = Math.min(1, PREVIEW_MAX_EDGE / Math.max(layout.canvasWidth, layout.canvasHeight))
+    previewCanvas.width = Math.max(1, Math.round(layout.canvasWidth * previewScale))
+    previewCanvas.height = Math.max(1, Math.round(layout.canvasHeight * previewScale))
+    const previewCtx = previewCanvas.getContext('2d')
+    if (previewCtx) {
+      previewCtx.scale(previewScale, previewScale)
+      renderRotatedSplitGrid(previewCtx, { photo, layout, showGridLines: true, gridBorder, gridBackground })
+    }
+  }, [photo, layout, gridBorder, gridBackground])
+
+  // 导出画布全分辨率渲染较慢，防抖到拖动结束后再算，避免每 1° 都重绘；
+  // 点击"生成卡片"时还会同步重算一次，保证拿到的永远是最新结果。
+  useEffect(() => {
+    setExportReady(false)
+    const timer = window.setTimeout(renderExportCanvas, 200)
+    return () => window.clearTimeout(timer)
+  }, [renderExportCanvas])
 
   // 点击画布选格：找最近中心点
   const handleCanvasClick = useCallback(
@@ -155,6 +171,8 @@ export function GridSplitPanel({ onGenerateCard, initialFile }: GridSplitPanelPr
   }, [rows, cols])
 
   const handleGenerateCard = () => {
+    // 同步重算一次导出画布，防抖未触发也能拿到最新结果
+    renderExportCanvas()
     if (exportCanvasRef.current) onGenerateCard(exportCanvasRef.current)
   }
 

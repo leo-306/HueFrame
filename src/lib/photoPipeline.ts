@@ -1,4 +1,4 @@
-import { extractPalette } from './colorExtraction'
+import { extractPalette, fallbackDominantColor } from './colorExtraction'
 import { rgbToHex } from './colorMath'
 import { nearestColorName } from './colorNames'
 import { pickReadableTextColor } from './contrastColor'
@@ -36,7 +36,13 @@ export async function extractPaletteEntries(
   const target = Math.max(1, Math.round(targetCount))
   // 多取一倍候选色，去重后才凑得出足够多"看得出的差别"的颜色；
   // 占比过低的量化噪声不占展示位，否则一色独大时剩下的都是近乎重复的残色。
-  const rawPalette = await extractPalette(photo, target * 2)
+  let rawPalette = await extractPalette(photo, target * 2)
+  // 纯色/近白图会被 color-thief 丢弃而得到空 palette；用画面主色兜底，
+  // 保证任何图至少有一块，不会渲染出空白色带。
+  if (rawPalette.length === 0) {
+    const dominant = fallbackDominantColor(photo)
+    if (dominant) rawPalette = [dominant]
+  }
   const distinct = buildDistinctPalette(rawPalette, target)
   const percentages = dropNegligiblePercentages(computePalettePercentages(photo, distinct))
 
@@ -67,7 +73,9 @@ export async function buildCardConfig(
     extractPaletteEntries(photo, options.paletteSize),
   ])
 
-  const locationName = meta.gps ? await resolveLocationName(meta.gps) : options.unknownLocationLabel
+  const locationName = meta.gps
+    ? await resolveLocationName(meta.gps, options.colorNameLanguage)
+    : options.unknownLocationLabel
   const capturedAtText = meta.capturedAt ? formatDate(meta.capturedAt) : ''
   return {
     photo,

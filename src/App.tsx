@@ -19,6 +19,7 @@ import { Button } from './components/ui/button'
 import { COLOR_FORMATS } from './lib/colorFormat'
 import { buildCardConfig, extractPaletteEntries, PALETTE_SIZE } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
+import { fitWithin } from './lib/imageScale'
 import { dimensionsForTemplate } from './lib/cardDimensions'
 import { updatePaletteEntryColor } from './lib/paletteEditing'
 import { renderClassicStrip } from './templates/classicStrip'
@@ -57,18 +58,44 @@ const RENDERERS: Record<TemplateId, TemplateRenderer> = {
 const TEMPLATE_IDS = Object.keys(RENDERERS) as TemplateId[]
 const MOCK_ENABLED = import.meta.env.DEV
 
+/** 滤镜工作分辨率上限：卡片只按 800px 宽渲染，1600px 已留足 2x 余量。 */
+const FILTER_WORK_MAX_EDGE = 1600
+/** 每张原图的各滤镜结果缓存，切回滤镜时零成本。键为原图，随原图一起回收。 */
+const filterCache = new WeakMap<HTMLImageElement, Map<FilterName, HTMLImageElement>>()
+
 function applyFilterToImage(photo: HTMLImageElement, filter: FilterName): Promise<HTMLImageElement> {
+  const cached = filterCache.get(photo)?.get(filter)
+  if (cached) return Promise.resolve(cached)
+
+  // 降采样到工作分辨率再处理：12MP 原图逐像素变换 + toDataURL  base64 既慢又占内存，
+  // 而卡片用不到那么高分辨率。
+  const { width, height } = fitWithin(photo.naturalWidth, photo.naturalHeight, FILTER_WORK_MAX_EDGE)
   const canvas = document.createElement('canvas')
-  canvas.width = photo.naturalWidth
-  canvas.height = photo.naturalHeight
+  canvas.width = width
+  canvas.height = height
   const ctx = canvas.getContext('2d')!
-  ctx.drawImage(photo, 0, 0)
+  ctx.drawImage(photo, 0, 0, width, height)
   applyFilter(canvas, filter)
 
-  return new Promise((resolve) => {
-    const filtered = new Image()
-    filtered.onload = () => resolve(filtered)
-    filtered.src = canvas.toDataURL()
+  return new Promise<HTMLImageElement>((resolve) => {
+    // toBlob + objectURL 取代 toDataURL：后者会产出数十 MB 的 base64 字符串。
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        resolve(photo)
+        return
+      }
+      const filtered = new Image()
+      filtered.onload = () => resolve(filtered)
+      filtered.src = URL.createObjectURL(blob)
+    }, 'image/png')
+  }).then((result) => {
+    let byFilter = filterCache.get(photo)
+    if (!byFilter) {
+      byFilter = new Map()
+      filterCache.set(photo, byFilter)
+    }
+    byFilter.set(filter, result)
+    return result
   })
 }
 
@@ -98,6 +125,7 @@ export default function App() {
   const [activeSubTab, setActiveSubTab] = useState<CardSubTab>('filter')
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false)
   const hasLoadedMockPhoto = useRef(false)
+  const uploadIdRef = useRef(0)
 
   // originalPhoto + baseConfig 保存取色/EXIF 等一次性处理结果（基于未加滤镜的原图，
   // 保证色卡反映照片真实色彩）；滤镜只影响展示用的 displayPhoto，不重新提取颜色。
@@ -169,6 +197,9 @@ export default function App() {
 
   const handleFileSelected = useCallback(
     async (file: File, isMock = false) => {
+      // 代际标记：连续上传时，只有最后一次的结果能写入 state，
+      // 避免慢的旧图（如 HEIC）覆盖快的新图，导致照片与色卡错配。
+      const requestId = ++uploadIdRef.current
       setIsProcessing(true)
       setProcessingError(null)
       try {
@@ -182,16 +213,20 @@ export default function App() {
           unknownLocationLabel: t.common.unknownLocation,
           paletteSize,
         })
+        if (requestId !== uploadIdRef.current) return
         setOriginalPhoto(photo)
         setBaseConfig(cardConfig)
         setIsMockPhoto(isMock)
         setPaletteOverride(null)
         setLocationOverride(null)
         setCapturedAtOverride(null)
+        // 新图已按当前 paletteSize 提取，同步 ref 免得重提取 effect 立刻多跑一次
+        lastExtractedSize.current = paletteSize
       } catch {
+        if (requestId !== uploadIdRef.current) return
         setProcessingError(t.common.imageLoadFailed)
       } finally {
-        setIsProcessing(false)
+        if (requestId === uploadIdRef.current) setIsProcessing(false)
       }
     },
     [language, template, marginPx, paletteSize, t.common.unknownLocation, t.common.imageLoadFailed]
@@ -385,6 +420,7 @@ export default function App() {
                     <PaletteList
                       palette={config.palette}
                       language={language}
+                      colorFormat={colorFormat}
                       onColorChange={handlePaletteColorChange}
                       onMove={handlePaletteMove}
                     />

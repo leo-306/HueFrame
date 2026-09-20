@@ -4,11 +4,14 @@ import './styles/fonts.css'
 import './index.css'
 import App from './App.tsx'
 import { LocaleProvider } from './i18n/LocaleContext'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LocaleProvider>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </LocaleProvider>
   </StrictMode>,
 )

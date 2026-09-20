@@ -23,6 +23,9 @@ export interface Translations {
     colorFormatValue: { hex: string; rgb: string; hsl: string }
     paletteSize: string
     colorPercentage: string
+    editColor: string
+    copyColor: string
+    copiedColor: string
     moveUp: string
     moveDown: string
     colorEditor: string
@@ -174,6 +177,11 @@ export interface Translations {
     confirm: string
     cancel: string
   }
+  errorBoundary: {
+    title: string
+    description: string
+    reload: string
+  }
 }
 
 export const zh: Translations = {
@@ -199,6 +207,9 @@ export const zh: Translations = {
     colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
     paletteSize: '色块数量',
     colorPercentage: '占比',
+    editColor: '编辑颜色',
+    copyColor: '复制色值',
+    copiedColor: '已复制',
     moveUp: '上移',
     moveDown: '下移',
     colorEditor: '颜色编辑',
@@ -350,6 +361,11 @@ export const zh: Translations = {
     confirm: '裁好了',
     cancel: '取消',
   },
+  errorBoundary: {
+    title: '渲染出错了',
+    description: '生成色卡时发生异常。重新加载页面通常就能恢复，你的照片不会上传到任何服务器。',
+    reload: '重新加载',
+  },
 }
 
 export const en: Translations = {
@@ -375,6 +391,9 @@ export const en: Translations = {
     colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
     paletteSize: 'Swatch count',
     colorPercentage: 'Share',
+    editColor: 'Edit color',
+    copyColor: 'Copy value',
+    copiedColor: 'Copied',
     moveUp: 'Move up',
     moveDown: 'Move down',
     colorEditor: 'Color editing',
@@ -525,6 +544,11 @@ export const en: Translations = {
     dragHint: 'Drag to reposition the crop',
     confirm: 'Crop it',
     cancel: 'Cancel',
+  },
+  errorBoundary: {
+    title: 'Something went wrong',
+    description: 'Rendering the card hit an error. Reloading usually fixes it — your photos never leave your device.',
+    reload: 'Reload',
   },
 }
 

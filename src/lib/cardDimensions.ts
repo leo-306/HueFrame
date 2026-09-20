@@ -4,6 +4,18 @@ const CARD_WIDTH = 800
 const CLASSIC_STRIP_HEIGHT_RATIO = 0.375
 const CLASSIC_INFO_HEIGHT_RATIO = 0.125
 
+/** 固定 800×1000 画布的版式（其余按照片比例推导高度）。 */
+const FIXED_PORTRAIT_TEMPLATES: ReadonlySet<TemplateId> = new Set<TemplateId>([
+  'editorialFrame',
+  'polaroidJournal',
+  'pantoneCard',
+  'colorAnnotation',
+  'designerSpec',
+  'heroHex',
+  'bandList',
+  'colorSpectrum',
+])
+
 export function photoHeightForWidth(photoWidth: number, photoHeight: number, targetWidth: number): number {
   if (photoWidth <= 0 || photoHeight <= 0) return targetWidth
   return Math.round(targetWidth * (photoHeight / photoWidth))
@@ -15,16 +27,7 @@ export function dimensionsForTemplate(
   photoHeight: number,
   marginPx: number
 ): { width: number; height: number } {
-  if (
-    template === 'editorialFrame' ||
-    template === 'polaroidJournal' ||
-    template === 'pantoneCard' ||
-    template === 'colorAnnotation' ||
-    template === 'designerSpec' ||
-    template === 'heroHex' ||
-    template === 'bandList' ||
-    template === 'colorSpectrum'
-  ) {
+  if (FIXED_PORTRAIT_TEMPLATES.has(template)) {
     return { width: CARD_WIDTH, height: 1000 }
   }
   if (template === 'colorArchive') {
