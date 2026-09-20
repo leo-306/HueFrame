@@ -1,5 +1,6 @@
 import type { RGB } from '../lib/colorExtraction'
 import type { ColorName } from '../lib/colorNames'
+import type { ColorFormat } from '../lib/colorFormat'
 
 export interface PaletteEntry {
   rgb: RGB
@@ -19,6 +20,9 @@ export type TemplateId =
   | 'colorArchive'
   | 'pantoneCard'
   | 'colorAnnotation'
+  | 'designerSpec'
+  | 'heroHex'
+  | 'bandList'
 
 export interface CardConfig {
   photo: HTMLImageElement
@@ -29,6 +33,8 @@ export interface CardConfig {
   width: number
   height: number
   colorNameLanguage: ColorNameLanguage
+  /** 色卡上色值用哪种格式展示，默认 hex。 */
+  colorFormat?: ColorFormat
   marginPx?: number
   swatchGapPx?: number
   swatchRadiusPx?: number

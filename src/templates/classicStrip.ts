@@ -1,6 +1,7 @@
 import type { TemplateRenderer } from './types'
 import { photoHeightForWidth } from '../lib/cardDimensions'
 import { CARD_INFO_FONT_FAMILY } from '../lib/fonts'
+import { formatColorValue } from '../lib/colorFormat'
 
 function setFittedFont(
   ctx: CanvasRenderingContext2D,
@@ -25,6 +26,7 @@ function setFittedFont(
  */
 export const renderClassicStrip: TemplateRenderer = (ctx, config) => {
   const { photo, palette, locationName, capturedAtText, width, height } = config
+  const format = config.colorFormat ?? 'hex'
 
   ctx.fillStyle = '#faf7f2'
   ctx.fillRect(0, 0, width, height)
@@ -56,8 +58,10 @@ export const renderClassicStrip: TemplateRenderer = (ctx, config) => {
     setFittedFont(ctx, displayName, swatchWidth - 12, 24, 16, 'sans-serif')
     const nameY = stripTop + Math.round(stripHeight * 0.45)
     ctx.fillText(displayName, x + swatchWidth / 2, nameY)
-    ctx.font = '16px monospace'
-    ctx.fillText(entry.hex.toUpperCase(), x + swatchWidth / 2, nameY + 42)
+    // 色值用等宽字体；RGB/HSL 比 HEX 长，按色块宽度自适应缩放
+    const value = formatColorValue(entry.rgb, format)
+    setFittedFont(ctx, value, swatchWidth - 12, 16, 10, 'monospace')
+    ctx.fillText(value, x + swatchWidth / 2, nameY + 42)
   })
 
   ctx.fillStyle = '#333333'

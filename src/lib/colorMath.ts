@@ -20,6 +20,51 @@ export function hexToRgb(hex: string): RGB {
   return [r, g, b]
 }
 
+export type HSL = [number, number, number]
+
+/** sRGB → HSL。色相取 [0,360)，饱和度与亮度取百分比整数。 */
+export function rgbToHsl([r, g, b]: RGB): HSL {
+  const rn = r / 255
+  const gn = g / 255
+  const bn = b / 255
+  const max = Math.max(rn, gn, bn)
+  const min = Math.min(rn, gn, bn)
+  const delta = max - min
+  const lightness = (max + min) / 2
+
+  let hue = 0
+  if (delta !== 0) {
+    if (max === rn) hue = ((gn - bn) / delta) % 6
+    else if (max === gn) hue = (bn - rn) / delta + 2
+    else hue = (rn - gn) / delta + 4
+    hue *= 60
+    if (hue < 0) hue += 360
+  }
+
+  const saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1))
+  return [Math.round(hue), Math.round(saturation * 100), Math.round(lightness * 100)]
+}
+
+/** 相对亮度（WCAG 2.1 定义），用于对比度计算。 */
+function relativeLuminance([r, g, b]: RGB): number {
+  const channel = (value: number) => {
+    const c = value / 255
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+  }
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+}
+
+/**
+ * 两个颜色的 WCAG 对比度，范围 [1, 21]。AA 正文需 ≥4.5，AA 大字/UI 需 ≥3。
+ */
+export function contrastRatio(a: RGB, b: RGB): number {
+  const la = relativeLuminance(a)
+  const lb = relativeLuminance(b)
+  const lighter = Math.max(la, lb)
+  const darker = Math.min(la, lb)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
 export type Lab = [number, number, number]
 
 /** sRGB → CIE L*a*b*（D65 白点），用于按人眼感知而非 RGB 距离判断颜色是否近似。 */

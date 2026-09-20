@@ -15,6 +15,8 @@ import { GridTool, type GridSubTab } from './components/grid/GridTool'
 import { GridSubTabSwitcher } from './components/grid/GridSubTabSwitcher'
 import { HomeTab } from './components/HomeTab'
 import { CropPanel } from './components/CropPanel'
+import { Button } from './components/ui/button'
+import { COLOR_FORMATS } from './lib/colorFormat'
 import { buildCardConfig, extractPaletteEntries } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForTemplate } from './lib/cardDimensions'
@@ -26,8 +28,12 @@ import { renderPolaroidJournal } from './templates/polaroidJournal'
 import { renderColorArchive } from './templates/colorArchive'
 import { renderPantoneCard } from './templates/pantoneCard'
 import { renderColorAnnotation } from './templates/colorAnnotation'
+import { renderDesignerSpec } from './templates/designerSpec'
+import { renderHeroHex } from './templates/heroHex'
+import { renderBandList } from './templates/bandList'
 import type { CardConfig, ColorNameLanguage, PaletteEntry, TemplateId, TemplateRenderer } from './templates/types'
 import { loadImage } from './lib/loadImage'
+import type { ColorFormat } from './lib/colorFormat'
 import { useTranslation } from './i18n/LocaleContext'
 import { LanguagePicker } from './components/LanguagePicker'
 import { LoadingOverlay } from './components/LoadingOverlay'
@@ -41,6 +47,9 @@ const RENDERERS: Record<TemplateId, TemplateRenderer> = {
   colorArchive: renderColorArchive,
   pantoneCard: renderPantoneCard,
   colorAnnotation: renderColorAnnotation,
+  designerSpec: renderDesignerSpec,
+  heroHex: renderHeroHex,
+  bandList: renderBandList,
 }
 
 const TEMPLATE_IDS = Object.keys(RENDERERS) as TemplateId[]
@@ -103,6 +112,7 @@ export default function App() {
   const [template, setTemplate] = useState<TemplateId>('classicStrip')
   const [filter, setFilter] = useState<FilterName>('none')
   const [language, setLanguage] = useState<ColorNameLanguage>('zh')
+  const [colorFormat, setColorFormat] = useState<ColorFormat>('hex')
   const [marginPx, setMarginPx] = useState(24)
   const [swatchGapPx, setSwatchGapPx] = useState(16)
   const [swatchRadiusPx, setSwatchRadiusPx] = useState(6)
@@ -126,6 +136,7 @@ export default function App() {
       ...baseConfig,
       photo: displayPhoto,
       colorNameLanguage: language,
+      colorFormat,
       width,
       height,
       marginPx,
@@ -142,6 +153,7 @@ export default function App() {
     displayPhoto,
     template,
     language,
+    colorFormat,
     marginPx,
     swatchGapPx,
     swatchRadiusPx,
@@ -326,6 +338,23 @@ export default function App() {
                     <div>
                       <div className="mb-3 text-base text-on-surface-variant">{t.cardTabs.colorNameLanguage}</div>
                       <LanguagePicker selected={language} onSelect={setLanguage} />
+                    </div>
+                    <div>
+                      <div className="mb-3 text-base text-on-surface-variant">{t.cardTabs.colorFormat}</div>
+                      <div className="grid grid-cols-3 gap-3">
+                        {COLOR_FORMATS.map((format) => (
+                          <Button
+                            key={format}
+                            variant={colorFormat === format ? 'secondary' : 'outline'}
+                            size="sm"
+                            className="h-12 bg-surface"
+                            aria-pressed={colorFormat === format}
+                            onClick={() => setColorFormat(format)}
+                          >
+                            {t.cardTabs.colorFormatValue[format]}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
                     <PaletteList
                       palette={config.palette}

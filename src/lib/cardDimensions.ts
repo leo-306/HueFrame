@@ -19,7 +19,10 @@ export function dimensionsForTemplate(
     template === 'editorialFrame' ||
     template === 'polaroidJournal' ||
     template === 'pantoneCard' ||
-    template === 'colorAnnotation'
+    template === 'colorAnnotation' ||
+    template === 'designerSpec' ||
+    template === 'heroHex' ||
+    template === 'bandList'
   ) {
     return { width: CARD_WIDTH, height: 1000 }
   }

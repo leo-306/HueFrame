@@ -19,6 +19,8 @@ export interface Translations {
     palette: string
     info: string
     colorNameLanguage: string
+    colorFormat: string
+    colorFormatValue: { hex: string; rgb: string; hsl: string }
     colorPercentage: string
     moveUp: string
     moveDown: string
@@ -69,6 +71,9 @@ export interface Translations {
     colorArchive: string
     pantoneCard: string
     colorAnnotation: string
+    designerSpec: string
+    heroHex: string
+    bandList: string
     previousTemplate: string
     nextTemplate: string
     viewAllTemplates: string
@@ -188,6 +193,8 @@ export const zh: Translations = {
     palette: '调色',
     info: '信息',
     colorNameLanguage: '色名语言',
+    colorFormat: '色值格式',
+    colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
     colorPercentage: '占比',
     moveUp: '上移',
     moveDown: '下移',
@@ -238,6 +245,9 @@ export const zh: Translations = {
     colorArchive: '色彩档案',
     pantoneCard: '潘通主色卡',
     colorAnnotation: '色彩注记',
+    designerSpec: '设计师规格卡',
+    heroHex: '主色巨卡',
+    bandList: '横带色谱',
     previousTemplate: '上一个模板',
     nextTemplate: '下一个模板',
     viewAllTemplates: '查看全部模板',
@@ -357,6 +367,8 @@ export const en: Translations = {
     palette: 'Palette',
     info: 'Info',
     colorNameLanguage: 'Color-name language',
+    colorFormat: 'Color format',
+    colorFormatValue: { hex: 'HEX', rgb: 'RGB', hsl: 'HSL' },
     colorPercentage: 'Share',
     moveUp: 'Move up',
     moveDown: 'Move down',
@@ -407,6 +419,9 @@ export const en: Translations = {
     colorArchive: 'Color Archive',
     pantoneCard: 'Pantone Card',
     colorAnnotation: 'Palette Map',
+    designerSpec: 'Designer Spec',
+    heroHex: 'Hero Hex',
+    bandList: 'Band List',
     previousTemplate: 'Previous template',
     nextTemplate: 'Next template',
     viewAllTemplates: 'View all templates',

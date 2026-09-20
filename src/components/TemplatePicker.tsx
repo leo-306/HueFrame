@@ -22,6 +22,9 @@ export function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerPr
     { id: 'colorArchive', label: t.templatePicker.colorArchive },
     { id: 'pantoneCard', label: t.templatePicker.pantoneCard },
     { id: 'colorAnnotation', label: t.templatePicker.colorAnnotation },
+    { id: 'designerSpec', label: t.templatePicker.designerSpec },
+    { id: 'heroHex', label: t.templatePicker.heroHex },
+    { id: 'bandList', label: t.templatePicker.bandList },
   ]
 
   useEffect(() => {
