@@ -1,32 +1,44 @@
-# React + TypeScript + Vite
+# HueFrame · 映色格
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+一款照片色卡拼贴工具。上传照片 → 自动提取主色调 → 识别地点/时间 → 选滤镜/版式 → 导出色卡拼贴图。
+移动端优先，竖屏设计。
 
-Currently, two official plugins are available:
+## 功能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**卡片**：上传照片后本地提取主色生成色卡，支持
+- 7 种卡片版式：经典色带、杂志封面、编辑画框、拍立得手记、色彩档案、潘通主色卡、色彩标注
+- 8 种滤镜（无滤镜 / 暖调胶片 / 冷调胶片 / 复古正片 / 黑白纪实 / 柔雾 / 鲜艳 / 青橙电影）
+- 调色板编辑：改色、上下移动排序、重新提取、色名中英切换
+- 信息编辑：地点、拍摄时间、HueFrame 水印及透明度
+- 导出 PNG
 
-## React Compiler
+**宫格**：照片切分与拼贴，可配置宫格尺寸、背景与边框，切分结果可接着生成色卡。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**裁剪**：按 4:5 / 1:1 / 16:9 裁剪，拖动调整取图位置、滑块放大局部，裁好的图直接进入色卡流程。
 
-## Expanding the Oxlint configuration
+## 技术要点
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- 取色：`color-thief-browser` 做初始量化，再用 CIE Lab 色差（ΔE）合并近似色——
+  实测近似残色两两 ΔE ≤ 14.15，而真正不同的颜色 ΔE ≥ 42.76，阈值取 16 落在间隔带中，
+  保证色卡上每一块都"看得出的差别"；占比过低的量化噪声不占展示位
+- 色名：中国传统色表匹配；同一色卡内重名的按 Lab 差异最大的轴加「深/浅」或「偏青/偏红」前缀
+- 元数据：`exifr` 解析 EXIF/GPS，GPS 经地理编码转地名；缺失时不阻塞主流程
+- 图片解码：JPG / PNG / WEBP / HEIF / HEIC（HEIC 经 `heic-to` 按需转换，独立 chunk 懒加载）
+- 全部渲染在 canvas 上完成，导出即所见
+- 中英双语界面
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 开发
+
+```bash
+npm install
+npm run dev        # 开发服务器
+npm run build      # 类型检查 + 生产构建
+npm test           # 运行测试套件
+npm run lint       # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 相关文档
+
+- `design/hueframe-design-brief.md` — 设计需求文档
+- `design/mockups/` — 设计参考图
+- `docs/superpowers/` — 各功能的实施计划与设计规格
