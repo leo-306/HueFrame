@@ -14,6 +14,7 @@ import { ExportButton } from './components/ExportButton'
 import { GridTool, type GridSubTab } from './components/grid/GridTool'
 import { GridSubTabSwitcher } from './components/grid/GridSubTabSwitcher'
 import { HomeTab } from './components/HomeTab'
+import { CropPanel } from './components/CropPanel'
 import { buildCardConfig, extractPaletteEntries } from './lib/photoPipeline'
 import { applyFilter, type FilterName } from './lib/filters'
 import { dimensionsForTemplate } from './lib/cardDimensions'
@@ -366,7 +367,15 @@ export default function App() {
         <GridTool activeSubTab={gridSubTab} onGenerateCard={handleGenerateCardFromGrid} />
       )}
 
-        {activeTab === 'crop' && <p className="px-5 py-10 text-center text-on-surface-variant">{t.common.comingSoon}</p>}
+      {activeTab === 'crop' && (
+        <CropPanel
+          onCropped={(file) => {
+            handleFileSelected(file)
+            setActiveTab('card')
+          }}
+          onCancel={() => setActiveTab('home')}
+        />
+      )}
       </div>
 
       {activeTab !== 'home' && <BottomNav active={activeTab} onSelect={setActiveTab} />}

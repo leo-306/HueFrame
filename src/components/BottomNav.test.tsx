@@ -1,6 +1,7 @@
 // src/components/BottomNav.test.tsx
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { BottomNav } from './BottomNav'
 
 describe('BottomNav', () => {
@@ -13,11 +14,19 @@ describe('BottomNav', () => {
     expect(screen.getByText('裁剪')).toBeInTheDocument()
   })
 
-  it('disables the crop tab but not the card or grid tabs', () => {
+  it('enables every tool tab now that cropping is implemented', () => {
     render(<BottomNav active="grid" onSelect={vi.fn()} />)
-    expect(screen.getByText('裁剪')).toBeDisabled()
-    expect(screen.getByText('卡片')).not.toBeDisabled()
-    expect(screen.getByText('宫格')).not.toBeDisabled()
+    for (const label of ['卡片', '宫格', '裁剪']) {
+      expect(screen.getByText(label)).toBeEnabled()
+    }
+  })
+
+  it('navigates to the crop tab when it is pressed', async () => {
+    const onSelect = vi.fn()
+    const user = userEvent.setup()
+    render(<BottomNav active="grid" onSelect={onSelect} />)
+    await user.click(screen.getByText('裁剪'))
+    expect(onSelect).toHaveBeenCalledWith('crop')
   })
 
   it('marks the active tab as selected via ARIA state', () => {

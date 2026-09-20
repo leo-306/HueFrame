@@ -159,6 +159,14 @@ export interface Translations {
     reupload: string
     unknownLocation: string
   }
+  crop: {
+    ratio: string
+    zoom: string
+    hint: string
+    dragHint: string
+    confirm: string
+    cancel: string
+  }
 }
 
 export const zh: Translations = {
@@ -320,6 +328,14 @@ export const zh: Translations = {
     reupload: '重新上传',
     unknownLocation: '未知地点',
   },
+  crop: {
+    ratio: '裁剪比例',
+    zoom: '缩放',
+    hint: '拖动照片调整取图位置，缩放用于放大局部细节。',
+    dragHint: '拖动以调整裁剪位置',
+    confirm: '裁好了',
+    cancel: '取消',
+  },
 }
 
 export const en: Translations = {
@@ -480,6 +496,14 @@ export const en: Translations = {
     comingSoon: 'Coming soon',
     reupload: 'Replace',
     unknownLocation: 'Unknown Location',
+  },
+  crop: {
+    ratio: 'Crop ratio',
+    zoom: 'Zoom',
+    hint: 'Drag the photo to reposition; zoom in to focus on a detail.',
+    dragHint: 'Drag to reposition the crop',
+    confirm: 'Crop it',
+    cancel: 'Cancel',
   },
 }
 

@@ -14,7 +14,7 @@ export function BottomNav({ active, onSelect }: BottomNavProps) {
   const tabs = [
     { id: 'card' as const, label: t.bottomNav.card, icon: SwatchBook },
     { id: 'grid' as const, label: t.bottomNav.grid, icon: Grid3X3 },
-    { id: 'crop' as const, label: t.bottomNav.crop, icon: Crop, disabled: true },
+    { id: 'crop' as const, label: t.bottomNav.crop, icon: Crop },
   ]
 
   return (
@@ -34,7 +34,6 @@ export function BottomNav({ active, onSelect }: BottomNavProps) {
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                disabled={tab.disabled}
                 className="type-caption h-14 flex-1 flex-col gap-1 rounded-2xl py-1.5 text-on-surface-variant data-[state=active]:bg-primary-container/70 data-[state=active]:text-primary data-[state=active]:shadow-none"
               >
                 <Icon aria-hidden="true" className="size-5" strokeWidth={1.7} />
